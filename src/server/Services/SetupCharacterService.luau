@@ -1,3 +1,4 @@
+local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 
 local characterAddedConnections = {}
@@ -5,6 +6,16 @@ local characterAddedConnections = {}
 function SetupCharacter(character: Instance)
 	local Torso = character:WaitForChild("Torso")
 	local HumanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+	local RightLeg = character:FindFirstChild("Right Leg")
+	if RightLeg then
+		CollectionService:AddTag(RightLeg, "Collect")
+	end
+
+	local LeftLeg = character:FindFirstChild("Left Leg")
+	if LeftLeg then
+		CollectionService:AddTag(LeftLeg, "Collect")
+	end
 
 	local ToolGrip = Instance.new("Motor6D")
 	ToolGrip.Name = "ToolGrip"
