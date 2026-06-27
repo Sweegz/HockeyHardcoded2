@@ -5,6 +5,7 @@ local Animator = require(script.Animator)
 local Input = require(script.Input)
 local StateMachine = require(script.StateMachine)
 local Power = require(script.Power)
+local Collect = require(script.Collect)
 
 local disconnectAndClear = require(ReplicatedStorage.Shared.Utility.disconnectAndClear)
 
@@ -27,6 +28,7 @@ end
 
 function StickController:Update(dt: number)
 	self.state_machine:Tick(dt)
+	self.collect:Tick(dt)
 	self.power:Tick(dt)
 end
 
@@ -41,6 +43,7 @@ function StickController:Equip()
 	self.input:Enable()
 	self.state_machine:Enable(require(script.StateMachine.DefaultState).New(self))
 	self.power:Enable()
+	self.collect:Enable()
 
 	self.humanoid = self.tool.Parent:FindFirstChildOfClass("Humanoid")
 	self.humanoid.JumpHeight = 0
@@ -60,6 +63,7 @@ function StickController:Unequip()
 	self.input:Disable()
 	self.state_machine:Disable()
 	self.power:Disable()
+	self.collect:Disable()
 
 	self.humanoid.JumpHeight = 7.2
 
@@ -74,6 +78,7 @@ function StickController:Initialize()
 	self.input = Input.New(self)
 	self.state_machine = StateMachine.New(require(script.StateMachine.DefaultState).New(self))
 	self.power = Power.New(self)
+	self.collect = Collect.New(self)
 
 	table.insert(
 		self.connections,
