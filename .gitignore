@@ -1,0 +1,12 @@
+# Project place file
+/HockeyHardcoded.rbxlx
+
+# Roblox Studio lock files
+/*.rbxlx.lock
+/*.rbxl.lock
+Packages/
+sourcemap.json
+wally.lock
+.vscode/
+
+sourcemap.json
