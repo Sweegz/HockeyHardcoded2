@@ -14,6 +14,14 @@ function DataController.Load()
 		ReplicatedFirst:SetAttribute("DataLoaded", true)
 		print("Loaded!")
 	end)
+
+	Synchronizer:WaitAndCall("Match", function(channel)
+		ReplicatedFirst:SetAttribute("MatchLoaded", true)
+	end)
+
+	Synchronizer:WaitAndCall("Puck", function(channel)
+		ReplicatedFirst:SetAttribute("PuckLoaded", true)
+	end)
 end
 
 return DataController
