@@ -2,7 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local ServerScriptService = game:GetService("ServerScriptService")
 
-local MoneyService = require(ServerScriptService.Server.Services.MoneyService)
+local MoneyService = require(ServerScriptService.Services.MoneyService)
 local Synchronizer = require(ReplicatedStorage.Packages.Synchronizer)
 
 local AutoMoneyService = {}

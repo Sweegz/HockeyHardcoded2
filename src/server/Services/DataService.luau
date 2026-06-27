@@ -6,7 +6,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
 local DataStore = DataStoreService:GetDataStore("PlayerData1")
-local DefaultStats = require(ServerScriptService.Server.Components.DefaultStats)
+local DefaultStats = require(ServerScriptService.Components.DefaultStats)
 local TableUtil = require(ReplicatedStorage.Packages.TableUtil)
 
 local Synchronizer = require(ReplicatedStorage.Packages.Synchronizer)
