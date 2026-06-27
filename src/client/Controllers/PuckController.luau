@@ -1,16 +1,35 @@
+local CollectionService = game:GetService("CollectionService")
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 local Synchronizer = require(ReplicatedStorage.Packages.Synchronizer)
+
+local LocalPlayer = Players.LocalPlayer
 
 local PuckController = {}
 
-function PuckController.Start()
+local Channel
+
+function PuckController:Start()
 	Synchronizer:WaitAndCall("Puck", function(channel)
-		print(channel:Get("Instance"))
-		channel:OnChanged("Instance", function(newValue: BasePart, oldValue: BasePart)
-			print("Instance", newValue)
-			newValue.Transparency = 0.5
-		end)
+		Channel = channel
 	end)
+end
+
+function PuckController:GetOwner(): Player
+	return Channel:Get("Owner")
+end
+
+function PuckController:GetInstance(): Instance
+	return Channel:Get("Instance")
+end
+
+function PuckController:GetCooldown(): number
+	return Channel:Get("Cooldown")
+end
+
+function PuckController:Collect()
+	print("Collect!")
 end
 
 return PuckController
