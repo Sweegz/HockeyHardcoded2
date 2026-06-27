@@ -35,7 +35,7 @@ function DataService:SavePlayer(player: Player)
 	end)
 end
 
-function DataService:Start()
+function DataService:Load()
 	local function setupPlayer(player: Player)
 		if Synchronizer:Get(player) then
 			return
