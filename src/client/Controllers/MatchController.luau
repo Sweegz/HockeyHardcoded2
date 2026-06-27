@@ -3,8 +3,12 @@ local Synchronizer = require(ReplicatedStorage.Packages.Synchronizer)
 
 local MatchController = {}
 
-function MatchController.Start()
+local Channel
+
+function MatchController:Start()
 	Synchronizer:WaitAndCall("Match", function(channel)
+		Channel = channel
+
 		channel:OnChanged("Time", function(newValue: number, oldValue: number)
 			print("Time", newValue)
 		end)
@@ -12,6 +16,22 @@ function MatchController.Start()
 			print("Period", newValue)
 		end)
 	end)
+end
+
+function MatchController:GetTime(): number
+	return Channel:Get("Time")
+end
+
+function MatchController:GetPeriod(): number
+	return Channel:Get("Period")
+end
+
+function MatchController:GetStarted(): boolean
+	return Channel:Get("Started")
+end
+
+function MatchController:GetInPlay(): boolean
+	return Channel:Get("InPlay")
 end
 
 return MatchController

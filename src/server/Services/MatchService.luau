@@ -14,6 +14,7 @@ function MatchService:Load()
 		Started = false,
 		Period = 0,
 		Time = 0,
+		InPlay = true,
 	})
 
 	for _, player in ipairs(Players:GetPlayers()) do
@@ -30,6 +31,7 @@ function MatchService:Load()
 end
 
 function MatchService:Start()
+	MatchService:StartMatch()
 	PuckService:Spawn(Vector3.new(0, 10, 0))
 
 	task.delay(3, function()
