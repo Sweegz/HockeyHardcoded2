@@ -15,14 +15,6 @@ function GameController:Start()
 			task.wait()
 		end
 
-		while ReplicatedFirst:GetAttribute("MatchLoaded") ~= true do
-			task.wait()
-		end
-
-		while ReplicatedFirst:GetAttribute("PuckLoaded") ~= true do
-			task.wait()
-		end
-
 		Loaded = true
 		for i = 1, #Callbacks do
 			local callback = Callbacks[i]
