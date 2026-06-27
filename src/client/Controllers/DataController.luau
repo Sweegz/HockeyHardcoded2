@@ -6,14 +6,14 @@ local Synchronizer = require(ReplicatedStorage.Packages.Synchronizer)
 
 local LocalPlayer = Players.LocalPlayer
 
-local Channel = nil
+local DataController = {}
 
-return {
-	Load = function()
-		Synchronizer:WaitAndCall(LocalPlayer, function(channel)
-			Channel = channel
-			ReplicatedFirst:SetAttribute("DataLoaded", true)
-			print("Loaded!")
-		end)
-	end,
-}
+function DataController.Load()
+	Synchronizer:WaitAndCall(LocalPlayer, function(channel)
+		DataController.Channel = channel
+		ReplicatedFirst:SetAttribute("DataLoaded", true)
+		print("Loaded!")
+	end)
+end
+
+return DataController
