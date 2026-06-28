@@ -8,7 +8,7 @@ local LocalPlayer = Players.LocalPlayer
 
 local DataController = {}
 
-function DataController.Load()
+function DataController:Load()
 	Synchronizer:WaitAndCall(LocalPlayer, function(channel)
 		DataController.Channel = channel
 		ReplicatedFirst:SetAttribute("DataLoaded", true)

@@ -74,7 +74,7 @@ function Animator:Enable()
 		self:LoadAnimations()
 	end
 
-	self.animationTracks.Idle:Play()
+	self.animationTracks.Idle:Play(0)
 end
 
 function Animator:Disable()

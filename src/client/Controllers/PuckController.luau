@@ -1,8 +1,10 @@
-local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local RunService = game:GetService("RunService")
 local Synchronizer = require(ReplicatedStorage.Packages.Synchronizer)
+
+local Net = ReplicatedStorage.Net
+local CollectEvent = Net:FindFirstChild("Collect") :: RemoteFunction
+local DropEvent = Net:FindFirstChild("Drop") :: RemoteEvent
 
 local LocalPlayer = Players.LocalPlayer
 
@@ -29,7 +31,21 @@ function PuckController:GetCooldown(): number
 end
 
 function PuckController:Collect()
-	print("Collect!")
+	if PuckController:GetOwner() == LocalPlayer then
+		return
+	end
+
+	task.spawn(function()
+		CollectEvent:InvokeServer()
+	end)
+end
+
+function PuckController:Drop()
+	if PuckController:GetOwner() ~= LocalPlayer then
+		return
+	end
+
+	DropEvent:FireServer()
 end
 
 return PuckController

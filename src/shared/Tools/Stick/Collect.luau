@@ -25,18 +25,6 @@ function Collect:Enable()
 	self.enabled = true
 end
 
-function Collect:Collect()
-	print("Collect!")
-end
-
-function Collect:Drop()
-	if PuckController:GetOwner() ~= LocalPlayer then
-		return
-	end
-
-	print("Drop")
-end
-
 function Collect:Tick(dt: number)
 	if not self.enabled then
 		return
@@ -46,9 +34,9 @@ function Collect:Tick(dt: number)
 		return
 	end
 
-	if PuckController:GetCooldown() > 0 then
+	--[[if PuckController:GetCooldown() > 0 then
 		return
-	end
+	end--]]
 
 	if PuckController:GetOwner() == LocalPlayer then
 		return
@@ -60,17 +48,27 @@ function Collect:Tick(dt: number)
 		return
 	end
 
-	for _, part in CollectionService:GetTagged("Collect") do
+	local character = LocalPlayer.Character
+	if not character then
+		return
+	end
+
+	for _, part in character:GetDescendants() do
+		if not part:HasTag("Collect") then
+			continue
+		end
+
 		local dist = (puck_instance.Position - part.Position).Magnitude
 
 		if dist < 2 then
-			self:Collect()
+			PuckController:Collect()
+			break
 		end
 	end
 end
 
 function Collect:Disable()
-	self:Drop()
+	PuckController:Drop()
 	self.enabled = false
 end
 
