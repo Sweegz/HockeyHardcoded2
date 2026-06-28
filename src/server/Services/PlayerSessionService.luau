@@ -7,24 +7,29 @@ local Synchronizer = require(ReplicatedStorage.Packages.Synchronizer)
 
 local playerSessionChannel
 
+local SESSION_DATA_TEMPLATE = {
+	Stamina = 100,
+	Benched = false,
+	Cooldown = 0,
+	Stats = {},
+}
+
+local function setupPlayer(player: Player)
+	if PlayerSessionService:GetPlayerSession(player) then
+		return
+	end
+
+	playerSessionChannel:InsertOnDictionary("Players", tostring(player.UserId), SESSION_DATA_TEMPLATE)
+
+	playerSessionChannel:AddListener(player)
+
+	return
+end
+
 function PlayerSessionService:Load()
 	playerSessionChannel = Synchronizer:Create("PlayerSession", {
 		Players = {},
 	})
-
-	local function setupPlayer(player: Player)
-		if PlayerSessionService:GetPlayerSession(player) then
-			return
-		end
-
-		playerSessionChannel:InsertOnDictionary("Players", tostring(player.UserId), {
-			Cooldown = 0,
-		})
-
-		playerSessionChannel:AddListener(player)
-
-		return
-	end
 
 	Players.PlayerAdded:Connect(setupPlayer)
 
@@ -52,6 +57,13 @@ end
 function PlayerSessionService:GetCooldown(player: Player)
 	local index = ("Players.%*.Cooldown"):format(player.UserId)
 	return playerSessionChannel:Get(index)
+end
+
+function PlayerSessionService:Reset()
+	playerSessionChannel:Set("Players", {})
+	for _, player in Players:GetPlayers() do
+		setupPlayer(player)
+	end
 end
 
 return PlayerSessionService
