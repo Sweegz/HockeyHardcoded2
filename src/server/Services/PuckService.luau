@@ -6,53 +6,10 @@ local PlayerSessionService = require(script.Parent.PlayerSessionService)
 local Synchronizer = require(ReplicatedStorage.Packages.Synchronizer)
 
 local PuckModel = ReplicatedStorage:FindFirstChild("Models"):FindFirstChild("Pucks"):FindFirstChild("Puck")
-local Net = ReplicatedStorage.Net
-
-local CollectEvent = Net:FindFirstChild("Collect") :: RemoteFunction
-local DropEvent = Net:FindFirstChild("Drop") :: RemoteEvent
 
 local Channel = nil
 
 local PuckService = {}
-
-local function SetPuckOwner(player: Player)
-	local character = player.Character
-	if not character then
-		return
-	end
-
-	local front = character:FindFirstChild("Front", true)
-	if not front then
-		return
-	end
-
-	local puck = Channel:Get("Instance")
-	if not puck then
-		return
-	end
-
-	puck.CFrame = front.CFrame * CFrame.Angles(0, 0, 0)
-	puck.weld.Part1 = front
-	Channel:Set("Owner", player)
-	Channel:Set("Cooldown", tick() + 1)
-end
-
-local function DropPuck()
-	local puck = Channel:Get("Instance")
-	if not puck then
-		return
-	end
-
-	local owner = Channel:Get("Owner")
-
-	puck.weld.Part1 = nil
-	Channel:Set("Owner", nil)
-	Channel:Set("Cooldown", tick() + 1)
-
-	if owner then
-		PlayerSessionService:SetCooldown(owner, 2)
-	end
-end
 
 function PuckService:Load()
 	Channel = Synchronizer:Create("Puck", {
@@ -75,32 +32,7 @@ function PuckService:Load()
 	end)
 end
 
-function PuckService:Start()
-	CollectEvent.OnServerInvoke = function(player)
-		local Owner = Channel:Get("Owner")
-		local Cooldown = Channel:Get("Cooldown")
-
-		if tick() < Cooldown then
-			return
-		end
-
-		if tick() < PlayerSessionService:GetCooldown(player) then
-			return
-		end
-
-		if not Owner then
-			SetPuckOwner(player)
-		elseif Owner ~= player then
-			DropPuck()
-		end
-	end
-
-	DropEvent.OnServerEvent:Connect(function(player: Player)
-		if Channel:Get("Owner") == player then
-			DropPuck()
-		end
-	end)
-end
+function PuckService:Start() end
 
 function PuckService:Enable()
 	Channel:Set("Enabled", true)
@@ -108,6 +40,53 @@ end
 
 function PuckService:Disable()
 	Channel:Set("Enabled", false)
+end
+
+function PuckService:SetOwner(player: Player)
+	local character = player.Character
+	if not character then
+		return
+	end
+
+	local front = character:FindFirstChild("Front", true)
+	if not front then
+		return
+	end
+
+	local puck = Channel:Get("Instance")
+	if not puck then
+		return
+	end
+
+	puck.CFrame = front.CFrame * CFrame.Angles(0, 0, 0)
+	puck.weld.Part1 = front
+	Channel:Set("Owner", player)
+	Channel:Set("Cooldown", tick() + 1)
+end
+
+function PuckService:DropPuck()
+	local puck = Channel:Get("Instance")
+	if not puck then
+		return
+	end
+
+	local owner = Channel:Get("Owner")
+
+	puck.weld.Part1 = nil
+	Channel:Set("Owner", nil)
+	Channel:Set("Cooldown", tick() + 1)
+
+	if owner then
+		PlayerSessionService:SetCooldown(owner, 2)
+	end
+end
+
+function PuckService:GetOwner()
+	return Channel:Get("Owner")
+end
+
+function PuckService:GetCooldown()
+	return Channel:Get("Cooldown")
 end
 
 function PuckService:GetPuckInstance()

@@ -1,7 +1,7 @@
-local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local StarterPlayer = game:GetService("StarterPlayer")
 
+local CollectController = require(StarterPlayer.StarterPlayerScripts.Controllers.CollectController)
 local MatchController = require(StarterPlayer.StarterPlayerScripts.Controllers.MatchController)
 local PuckController = require(StarterPlayer.StarterPlayerScripts.Controllers.PuckController)
 
@@ -61,14 +61,14 @@ function Collect:Tick(dt: number)
 		local dist = (puck_instance.Position - part.Position).Magnitude
 
 		if dist < 2 then
-			PuckController:Collect()
+			CollectController:Collect()
 			break
 		end
 	end
 end
 
 function Collect:Disable()
-	PuckController:Drop()
+	CollectController:Drop()
 	self.enabled = false
 end
 
