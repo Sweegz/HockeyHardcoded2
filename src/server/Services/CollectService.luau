@@ -27,6 +27,7 @@ function CollectService:Start()
 			PuckService:SetOwner(player)
 		elseif owner ~= player then
 			PuckService:DropPuck()
+			PlayerSessionService:SetCooldown(owner, 2)
 		end
 	end
 
@@ -34,6 +35,7 @@ function CollectService:Start()
 		local owner = PuckService:GetOwner()
 		if owner == player then
 			PuckService:DropPuck()
+			PlayerSessionService:SetCooldown(owner, 2)
 		end
 	end)
 end

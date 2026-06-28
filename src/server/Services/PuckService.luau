@@ -2,7 +2,6 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
-local PlayerSessionService = require(script.Parent.PlayerSessionService)
 local Synchronizer = require(ReplicatedStorage.Packages.Synchronizer)
 
 local PuckModel = ReplicatedStorage:FindFirstChild("Models"):FindFirstChild("Pucks"):FindFirstChild("Puck")
@@ -70,15 +69,9 @@ function PuckService:DropPuck()
 		return
 	end
 
-	local owner = Channel:Get("Owner")
-
 	puck.weld.Part1 = nil
 	Channel:Set("Owner", nil)
 	Channel:Set("Cooldown", tick() + 1)
-
-	if owner then
-		PlayerSessionService:SetCooldown(owner, 2)
-	end
 end
 
 function PuckService:GetOwner()
