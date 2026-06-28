@@ -33,10 +33,6 @@ end
 function MatchService:Start()
 	MatchService:StartMatch()
 	PuckService:Spawn(Vector3.new(0, 10, 0))
-
-	task.delay(3, function()
-		PuckService:Spawn(Vector3.new(0, 10, 0))
-	end)
 end
 
 function MatchService:StartMatch()

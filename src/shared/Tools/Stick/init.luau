@@ -6,6 +6,7 @@ local Input = require(script.Input)
 local StateMachine = require(script.StateMachine)
 local Power = require(script.Power)
 local Collect = require(script.Collect)
+local Momentum = require(script.Momentum)
 
 local disconnectAndClear = require(ReplicatedStorage.Shared.Utility.disconnectAndClear)
 
@@ -30,6 +31,7 @@ function StickController:Update(dt: number)
 	self.state_machine:Tick(dt)
 	self.collect:Tick(dt)
 	self.power:Tick(dt)
+	self.momentum:Tick(dt)
 end
 
 function StickController:Equip()
@@ -39,14 +41,17 @@ function StickController:Equip()
 	self.equipped = true
 	self.extended = nil
 
+	self.humanoid = self.tool.Parent:FindFirstChildOfClass("Humanoid")
+	self.humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, false)
+	self.humanoid.JumpHeight = 0
+	self.humanoid.WalkSpeed = 38
+
 	self.animator:Enable()
 	self.input:Enable()
 	self.state_machine:Enable(require(script.StateMachine.DefaultState).New(self))
 	self.power:Enable()
 	self.collect:Enable()
-
-	self.humanoid = self.tool.Parent:FindFirstChildOfClass("Humanoid")
-	self.humanoid.JumpHeight = 0
+	self.momentum:Enable()
 
 	self.update_connection = RunService:BindToSimulation(function(dt)
 		self:Update(dt)
@@ -59,13 +64,16 @@ function StickController:Unequip()
 	end
 	self.equipped = false
 
+	self.humanoid.JumpHeight = 7.2
+	self.humanoid.WalkSpeed = 16
+	self.humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, true)
+
 	self.animator:Disable()
 	self.input:Disable()
 	self.state_machine:Disable()
 	self.power:Disable()
 	self.collect:Disable()
-
-	self.humanoid.JumpHeight = 7.2
+	self.momentum:Disable()
 
 	if self.update_connection then
 		self.update_connection:Disconnect()
@@ -79,6 +87,7 @@ function StickController:Initialize()
 	self.state_machine = StateMachine.New(require(script.StateMachine.DefaultState).New(self))
 	self.power = Power.New(self)
 	self.collect = Collect.New(self)
+	self.momentum = Momentum.New(self)
 
 	table.insert(
 		self.connections,
