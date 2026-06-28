@@ -8,9 +8,9 @@ local Shots = require(ServerScriptService.Shots)
 local Net = ReplicatedStorage.Net
 local ShootEvent = Net:FindFirstChild("Shoot") :: RemoteEvent
 
-local ShootService = {}
+local PlayerActionService = {}
 
-function ShootService:Start()
+function PlayerActionService:Start()
 	ShootEvent.OnServerEvent:Connect(
 		function(player: Player, power: number, mouseHit: Vector3, puckPosition: Vector3, flags: {})
 			local owner = PuckService:GetOwner()
@@ -36,4 +36,4 @@ function ShootService:Start()
 	)
 end
 
-return ShootService
+return PlayerActionService
