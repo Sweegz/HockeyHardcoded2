@@ -1,4 +1,9 @@
+local Players = game:GetService("Players")
+local StarterPlayer = game:GetService("StarterPlayer")
+local PuckController = require(StarterPlayer.StarterPlayerScripts.Controllers.PuckController)
 local Constants = require(script.Parent.Parent.Constants)
+
+local LocalPlayer = Players.LocalPlayer
 
 function higherThan(source: number?, target: number?): boolean
 	if source and target then
@@ -80,7 +85,11 @@ function DefaultState:Tick(dt: number)
 		(self.stickController.power.current > 0 and not commands.ChargePower)
 		or (commands.ChargePower and commands.ChargePower < tick() - 1.45)
 	then
-		next_state = self.stickController.state_machine.states.ShotState
+		if PuckController:GetOwner() == LocalPlayer then
+			next_state = self.stickController.state_machine.states.ShotState
+		elseif self.stickController.power.current > 30 then
+			next_state = self.stickController.state_machine.states.CheckState
+		end
 	end
 
 	if next_state then
