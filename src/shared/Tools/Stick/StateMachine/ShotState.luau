@@ -1,5 +1,5 @@
 local StarterPlayer = game:GetService("StarterPlayer")
-local ShootController = require(StarterPlayer.StarterPlayerScripts.Controllers.ShootController)
+local PlayerActionController = require(StarterPlayer.StarterPlayerScripts.Controllers.PlayerActionController)
 local Constants = require(script.Parent.Parent.Constants)
 
 local ShotState = {}
@@ -47,7 +47,7 @@ function ShotState:Enter()
 
 	task.spawn(function()
 		self.connection = self.track:GetMarkerReachedSignal("Shoot"):Once(function()
-			ShootController:Shoot(self.power, {
+			PlayerActionController:Shoot(self.power, {
 				wrist = false,
 				chip = false,
 				fake = false,
