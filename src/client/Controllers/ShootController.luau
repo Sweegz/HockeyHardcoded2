@@ -1,0 +1,25 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local PuckController = require(script.Parent.PuckController)
+
+local getValidMouseHit = require(ReplicatedStorage.Shared.Utility.getValidMouseHit)
+
+local Net = ReplicatedStorage.Net
+local ShootEvent = Net:FindFirstChild("Shoot") :: RemoteEvent
+
+local ShootController = {}
+
+function ShootController:Shoot(power: number, flags: {})
+	local mouseHit = getValidMouseHit() * Vector3.new(1, 0, 1)
+
+	local puck = PuckController:GetInstance()
+	if not puck then
+		return
+	end
+
+	local puckPosition = puck.Position
+
+	ShootEvent:FireServer(power, mouseHit, puckPosition, flags)
+end
+
+return ShootController
