@@ -13,9 +13,8 @@ local CollectService = {}
 function CollectService:Start()
 	CollectEvent.OnServerInvoke = function(player)
 		local owner = PuckService:GetOwner()
-		local cooldown = PuckService:GetCooldown()
 
-		if tick() < cooldown then
+		if tick() < PuckService:GetCooldown() then
 			return
 		end
 
