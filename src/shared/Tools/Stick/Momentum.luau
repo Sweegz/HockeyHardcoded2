@@ -69,12 +69,6 @@ function Momentum:Tick(dt: number)
 		return
 	end
 
-	if humanoid.WalkSpeed > 47 then
-		humanoid.WalkSpeed = 47
-	elseif humanoid.WalkSpeed > 38 then
-		humanoid.WalkSpeed = 38
-	end
-
 	local bodyVelocity = self.bodyVelocity
 	local moveDirection = humanoid.MoveDirection
 	local isMoving = moveDirection.Magnitude > 0

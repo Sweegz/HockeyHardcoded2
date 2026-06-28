@@ -6,6 +6,7 @@ local Input = require(script.Input)
 local StateMachine = require(script.StateMachine)
 local Power = require(script.Power)
 local Collect = require(script.Collect)
+local Sprint = require(script.Sprint)
 local Momentum = require(script.Momentum)
 
 local disconnectAndClear = require(ReplicatedStorage.Shared.Utility.disconnectAndClear)
@@ -31,6 +32,7 @@ function StickController:Update(dt: number)
 	self.state_machine:Tick(dt)
 	self.collect:Tick(dt)
 	self.power:Tick(dt)
+	self.sprint:Tick(dt)
 	self.momentum:Tick(dt)
 end
 
@@ -51,6 +53,7 @@ function StickController:Equip()
 	self.state_machine:Enable(require(script.StateMachine.DefaultState).New(self))
 	self.power:Enable()
 	self.collect:Enable()
+	self.sprint:Enable()
 	self.momentum:Enable()
 
 	self.update_connection = RunService.Heartbeat:Connect(function(dt)
@@ -73,6 +76,7 @@ function StickController:Unequip()
 	self.state_machine:Disable()
 	self.power:Disable()
 	self.collect:Disable()
+	self.sprint:Disable()
 	self.momentum:Disable()
 
 	if self.update_connection then
@@ -87,6 +91,7 @@ function StickController:Initialize()
 	self.state_machine = StateMachine.New(require(script.StateMachine.DefaultState).New(self))
 	self.power = Power.New(self)
 	self.collect = Collect.New(self)
+	self.sprint = Sprint.New(self)
 	self.momentum = Momentum.New(self)
 
 	table.insert(

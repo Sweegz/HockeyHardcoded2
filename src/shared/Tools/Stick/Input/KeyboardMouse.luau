@@ -25,6 +25,11 @@ function KeyboardMouse.InputBegan(input: InputObject, commands)
 		commands.HighTip = tick()
 	end
 
+	if input.KeyCode == Enum.KeyCode.LeftControl then
+		print("K")
+		commands.Sprint = tick()
+	end
+
 	if input.UserInputType == Enum.UserInputType.MouseButton1 then
 		commands.ChargePower = tick()
 	end
@@ -53,6 +58,10 @@ function KeyboardMouse.InputEnded(input: InputObject, commands)
 
 	if input.KeyCode == Enum.KeyCode.R then
 		commands.HighTip = false
+	end
+
+	if input.KeyCode == Enum.KeyCode.LeftControl then
+		commands.Sprint = false
 	end
 
 	if input.UserInputType == Enum.UserInputType.MouseButton1 then
