@@ -15,7 +15,7 @@ function PuckController:GetOwner(): Player
 	return Channel:Get("Owner")
 end
 
-function PuckController:GetInstance(): Instance
+function PuckController:GetInstance(): BasePart
 	return Channel:Get("Instance")
 end
 
