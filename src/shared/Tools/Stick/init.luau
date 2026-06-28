@@ -53,7 +53,7 @@ function StickController:Equip()
 	self.collect:Enable()
 	self.momentum:Enable()
 
-	self.update_connection = RunService:BindToSimulation(function(dt)
+	self.update_connection = RunService.Heartbeat:Connect(function(dt)
 		self:Update(dt)
 	end)
 end

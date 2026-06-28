@@ -1,28 +1,46 @@
 local Players = game:GetService("Players")
 local Momentum = {}
+Momentum.__index = Momentum
 
 local LocalPlayer = Players.LocalPlayer
 
-local dir_change = false
-local is_moving = false
-local extended = false
+local Config = {
+	AngularFriction = 0.005,
+	AngularFrictionGlide = 0.04,
+	AngularVelocityThreshold = 10,
+	GlideSpeedModifierAccelerating = 0.04,
+	GlideSpeedModifierResisting = 0.06064,
+	VelocityDampFactor = 0.825,
+	DirectionLerpFactor = 0.6,
+	MaxForce = Vector3.new(25000, 0, 25000),
+	BaseFrameRate = 1 / 60,
+}
 
-Momentum.__index = Momentum
+local function GetHumanoidRootPart()
+	local character = LocalPlayer and LocalPlayer.Character
+	return character and character:FindFirstChild("HumanoidRootPart")
+end
+
+local function IsFiniteVector3(value: Vector3)
+	return value.X == value.X
+end
 
 function Momentum.New(stickController)
-	local self = {
+	local self = setmetatable({
 		stickController = stickController,
+		bodyVelocity = nil,
 		enabled = false,
-	}
+		isChangingDirection = false,
+	}, Momentum)
 
-	local character = LocalPlayer.Character
-	local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-	self.momentum = humanoidRootPart:FindFirstChild("Momentum ") or Instance.new("BodyVelocity")
-	self.momentum.Parent = humanoidRootPart
-	self.momentum.MaxForce = Vector3.new(25000, 0, 25000)
-	self.momentum.Name = "Momentum"
+	local humanoidRootPart = GetHumanoidRootPart()
+	local bodyVelocity = humanoidRootPart and humanoidRootPart:FindFirstChild("Momentum")
+		or Instance.new("BodyVelocity")
+	bodyVelocity.Name = "Momentum"
+	bodyVelocity.MaxForce = Config.MaxForce
+	bodyVelocity.Parent = humanoidRootPart
 
-	setmetatable(self, Momentum)
+	self.bodyVelocity = bodyVelocity
 
 	return self
 end
@@ -30,104 +48,83 @@ end
 function Momentum:Enable()
 	self.enabled = true
 
-	local character = LocalPlayer.Character
-	local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-	self.momentum.Parent = humanoidRootPart
+	local humanoidRootPart = GetHumanoidRootPart()
+	if humanoidRootPart then
+		self.bodyVelocity.Parent = humanoidRootPart
+	end
 end
-
-local CONFIG = {
-	angular_friction = 0.005,
-	angular_friction_glide = 0.04,
-	angular_velocity_threshhold = 10,
-	glide_speed_modifier_accelerating = 0.04,
-	glide_speed_modifier_resisting = 0.06064,
-	velocity_damp_factor = 0.825,
-	direction_lerp_factor = 0.6,
-}
 
 function Momentum:Tick(dt: number)
 	if not self.enabled then
 		return
 	end
 
-	extended = self.stickController.extended
 	local humanoid = self.stickController.humanoid
+	if not humanoid then
+		return
+	end
+
+	local humanoidRootPart = GetHumanoidRootPart()
+	if not humanoidRootPart then
+		return
+	end
 
 	if humanoid.WalkSpeed > 47 then
 		humanoid.WalkSpeed = 47
-	elseif humanoid.WalkSpeed < 47 and humanoid.WalkSpeed > 38 then
+	elseif humanoid.WalkSpeed > 38 then
 		humanoid.WalkSpeed = 38
 	end
 
-	local momentum = self.momentum
+	local bodyVelocity = self.bodyVelocity
+	local moveDirection = humanoid.MoveDirection
+	local isMoving = moveDirection.Magnitude > 0
+	local isExtended = self.stickController.extended ~= nil
 
-	local character = LocalPlayer.Character
-	local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-
-	task.spawn(function()
-		local glide_speed_modifier = nil
-		if humanoid.MoveDirection.Magnitude > 0 then
-			local max_glide_velocity = 60
-			if humanoid.WalkSpeed > 33 then
-				max_glide_velocity = 80
+	local glideModifier = 0.1
+	if isMoving then
+		local maxGlideVelocity = humanoid.WalkSpeed > 33 and 80 or 60
+		if (bodyVelocity.Velocity + moveDirection * humanoid.WalkSpeed).Magnitude <= maxGlideVelocity then
+			if not self.isChangingDirection then
+				self.isChangingDirection = true
+				bodyVelocity.Velocity *= Config.VelocityDampFactor
 			end
-			if (momentum.Velocity + humanoid.MoveDirection * humanoid.WalkSpeed).Magnitude <= max_glide_velocity then
-				glide_speed_modifier = CONFIG.glide_speed_modifier_accelerating
-				if not dir_change then
-					dir_change = true
-					local velocity_reference = momentum
-					velocity_reference.Velocity = velocity_reference.Velocity * CONFIG.velocity_damp_factor
-				end
-			else
-				if momentum.Velocity.Magnitude > humanoid.WalkSpeed + 1 and not is_moving then
-					local velocity_reference2 = momentum
-					velocity_reference2.Velocity = velocity_reference2.Velocity * CONFIG.velocity_damp_factor
-				end
-				dir_change = false
-				glide_speed_modifier = CONFIG.glide_speed_modifier_resisting
-			end
-			local _ = nil
-			glide_speed_modifier = glide_speed_modifier
-				+ if not extended
-					then humanoidRootPart.AssemblyAngularVelocity.Magnitude / 18 * CONFIG.angular_friction
-					else humanoidRootPart.AssemblyAngularVelocity.Magnitude / 18 * CONFIG.angular_friction_glide
+			glideModifier = Config.GlideSpeedModifierAccelerating
 		else
-			glide_speed_modifier = 0.1
-		end
-		local frame_rate = 1 / 60
-
-		if not is_moving then
-			if humanoidRootPart.AssemblyAngularVelocity.Magnitude <= CONFIG.angular_velocity_threshhold then
-				if momentum.Velocity.X ~= (0 / 0) then
-					momentum.Velocity = humanoidRootPart.AssemblyLinearVelocity
-				end
-				local walk_speed = humanoid.WalkSpeed
-				local alpha = 1 - (1 - glide_speed_modifier) ^ (dt / frame_rate)
-				momentum.Velocity = momentum.Velocity:Lerp(humanoid.MoveDirection * walk_speed, alpha)
-			else
-				local desired_dir_velocity = nil
-				if momentum.Velocity.Magnitude > 0 then
-					desired_dir_velocity = (momentum.Velocity / momentum.Velocity.Magnitude):Lerp(
-						humanoid.MoveDirection,
-						CONFIG.direction_lerp_factor
-					)
-				else
-					desired_dir_velocity = Vector3.new(0, 0, 0):Lerp(humanoid.MoveDirection, 0.6)
-				end
-
-				if desired_dir_velocity then
-					local walk_speed2 = humanoid.WalkSpeed
-					local alpha = 1 - (1 - glide_speed_modifier) ^ (dt / frame_rate)
-					momentum.Velocity = momentum.Velocity:Lerp(desired_dir_velocity * walk_speed2, alpha)
-				end
+			if bodyVelocity.Velocity.Magnitude > humanoid.WalkSpeed + 1 then
+				bodyVelocity.Velocity *= Config.VelocityDampFactor
 			end
+			self.isChangingDirection = false
+			glideModifier = Config.GlideSpeedModifierResisting
 		end
-	end)
+
+		local angularFactor = humanoidRootPart.AssemblyAngularVelocity.Magnitude / 18
+		glideModifier += angularFactor * (isExtended and Config.AngularFrictionGlide or Config.AngularFriction)
+	end
+
+	if not IsFiniteVector3(bodyVelocity.Velocity) then
+		bodyVelocity.Velocity = humanoidRootPart.AssemblyLinearVelocity
+	end
+
+	local alpha = 1 - (1 - glideModifier) ^ (dt / Config.BaseFrameRate)
+
+	if humanoidRootPart.AssemblyAngularVelocity.Magnitude <= Config.AngularVelocityThreshold then
+		bodyVelocity.Velocity = bodyVelocity.Velocity:Lerp(moveDirection * humanoid.WalkSpeed, alpha)
+		return
+	end
+
+	local desiredDirection = Vector3.new()
+	if bodyVelocity.Velocity.Magnitude > 0 then
+		desiredDirection = bodyVelocity.Velocity.Unit:Lerp(moveDirection, Config.DirectionLerpFactor)
+	else
+		desiredDirection = Vector3.new():Lerp(moveDirection, Config.DirectionLerpFactor)
+	end
+
+	bodyVelocity.Velocity = bodyVelocity.Velocity:Lerp(desiredDirection * humanoid.WalkSpeed, alpha)
 end
 
 function Momentum:Disable()
 	self.enabled = false
-	self.momentum.Parent = nil
+	self.bodyVelocity.Parent = nil
 end
 
 return Momentum
