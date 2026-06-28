@@ -72,4 +72,6 @@ function Collect:Disable()
 	self.enabled = false
 end
 
+function Collect:Destroy() end
+
 return Collect

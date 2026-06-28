@@ -33,6 +33,12 @@ function Momentum.New(stickController)
 		isChangingDirection = false,
 	}, Momentum)
 
+	return self
+end
+
+function Momentum:Enable()
+	self.enabled = true
+
 	local humanoidRootPart = GetHumanoidRootPart()
 	local bodyVelocity = humanoidRootPart and humanoidRootPart:FindFirstChild("Momentum")
 		or Instance.new("BodyVelocity")
@@ -41,17 +47,6 @@ function Momentum.New(stickController)
 	bodyVelocity.Parent = humanoidRootPart
 
 	self.bodyVelocity = bodyVelocity
-
-	return self
-end
-
-function Momentum:Enable()
-	self.enabled = true
-
-	local humanoidRootPart = GetHumanoidRootPart()
-	if humanoidRootPart then
-		self.bodyVelocity.Parent = humanoidRootPart
-	end
 end
 
 function Momentum:Tick(dt: number)
@@ -120,5 +115,7 @@ function Momentum:Disable()
 	self.enabled = false
 	self.bodyVelocity.Parent = nil
 end
+
+function Momentum:Destroy() end
 
 return Momentum

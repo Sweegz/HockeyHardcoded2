@@ -47,6 +47,22 @@ function SetupCharacter(character: Instance)
 			ToolGrip.Part1 = nil
 		end
 	end)
+
+	local humanoid = character:FindFirstChild("Humanoid")
+	if humanoid then
+		humanoid.Died:Once(function()
+			for _, child in character:GetDescendants() do
+				if child:IsA("Tool") then
+					child:Destroy()
+				end
+			end
+
+			local player = Players:GetPlayerFromCharacter(character)
+			for _, child in player.Backpack:GetChildren() do
+				child:Destroy()
+			end
+		end)
+	end
 end
 
 local SetupCharacterService = {}

@@ -42,4 +42,6 @@ function Power:Disable()
 	self.enabled = false
 end
 
+function Power:Destroy() end
+
 return Power

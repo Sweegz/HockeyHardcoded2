@@ -43,4 +43,6 @@ function StateMachine:Tick(dt: number)
 	self.state:Tick(dt)
 end
 
+function StateMachine:Destroy() end
+
 return StateMachine

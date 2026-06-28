@@ -113,6 +113,11 @@ function StickController:Destroy()
 	disconnectAndClear(self.connections)
 	self.animator:Destroy()
 	self.input:Destroy()
+	self.state_machine:Destroy()
+	self.power:Destroy()
+	self.collect:Destroy()
+	self.sprint:Destroy()
+	self.momentum:Destroy()
 end
 
 return StickController

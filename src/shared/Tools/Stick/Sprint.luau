@@ -40,4 +40,6 @@ function Sprint:Disable()
 	self.enabled = false
 end
 
+function Sprint:Destroy() end
+
 return Sprint
