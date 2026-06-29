@@ -83,6 +83,13 @@ function StickController:Unequip()
 	self.momentum:Disable()
 	CustomLockController:Disable()
 
+	task.spawn(function()
+		local temp = self.tool.Parent
+		self.tool.Parent = nil
+		task.wait(1.5)
+		self.tool.Parent = temp
+	end)
+
 	if self.update_connection then
 		self.update_connection:Disconnect()
 		self.update_connection = nil
