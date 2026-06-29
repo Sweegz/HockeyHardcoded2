@@ -70,6 +70,7 @@ function PuckService:DropPuck()
 	end
 
 	puck.weld.Part1 = nil
+	puck:SetNetworkOwner(nil)
 	Channel:Set("Owner", nil)
 	Channel:Set("Cooldown", tick() + 1)
 end
@@ -92,6 +93,7 @@ function PuckService:Spawn(position: Vector3)
 	local clone = PuckModel:Clone()
 	clone.Parent = Workspace:FindFirstChild("Pucks")
 	clone.Position = position
+	clone:SetNetworkOwner(nil)
 	Channel:Set("Instance", clone):Set("Owner", nil):Set("Cooldown", 0)
 end
 
