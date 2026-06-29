@@ -33,7 +33,7 @@ UserInputService.InputBegan:Connect(function(input: InputObject, gameProcessedEv
 end)
 
 function CustomLockController:Start()
-	local conn = RunService.Heartbeat:Connect(function(dt)
+	local _conn = RunService.Heartbeat:Connect(function(_dt)
 		local character = LocalPlayer.Character
 		if not character then
 			return

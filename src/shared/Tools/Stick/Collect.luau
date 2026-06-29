@@ -25,7 +25,7 @@ function Collect:Enable()
 	self.enabled = true
 end
 
-function Collect:Tick(dt: number)
+function Collect:Tick(_dt: number)
 	if not self.enabled then
 		return
 	end
@@ -33,10 +33,6 @@ function Collect:Tick(dt: number)
 	if not MatchController:GetInPlay() then
 		return
 	end
-
-	--[[if PuckController:GetCooldown() > 0 then
-		return
-	end--]]
 
 	if PuckController:GetOwner() == LocalPlayer then
 		return

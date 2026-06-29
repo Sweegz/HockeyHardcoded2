@@ -60,9 +60,8 @@ function ShotState:Enter()
 	print("Enter ShotState from:", extended, " Power:", self.power)
 end
 
-function ShotState:Tick(dt: number)
-	local commands = self.stickController.input.commands
-	local time = tick() - self.timestamp
+function ShotState:Tick(_dt: number)
+	local _commands = self.stickController.input.commands
 
 	if not self.track.IsPlaying then
 		self.stickController.state_machine:ChangeState(

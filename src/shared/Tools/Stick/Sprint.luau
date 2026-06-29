@@ -19,7 +19,7 @@ function Sprint:Enable()
 	self.enabled = true
 end
 
-function Sprint:Tick(dt: number)
+function Sprint:Tick(_dt: number)
 	if not self.enabled then
 		return
 	end
@@ -38,7 +38,7 @@ end
 
 function Sprint:Disable()
 	self.enabled = false
-	StaminaController:DisableBurn()
+	StaminaController:SetBurning(false)
 end
 
 function Sprint:Destroy() end

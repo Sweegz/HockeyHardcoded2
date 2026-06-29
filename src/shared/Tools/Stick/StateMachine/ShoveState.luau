@@ -19,8 +19,7 @@ function ShoveState:Enter()
 	self.stickController.animator:PlayAnimationByName("Shove", Constants.FADE_TIME)
 end
 
-function ShoveState:Tick(dt: number)
-	local commands = self.stickController.input.commands
+function ShoveState:Tick(_dt: number)
 	local time = tick() - self.timestamp
 
 	if time < 0.8 then

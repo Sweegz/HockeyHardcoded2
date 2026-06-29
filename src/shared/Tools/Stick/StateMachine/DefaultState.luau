@@ -46,7 +46,7 @@ function DefaultState:Enter()
 	end
 end
 
-function DefaultState:Tick(dt: number)
+function DefaultState:Tick(_dt: number)
 	local commands = self.stickController.input.commands
 	local extended = self.stickController.extended
 	local time = tick() - self.timestamp

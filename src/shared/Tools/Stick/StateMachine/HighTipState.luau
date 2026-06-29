@@ -19,8 +19,7 @@ function HighTipState:Enter()
 	self.stickController.animator:PlayAnimationByName("HighTip", Constants.FADE_TIME)
 end
 
-function HighTipState:Tick(dt: number)
-	local commands = self.stickController.input.commands
+function HighTipState:Tick(_dt: number)
 	local time = tick() - self.timestamp
 
 	if time < 1.6 then

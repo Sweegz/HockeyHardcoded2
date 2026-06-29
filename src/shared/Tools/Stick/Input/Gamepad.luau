@@ -1,9 +1,9 @@
 local Gamepad = {}
 
-function Gamepad.InputBegan(input: InputObject, commands)
+function Gamepad.InputBegan(input: InputObject, _commands)
 	print(input.KeyCode)
 end
 
-function Gamepad.InputEnded(input: InputObject, commands) end
+function Gamepad.InputEnded(_input: InputObject, _commands) end
 
 return Gamepad

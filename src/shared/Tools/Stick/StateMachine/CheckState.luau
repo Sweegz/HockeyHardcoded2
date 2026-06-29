@@ -19,7 +19,7 @@ function CheckState:Enter()
 	self.stickController.animator:PlayAnimationByName("Check", Constants.FADE_TIME)
 end
 
-function CheckState:Tick(dt: number)
+function CheckState:Tick(_dt: number)
 	local time = tick() - self.timestamp
 
 	if time < 0.75 then

@@ -19,7 +19,7 @@ function RaiseHandState:Enter()
 	self.stickController.animator:PlayAnimationByName("RaiseHand", Constants.FADE_TIME)
 end
 
-function RaiseHandState:Tick(dt: number)
+function RaiseHandState:Tick(_dt: number)
 	local commands = self.stickController.input.commands
 	local time = tick() - self.timestamp
 

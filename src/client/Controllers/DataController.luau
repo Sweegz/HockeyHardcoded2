@@ -15,11 +15,11 @@ function DataController:Load()
 		print("Loaded!")
 	end)
 
-	Synchronizer:WaitAndCall("Match", function(channel)
+	Synchronizer:WaitAndCall("Match", function(_channel)
 		ReplicatedFirst:SetAttribute("MatchLoaded", true)
 	end)
 
-	Synchronizer:WaitAndCall("Puck", function(channel)
+	Synchronizer:WaitAndCall("Puck", function(_channel)
 		ReplicatedFirst:SetAttribute("PuckLoaded", true)
 	end)
 end

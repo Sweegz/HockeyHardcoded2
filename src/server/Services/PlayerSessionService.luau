@@ -33,11 +33,7 @@ function PlayerSessionService:Load()
 
 	Players.PlayerAdded:Connect(setupPlayer)
 
-	Players.PlayerRemoving:Connect(function(player: Player)
-		task.spawn(function()
-			--Synchronizer:Destroy(player)
-		end)
-	end)
+	--Players.PlayerRemoving:Connect(function(_player: Player) end)
 
 	for _, player in ipairs(Players:GetPlayers()) do
 		task.spawn(setupPlayer, player)

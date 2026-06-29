@@ -20,7 +20,7 @@ local SettingsController = {}
 function SettingsController.Start()
 	local SFXButton = Settings.Frame:FindFirstChild("SFXButton")
 	SFXButton.Activated:Connect(function()
-		local success, message = ToggleSetting:InvokeServer("Sound Effects")
+		local _success, _message = ToggleSetting:InvokeServer("Sound Effects")
 	end)
 end
 

@@ -9,10 +9,10 @@ function MatchController:Start()
 	Synchronizer:WaitAndCall("Match", function(channel)
 		Channel = channel
 
-		channel:OnChanged("Time", function(newValue: number, oldValue: number)
+		channel:OnChanged("Time", function(newValue: number, _oldValue: number)
 			print("Time", newValue)
 		end)
-		channel:OnChanged("Period", function(newValue: number, oldValue: number)
+		channel:OnChanged("Period", function(newValue: number, _oldValue: number)
 			print("Period", newValue)
 		end)
 	end)

@@ -10,9 +10,9 @@ function StateMachine.New(state)
 		states = {},
 	}
 
-	for k, v in script:GetChildren() do
-		if v:IsA("ModuleScript") then
-			self.states[v.Name] = require(v)
+	for _, child in script:GetChildren() do
+		if child:IsA("ModuleScript") then
+			self.states[child.Name] = require(child)
 		end
 	end
 
