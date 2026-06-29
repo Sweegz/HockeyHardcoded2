@@ -13,18 +13,18 @@ function Animator.New(stickController)
 	return self
 end
 
-function Animator:PlayAnimationByName(animationName: string, fadeInTime: number?)
+function Animator:PlayAnimationByName(animationName: string, fadeTime: number?)
 	if not self.animationTracks[animationName] then
 		return
 	end
-	self.animationTracks[animationName]:Play(fadeInTime)
+	self.animationTracks[animationName]:Play(fadeTime)
 end
 
-function Animator:StopAnimationByName(animationName: string, fadeOutTime: number?)
+function Animator:StopAnimationByName(animationName: string, fadeTime: number?)
 	if not self.animationTracks[animationName] then
 		return
 	end
-	self.animationTracks[animationName]:Stop(fadeOutTime)
+	self.animationTracks[animationName]:Stop(fadeTime)
 end
 
 function Animator:AdjustSpeedByName(animationName: string, speed: number)
@@ -34,9 +34,16 @@ function Animator:AdjustSpeedByName(animationName: string, speed: number)
 	self.animationTracks[animationName]:AdjustSpeed(speed)
 end
 
-function Animator:StopCurrentAnimation(fadeOutTime: number?)
+function Animator:AdjustWeightByName(animationName: string, weight: number, fadeTime: number)
+	if not self.animationTracks[animationName] then
+		return
+	end
+	self.animationTracks[animationName]:AdjustWeight(weight, fadeTime)
+end
+
+function Animator:StopCurrentAnimation(fadeTime: number?)
 	for _, animationTrack in self.animationTracks do
-		animationTrack:Stop(fadeOutTime)
+		animationTrack:Stop(fadeTime)
 	end
 end
 

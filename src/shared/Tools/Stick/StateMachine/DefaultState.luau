@@ -69,6 +69,11 @@ function DefaultState:Tick(_dt: number)
 		next_state = "Default"
 	end
 
+	if not extended and commands.SlapShot then
+		print("Ok")
+		next_state = self.stickController.state_machine.states.SlapShotState
+	end
+
 	if not extended and commands.PokeCheck and commands.PokeCheck > tick() - 0.5 then
 		next_state = self.stickController.state_machine.states.PokeCheckState
 	end
