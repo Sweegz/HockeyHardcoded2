@@ -85,13 +85,13 @@ function CustomLockController:Start()
 end
 
 function CustomLockController:Enable()
-	CustomLockController.enabled = true
-	CustomLockController.MouseLock = false
+	self.enabled = true
+	self.MouseLock = false
 end
 
 function CustomLockController:Disable()
-	CustomLockController.enabled = false
-	CustomLockController.MouseLock = false
+	self.enabled = false
+	self.MouseLock = false
 end
 
 return CustomLockController
