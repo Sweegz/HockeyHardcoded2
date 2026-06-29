@@ -1,5 +1,8 @@
 local KeyboardMouse = {}
 
+local lastClickTime = 0
+local doubleClickTime = 0.25
+
 function KeyboardMouse.InputBegan(input: InputObject, commands)
 	if input.KeyCode == Enum.KeyCode.Space then
 		commands.Aim = tick()
@@ -25,12 +28,40 @@ function KeyboardMouse.InputBegan(input: InputObject, commands)
 		commands.HighTip = tick()
 	end
 
+	if input.KeyCode == Enum.KeyCode.E then
+		commands.LowTip = tick()
+	end
+
+	if input.KeyCode == Enum.KeyCode.X then
+		commands.LyingBlock = tick()
+	end
+
+	if input.KeyCode == Enum.KeyCode.C then
+		commands.KneeBlock = tick()
+	end
+
+	if input.KeyCode == Enum.KeyCode.V then
+		commands.StandBlock = tick()
+	end
+
+	if input.KeyCode == Enum.KeyCode.X then
+		commands.LyingBlock = tick()
+	end
+
 	if input.KeyCode == Enum.KeyCode.LeftShift then
 		commands.Sprint = tick()
 	end
 
 	if input.UserInputType == Enum.UserInputType.MouseButton1 then
 		commands.ChargePower = tick()
+	end
+
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		local clickTime = tick()
+		if (clickTime - lastClickTime) < doubleClickTime then
+			commands.PokeCheck = tick()
+		end
+		lastClickTime = clickTime
 	end
 end
 
@@ -57,6 +88,26 @@ function KeyboardMouse.InputEnded(input: InputObject, commands)
 
 	if input.KeyCode == Enum.KeyCode.R then
 		commands.HighTip = false
+	end
+
+	if input.KeyCode == Enum.KeyCode.E then
+		commands.LowTip = false
+	end
+
+	if input.KeyCode == Enum.KeyCode.X then
+		commands.LyingBlock = false
+	end
+
+	if input.KeyCode == Enum.KeyCode.C then
+		commands.KneeBlock = false
+	end
+
+	if input.KeyCode == Enum.KeyCode.V then
+		commands.StandBlock = false
+	end
+
+	if input.KeyCode == Enum.KeyCode.X then
+		commands.LyingBlock = false
 	end
 
 	if input.KeyCode == Enum.KeyCode.LeftShift then

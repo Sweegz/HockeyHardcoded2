@@ -27,6 +27,13 @@ function Animator:StopAnimationByName(animationName: string, fadeOutTime: number
 	self.animationTracks[animationName]:Stop(fadeOutTime)
 end
 
+function Animator:AdjustSpeedByName(animationName: string, speed: number)
+	if not self.animationTracks[animationName] then
+		return
+	end
+	self.animationTracks[animationName]:AdjustSpeed(speed)
+end
+
 function Animator:StopCurrentAnimation(fadeOutTime: number?)
 	for _, animationTrack in self.animationTracks do
 		animationTrack:Stop(fadeOutTime)

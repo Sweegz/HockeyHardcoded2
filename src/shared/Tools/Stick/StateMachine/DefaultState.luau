@@ -69,16 +69,36 @@ function DefaultState:Tick(_dt: number)
 		next_state = "Default"
 	end
 
+	if not extended and commands.PokeCheck and commands.PokeCheck > tick() - 0.5 then
+		next_state = self.stickController.state_machine.states.PokeCheckState
+	end
+
+	if not extended and commands.HighTip then
+		next_state = self.stickController.state_machine.states.HighTipState
+	end
+
+	if not extended and commands.LowTip then
+		next_state = self.stickController.state_machine.states.LowTipState
+	end
+
+	if not extended and commands.LyingBlock then
+		next_state = self.stickController.state_machine.states.LyingBlockState
+	end
+
+	if not extended and commands.StandBlock then
+		next_state = self.stickController.state_machine.states.StandBlockState
+	end
+
+	if not extended and commands.KneeBlock then
+		next_state = self.stickController.state_machine.states.KneeBlockState
+	end
+
 	if not extended and commands.Shove then
 		next_state = self.stickController.state_machine.states.ShoveState
 	end
 
 	if not extended and commands.RaiseHand then
 		next_state = self.stickController.state_machine.states.RaiseHandState
-	end
-
-	if not extended and commands.HighTip then
-		next_state = self.stickController.state_machine.states.HighTipState
 	end
 
 	if
