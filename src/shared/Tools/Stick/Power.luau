@@ -35,7 +35,6 @@ function Power:Tick(dt: number)
 	end
 
 	self.current = math.min(self.current + self.rate * dt, self.max)
-	print(self.current)
 end
 
 function Power:Disable()
