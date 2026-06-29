@@ -17,6 +17,7 @@ function SlapShotState.New(stickController)
 		timestamp = tick(),
 		canCollect = false,
 		canDropOthersPuck = false,
+		canSprint = false,
 	}
 	setmetatable(self, SlapShotState)
 

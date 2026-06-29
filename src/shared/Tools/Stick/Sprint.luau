@@ -25,8 +25,9 @@ function Sprint:Tick(_dt: number)
 	end
 
 	local input = self.stickController.input
+	local state = self.stickController.state_machine.state
 
-	if StaminaController:CanSprint() and input.commands.Sprint then
+	if StaminaController:CanSprint() and input.commands.Sprint and state.canSprint then
 		StaminaController:SetBurning(true)
 		self.stickController.humanoid.WalkSpeed = 47
 	else

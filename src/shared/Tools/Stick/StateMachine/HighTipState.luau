@@ -11,6 +11,7 @@ function HighTipState.New(stickController)
 		timestamp = tick(),
 		canCollect = false,
 		canDropOthersPuck = false,
+		canSprint = true,
 	}
 	setmetatable(self, HighTipState)
 

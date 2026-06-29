@@ -13,6 +13,7 @@ function ShotState.New(stickController)
 		timestamp = tick(),
 		canCollect = false,
 		canDropOthersPuck = false,
+		canSprint = true,
 	}
 	setmetatable(self, ShotState)
 

@@ -11,6 +11,7 @@ function PokeCheckState.New(stickController)
 		timestamp = tick(),
 		canCollect = false,
 		canDropOthersPuck = true,
+		canSprint = true,
 	}
 	setmetatable(self, PokeCheckState)
 

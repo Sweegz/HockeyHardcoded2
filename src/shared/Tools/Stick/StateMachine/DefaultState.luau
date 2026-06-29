@@ -26,6 +26,7 @@ function DefaultState.New(stickController)
 		timestamp = tick(),
 		canCollect = true,
 		canDropOthersPuck = true,
+		canSprint = true,
 	}
 	setmetatable(self, DefaultState)
 
