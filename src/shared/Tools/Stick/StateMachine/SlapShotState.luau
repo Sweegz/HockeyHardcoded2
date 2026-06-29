@@ -1,3 +1,5 @@
+local StarterPlayer = game:GetService("StarterPlayer")
+local CollectController = require(StarterPlayer.StarterPlayerScripts.Controllers.CollectController)
 local Constants = require(script.Parent.Parent.Constants)
 
 local PHASE_1 = false
@@ -21,6 +23,7 @@ function SlapShotState.New(stickController)
 end
 
 function SlapShotState:Enter()
+	CollectController:Drop()
 	local animator = self.stickController.animator
 	animator:PlayAnimationByName("SlapWind1", 0.3)
 

@@ -71,11 +71,6 @@ function DefaultState:Tick(_dt: number)
 	end
 
 	if not extended and not self.stickController.hasPuck then
-		if commands.SlapShot then
-			print("Ok")
-			next_state = self.stickController.state_machine.states.SlapShotState
-		end
-
 		if commands.PokeCheck and commands.PokeCheck > tick() - 0.5 then
 			next_state = self.stickController.state_machine.states.PokeCheckState
 		end
@@ -107,6 +102,10 @@ function DefaultState:Tick(_dt: number)
 
 	if not extended and commands.RaiseHand then
 		next_state = self.stickController.state_machine.states.RaiseHandState
+	end
+
+	if not extended and commands.SlapShot then
+		next_state = self.stickController.state_machine.states.SlapShotState
 	end
 
 	if
