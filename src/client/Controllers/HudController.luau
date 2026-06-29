@@ -26,8 +26,6 @@ function HudController.Start()
 				Sound:Destroy()
 			end)
 			Sound:Play()
-
-			print(oldValue, " -> ", newValue)
 		end)
 	end)
 end

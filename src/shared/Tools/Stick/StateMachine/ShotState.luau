@@ -56,8 +56,6 @@ function ShotState:Enter()
 	end)
 
 	self.stickController.animator:PlayAnimationByName(self.animation_name, 0)
-
-	print("Enter ShotState from:", extended, " Power:", self.power)
 end
 
 function ShotState:Tick(_dt: number)
@@ -71,7 +69,6 @@ function ShotState:Tick(_dt: number)
 end
 
 function ShotState:Exit()
-	print("Exit ShotState")
 	self.stickController.animator:StopAnimationByName(self.animation_name, Constants.FADE_TIME)
 	local input = self.stickController.input
 	input:DisableCommand("ChargePower")

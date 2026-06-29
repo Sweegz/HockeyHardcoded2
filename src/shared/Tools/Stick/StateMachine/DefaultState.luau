@@ -106,8 +106,6 @@ function DefaultState:Tick(_dt: number)
 end
 
 function DefaultState:Exit()
-	print("Exit DefaultState")
-
 	self.name = nil
 	self.timestamp = nil
 	setmetatable(self, nil)
