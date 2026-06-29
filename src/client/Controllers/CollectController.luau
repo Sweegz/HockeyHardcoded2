@@ -21,10 +21,6 @@ function CollectController:Collect()
 end
 
 function CollectController:Drop()
-	if PuckController:GetOwner() ~= LocalPlayer then
-		return
-	end
-
 	DropEvent:FireServer()
 end
 
