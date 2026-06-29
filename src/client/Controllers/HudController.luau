@@ -14,7 +14,7 @@ local HudController = {}
 
 function HudController.Start()
 	Synchronizer:WaitAndCall(LocalPlayer, function(channel)
-		channel:OnChanged("Coins", function(newValue: number, oldValue: number)
+		channel:OnChanged("Coins", function(newValue: number, _oldValue: number)
 			local CurrencyTextLabel = LeftBottom.Frame:FindFirstChild("Currency")
 			CurrencyTextLabel.Text = ("$%*"):format(tostring(newValue))
 
