@@ -1,8 +1,10 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local StarterPlayer = game:GetService("StarterPlayer")
 
 local CustomLockController = require(StarterPlayer.StarterPlayerScripts.Controllers.CustomLockController)
+local PuckController = require(StarterPlayer.StarterPlayerScripts.Controllers.PuckController)
 local Animator = require(script.Animator)
 local Input = require(script.Input)
 local StateMachine = require(script.StateMachine)
@@ -13,6 +15,8 @@ local Momentum = require(script.Momentum)
 
 local disconnectAndClear = require(ReplicatedStorage.Shared.Utility.disconnectAndClear)
 
+local LocalPlayer = Players.LocalPlayer
+
 local StickController = {}
 StickController.__index = StickController
 
@@ -22,6 +26,7 @@ function StickController.New(tool: Tool)
 		equipped = false,
 		connections = {},
 		extended = nil,
+		hasPuck = false,
 	}
 	setmetatable(self, StickController)
 
@@ -31,6 +36,8 @@ function StickController.New(tool: Tool)
 end
 
 function StickController:Update(dt: number)
+	self.hasPuck = PuckController:GetOwner() == LocalPlayer
+
 	self.state_machine:Tick(dt)
 	self.collect:Tick(dt)
 	self.power:Tick(dt)

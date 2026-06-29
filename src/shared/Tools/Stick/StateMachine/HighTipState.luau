@@ -9,6 +9,7 @@ function HighTipState.New(stickController)
 		name = "HighTipState",
 		stickController = stickController,
 		timestamp = tick(),
+		canCollect = false,
 	}
 	setmetatable(self, HighTipState)
 
@@ -21,6 +22,12 @@ end
 
 function HighTipState:Tick(_dt: number)
 	local time = tick() - self.timestamp
+
+	if self.stickController.hasPuck then
+		self.stickController.state_machine:ChangeState(
+			self.stickController.state_machine.states.DefaultState.New(self.stickController)
+		)
+	end
 
 	if time < 1.6 then
 		return

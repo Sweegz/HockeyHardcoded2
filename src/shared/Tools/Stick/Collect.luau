@@ -49,6 +49,8 @@ function Collect:Tick(_dt: number)
 		return
 	end
 
+	local collect = false
+
 	for _, part in character:GetDescendants() do
 		if not part:HasTag("Collect") then
 			continue
@@ -57,8 +59,16 @@ function Collect:Tick(_dt: number)
 		local dist = (puck_instance.Position - part.Position).Magnitude
 
 		if dist < 2 then
-			CollectController:Collect()
+			collect = true
 			break
+		end
+	end
+
+	local state = self.stickController.state_machine.state
+
+	if collect then
+		if state.canCollect then
+			CollectController:Collect()
 		end
 	end
 end

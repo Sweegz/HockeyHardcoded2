@@ -9,6 +9,7 @@ function LowTipState.New(stickController)
 		name = "LowTipState",
 		stickController = stickController,
 		timestamp = tick(),
+		canCollect = false,
 	}
 	setmetatable(self, LowTipState)
 

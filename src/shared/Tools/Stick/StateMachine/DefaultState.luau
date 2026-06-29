@@ -24,6 +24,7 @@ function DefaultState.New(stickController)
 		name = "DefaultState",
 		stickController = stickController,
 		timestamp = tick(),
+		canCollect = true,
 	}
 	setmetatable(self, DefaultState)
 
@@ -69,37 +70,39 @@ function DefaultState:Tick(_dt: number)
 		next_state = "Default"
 	end
 
-	if not extended and commands.SlapShot then
-		print("Ok")
-		next_state = self.stickController.state_machine.states.SlapShotState
-	end
+	if not extended and not self.stickController.hasPuck then
+		if commands.SlapShot then
+			print("Ok")
+			next_state = self.stickController.state_machine.states.SlapShotState
+		end
 
-	if not extended and commands.PokeCheck and commands.PokeCheck > tick() - 0.5 then
-		next_state = self.stickController.state_machine.states.PokeCheckState
-	end
+		if commands.PokeCheck and commands.PokeCheck > tick() - 0.5 then
+			next_state = self.stickController.state_machine.states.PokeCheckState
+		end
 
-	if not extended and commands.HighTip then
-		next_state = self.stickController.state_machine.states.HighTipState
-	end
+		if commands.HighTip then
+			next_state = self.stickController.state_machine.states.HighTipState
+		end
 
-	if not extended and commands.LowTip then
-		next_state = self.stickController.state_machine.states.LowTipState
-	end
+		if commands.LowTip then
+			next_state = self.stickController.state_machine.states.LowTipState
+		end
 
-	if not extended and commands.LyingBlock then
-		next_state = self.stickController.state_machine.states.LyingBlockState
-	end
+		if commands.LyingBlock then
+			next_state = self.stickController.state_machine.states.LyingBlockState
+		end
 
-	if not extended and commands.StandBlock then
-		next_state = self.stickController.state_machine.states.StandBlockState
-	end
+		if commands.StandBlock then
+			next_state = self.stickController.state_machine.states.StandBlockState
+		end
 
-	if not extended and commands.KneeBlock then
-		next_state = self.stickController.state_machine.states.KneeBlockState
-	end
+		if commands.KneeBlock then
+			next_state = self.stickController.state_machine.states.KneeBlockState
+		end
 
-	if not extended and commands.Shove then
-		next_state = self.stickController.state_machine.states.ShoveState
+		if commands.Shove then
+			next_state = self.stickController.state_machine.states.ShoveState
+		end
 	end
 
 	if not extended and commands.RaiseHand then

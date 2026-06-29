@@ -11,6 +11,7 @@ function ShotState.New(stickController)
 		name = "ShotState",
 		stickController = stickController,
 		timestamp = tick(),
+		canCollect = false,
 	}
 	setmetatable(self, ShotState)
 

@@ -9,6 +9,7 @@ function LyingBlockState.New(stickController)
 		name = "LyingBlockState",
 		stickController = stickController,
 		timestamp = tick(),
+		canCollect = false,
 	}
 	setmetatable(self, LyingBlockState)
 
@@ -22,6 +23,12 @@ end
 function LyingBlockState:Tick(_dt: number)
 	local commands = self.stickController.input.commands
 	local time = tick() - self.timestamp
+
+	if self.stickController.hasPuck then
+		self.stickController.state_machine:ChangeState(
+			self.stickController.state_machine.states.DefaultState.New(self.stickController)
+		)
+	end
 
 	if time > 0.8 then
 		self.stickController.animator:AdjustSpeedByName("LyingBlock", 0)
