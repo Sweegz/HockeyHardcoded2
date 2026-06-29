@@ -14,6 +14,7 @@ function CheckState.New(stickController)
 		movementSpeedMultiplier = 0,
 		lastVelocityUpdate = 0,
 		canCollect = false,
+		canDropOthersPuck = true,
 	}
 	setmetatable(self, CheckState)
 

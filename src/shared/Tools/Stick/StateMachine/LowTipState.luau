@@ -10,6 +10,7 @@ function LowTipState.New(stickController)
 		stickController = stickController,
 		timestamp = tick(),
 		canCollect = false,
+		canDropOthersPuck = false,
 	}
 	setmetatable(self, LowTipState)
 

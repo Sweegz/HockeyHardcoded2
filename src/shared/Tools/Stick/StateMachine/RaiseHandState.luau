@@ -10,6 +10,7 @@ function RaiseHandState.New(stickController)
 		stickController = stickController,
 		timestamp = tick(),
 		canCollect = false,
+		canDropOthersPuck = true,
 	}
 	setmetatable(self, RaiseHandState)
 

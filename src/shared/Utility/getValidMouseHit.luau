@@ -1,6 +1,6 @@
-local CollectionService = game:GetService("CollectionService")
+--local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
-local Workspace = game:GetService("Workspace")
+--local Workspace = game:GetService("Workspace")
 
 local player = Players.LocalPlayer
 local mouse = player:GetMouse()

@@ -48,6 +48,12 @@ function SetupCharacter(character: Instance)
 		end
 	end)
 
+	for _, child in character:GetChildren() do
+		if child:IsA("BasePart") then
+			child.CollisionGroup = "Character"
+		end
+	end
+
 	local humanoid = character:FindFirstChild("Humanoid")
 	if humanoid then
 		humanoid.Died:Once(function()
