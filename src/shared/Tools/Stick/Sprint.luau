@@ -1,3 +1,5 @@
+local StarterPlayer = game:GetService("StarterPlayer")
+local StaminaController = require(StarterPlayer.StarterPlayerScripts.Controllers.StaminaController)
 local DRAIN_RATE = 20
 local REGEN_RATE = 10
 
@@ -27,12 +29,17 @@ function Sprint:Tick(dt: number)
 
 	local input = self.stickController.input
 
-	if self.stamina > 0 and input.commands.Sprint then
-		self.stamina -= DRAIN_RATE * dt
+	local stamina = StaminaController:GetStamina()
+
+	if stamina > 0 and input.commands.Sprint then
+		StaminaController:SetStamina(stamina - DRAIN_RATE * dt)
 		self.stickController.humanoid.WalkSpeed = 47
 	else
 		self.stickController.humanoid.WalkSpeed = 38
 		input:DisableCommand("Sprint")
+		if stamina < 100 then
+			StaminaController:SetStamina(stamina + REGEN_RATE * dt)
+		end
 	end
 end
 

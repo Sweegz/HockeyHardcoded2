@@ -1,6 +1,8 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local StarterPlayer = game:GetService("StarterPlayer")
 
+local CustomLockController = require(StarterPlayer.StarterPlayerScripts.Controllers.CustomLockController)
 local Animator = require(script.Animator)
 local Input = require(script.Input)
 local StateMachine = require(script.StateMachine)
@@ -55,6 +57,7 @@ function StickController:Equip()
 	self.collect:Enable()
 	self.sprint:Enable()
 	self.momentum:Enable()
+	CustomLockController:Enable()
 
 	self.update_connection = RunService.Heartbeat:Connect(function(dt)
 		self:Update(dt)
@@ -78,6 +81,7 @@ function StickController:Unequip()
 	self.collect:Disable()
 	self.sprint:Disable()
 	self.momentum:Disable()
+	CustomLockController:Disable()
 
 	if self.update_connection then
 		self.update_connection:Disconnect()

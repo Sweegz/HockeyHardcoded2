@@ -25,8 +25,7 @@ function KeyboardMouse.InputBegan(input: InputObject, commands)
 		commands.HighTip = tick()
 	end
 
-	if input.KeyCode == Enum.KeyCode.LeftControl then
-		print("K")
+	if input.KeyCode == Enum.KeyCode.LeftShift then
 		commands.Sprint = tick()
 	end
 
@@ -60,7 +59,7 @@ function KeyboardMouse.InputEnded(input: InputObject, commands)
 		commands.HighTip = false
 	end
 
-	if input.KeyCode == Enum.KeyCode.LeftControl then
+	if input.KeyCode == Enum.KeyCode.LeftShift then
 		commands.Sprint = false
 	end
 

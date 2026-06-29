@@ -6,8 +6,8 @@ local Workspace = game:GetService("Workspace")
 local LocalPlayer = Players.LocalPlayer
 
 local CustomLockController = {
-	enabled = true,
-	SHIFT_LOCK = false,
+	enabled = false,
+	MouseLock = false,
 }
 
 local function CreateBodyGyro(humanoidRootPart: BasePart)
@@ -20,19 +20,15 @@ local function CreateBodyGyro(humanoidRootPart: BasePart)
 	return bodyGyro
 end
 
-function CustomLockController:Load()
-	--[[LocalPlayer.CharacterAdded:Connect(function()
-		CustomLockController.SHIFT_LOCK = false
-	end)--]]
-end
+function CustomLockController:Load() end
 
 UserInputService.InputBegan:Connect(function(input: InputObject, gameProcessedEvent: boolean)
 	if gameProcessedEvent then
 		return
 	end
 
-	if input.KeyCode == Enum.KeyCode.LeftShift then
-		CustomLockController.SHIFT_LOCK = not CustomLockController.SHIFT_LOCK
+	if input.KeyCode == Enum.KeyCode.LeftControl and CustomLockController.enabled then
+		CustomLockController.MouseLock = not CustomLockController.MouseLock
 	end
 end)
 
@@ -54,6 +50,14 @@ function CustomLockController:Start()
 		end
 
 		local bodyGyro = humanoidRootPart:FindFirstChild("BodyGyro")
+		if not CustomLockController.enabled then
+			if bodyGyro then
+				bodyGyro:Destroy()
+				humanoid.AutoRotate = true
+			end
+			return
+		end
+
 		if not bodyGyro then
 			bodyGyro = CreateBodyGyro(humanoidRootPart)
 		end
@@ -69,7 +73,7 @@ function CustomLockController:Start()
 			humanoid.AutoRotate = true
 		end
 
-		if CustomLockController.SHIFT_LOCK then
+		if CustomLockController.MouseLock then
 			local _, cameraOrientationY = camera.CFrame:ToOrientation()
 			bodyGyro.CFrame = CFrame.new(camera.CFrame.Position) * CFrame.Angles(0, cameraOrientationY, 0)
 		elseif humanoid.MoveDirection.Magnitude > 0 then
@@ -82,10 +86,12 @@ end
 
 function CustomLockController:Enable()
 	CustomLockController.enabled = true
+	CustomLockController.MouseLock = false
 end
 
 function CustomLockController:Disable()
 	CustomLockController.enabled = false
+	CustomLockController.MouseLock = false
 end
 
 return CustomLockController
