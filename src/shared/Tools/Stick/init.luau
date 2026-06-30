@@ -40,9 +40,9 @@ end
 function StickController:Update(dt: number)
 	self.hasPuck = PuckController:GetOwner() == LocalPlayer
 
+	self.power:Tick(dt)
 	self.state_machine:Tick(dt)
 	self.collect:Tick(dt)
-	self.power:Tick(dt)
 	self.sprint:Tick(dt)
 	self.momentum:Tick(dt)
 end

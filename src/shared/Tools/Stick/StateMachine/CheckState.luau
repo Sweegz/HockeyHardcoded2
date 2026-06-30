@@ -99,8 +99,6 @@ function CheckState:Tick(dt: number)
 	local moveDirection = humanoid.MoveDirection
 
 	if time < 0.5 then
-		--local alpha = 1 - (1 - 0.8) ^ (dt / (1 / 60))
-
 		if (tick() - self.lastVelocityUpdate) >= (1 / 60) and humanoid.MoveDirection.Magnitude > 0.1 then
 			local velocity = momentum:GetBodyVelocity()
 			velocity = velocity:Lerp(moveDirection * self.movementSpeedMultiplier, 0.8 * dt)
@@ -124,7 +122,6 @@ end
 
 function CheckState:Exit()
 	self.stickController.animator:StopAnimationByName("Check", Constants.FADE_TIME)
-	local input = self.stickController.input
 
 	self.name = nil
 	self.timestamp = nil

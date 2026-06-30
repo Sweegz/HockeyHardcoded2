@@ -46,14 +46,17 @@ function DefaultState:Enter()
 	end
 end
 
+function DefaultState:CanTransition()
+	return tick() - self.timestamp > 0.2
+end
+
 function DefaultState:Tick(dt: number)
 	local commands = self.stickController.input.commands
 	local extended = self.stickController.extended
-	local time = tick() - self.timestamp
 
 	local next_state = nil
 
-	if time < 0.2 then
+	if not self:CanTransition() then
 		return
 	end
 

@@ -73,7 +73,6 @@ end
 
 function ShotState:Exit()
 	self.stickController.animator:StopAnimationByName(self.animation_name, Constants.FADE_TIME)
-	local input = self.stickController.input
 
 	self.name = nil
 	self.timestamp = nil

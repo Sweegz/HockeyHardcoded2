@@ -59,7 +59,9 @@ function Power:Tick(dt)
 	local powerExceededTime = (self.current >= 100 and commands.ChargePower and commands.ChargePower < tick() - 1.45)
 
 	if powerReleased or powerExceededTime then
-		self:Release()
+		if state:CanTransition() then
+			self:Release()
+		end
 	elseif commands.ChargePower then
 		self.current = math.min(self.current + self.rate * dt, self.max)
 	end
