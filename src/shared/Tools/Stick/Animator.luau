@@ -104,8 +104,13 @@ end
 
 function Animator:Destroy()
 	self:Disable()
+	self.enabled = nil
+	self.loadedAnimations = nil
 	-- Clear the animationTracks table so we don't keep any references around.
 	-- This makes sure the animation tracks get garbage collected correctly and don't cause a memory leak.
+	for i, _ in self.animationTracks do
+		self.animationTracks[i] = nil
+	end
 	table.clear(self.animationTracks)
 end
 

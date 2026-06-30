@@ -42,6 +42,9 @@ function Sprint:Disable()
 	StaminaController:SetBurning(false)
 end
 
-function Sprint:Destroy() end
+function Sprint:Destroy()
+	self:Disable()
+	self.enabled = false
+end
 
 return Sprint

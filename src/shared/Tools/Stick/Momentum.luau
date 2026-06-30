@@ -141,6 +141,15 @@ function Momentum:Disable()
 	self.bodyVelocity.Parent = nil
 end
 
-function Momentum:Destroy() end
+function Momentum:Destroy()
+	self:Disable()
+	self.enabled = false
+	self.isChangingDirection = false
+	self.isMoving = false
+	if self.bodyVelocity then
+		self.bodyVelocity:Destroy()
+	end
+	self.bodyVelocity = nil
+end
 
 return Momentum

@@ -80,6 +80,9 @@ function Collect:Disable()
 	self.enabled = false
 end
 
-function Collect:Destroy() end
+function Collect:Destroy()
+	self:Disable()
+	self.enabled = false
+end
 
 return Collect
