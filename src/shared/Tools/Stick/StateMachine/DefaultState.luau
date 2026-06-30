@@ -51,6 +51,7 @@ end
 
 function DefaultState:Tick(_dt: number)
 	local commands = self.stickController.input.commands
+	local power = self.stickController.power
 	local extended = self.stickController.extended
 	local time = tick() - self.timestamp
 
@@ -102,23 +103,25 @@ function DefaultState:Tick(_dt: number)
 		end
 	end
 
-	if not extended and commands.RaiseHand then
-		next_state = self.stickController.state_machine.states.RaiseHandState
-	end
-
 	if not extended and commands.SlapShot then
 		next_state = self.stickController.state_machine.states.SlapShotState
 	end
 
-	if
-		(self.stickController.power.current > 0 and not commands.ChargePower)
-		or (commands.ChargePower and commands.ChargePower < tick() - 1.45)
-	then
+	local powerReleased = (power.current > 0 and not commands.ChargePower)
+	local powerExceededTime = (power.current >= 100 and commands.ChargePower and commands.ChargePower < tick() - 1.45)
+
+	if powerReleased or powerExceededTime then
 		if PuckController:GetOwner() == LocalPlayer then
 			next_state = self.stickController.state_machine.states.ShotState
-		elseif self.stickController.power.current > 30 then
+		elseif power.current > 30 then
 			next_state = self.stickController.state_machine.states.CheckState
+		else
+			power:SetPower(0)
 		end
+	end
+
+	if not extended and commands.RaiseHand then
+		next_state = self.stickController.state_machine.states.RaiseHandState
 	end
 
 	if next_state then
