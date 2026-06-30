@@ -9,19 +9,14 @@ local LocalPlayer = Players.LocalPlayer
 local DataController = {}
 
 function DataController:Load()
-	Synchronizer:WaitAndCall(LocalPlayer, function(channel)
-		DataController.Channel = channel
-		ReplicatedFirst:SetAttribute("DataLoaded", true)
-		print("Loaded!")
-	end)
+	Synchronizer:Wait(LocalPlayer)
+	Synchronizer:Wait("Puck")
+	Synchronizer:Wait("Match")
 
-	Synchronizer:WaitAndCall("Match", function(_channel)
-		ReplicatedFirst:SetAttribute("MatchLoaded", true)
-	end)
-
-	Synchronizer:WaitAndCall("Puck", function(_channel)
-		ReplicatedFirst:SetAttribute("PuckLoaded", true)
-	end)
+	ReplicatedFirst:SetAttribute("DataLoaded", true)
+	ReplicatedFirst:SetAttribute("MatchLoaded", true)
+	ReplicatedFirst:SetAttribute("PuckLoaded", true)
+	print("Loaded")
 end
 
 return DataController
