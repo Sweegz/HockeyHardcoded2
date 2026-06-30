@@ -46,7 +46,7 @@ function DefaultState:Enter()
 	end
 end
 
-function DefaultState:CanTransition()
+function DefaultState:TransitionFinished()
 	return tick() - self.timestamp > 0.2
 end
 
@@ -56,7 +56,7 @@ function DefaultState:Tick(dt: number)
 
 	local next_state = nil
 
-	if not self:CanTransition() then
+	if not self:TransitionFinished() then
 		return
 	end
 
