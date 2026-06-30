@@ -21,6 +21,7 @@ function Power.New(stickController)
 end
 
 function Power:Enable()
+	self.current = 0
 	self.enabled = true
 end
 
@@ -45,6 +46,7 @@ function Power:Tick(dt: number)
 end
 
 function Power:Disable()
+	self.current = 0
 	self.enabled = false
 end
 
