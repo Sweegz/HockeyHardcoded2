@@ -25,24 +25,44 @@ function Power:Enable()
 	self.enabled = true
 end
 
-function Power:Tick(dt: number)
-	local state = self.stickController.state_machine.state
-	local commands = self.stickController.input.commands
+function Power:Release()
+	local owner = PuckController:GetOwner()
 
+	if owner == LocalPlayer then
+		self.stickController.state_machine:ChangeState(
+			self.stickController.state_machine.states.ShotState.New(self.stickController)
+		)
+	elseif self.current > 30 then
+		self.stickController.state_machine:ChangeState(
+			self.stickController.state_machine.states.CheckState.New(self.stickController)
+		)
+	end
+
+	self.current = 0
+end
+
+function Power:Tick(dt)
 	if not self.enabled then
 		return
 	end
 
-	if not (state.name == "DefaultState") then
+	local state = self.stickController.state_machine.state
+
+	if not state.canCharge then
 		self.current = 0
 		return
 	end
 
-	if commands.ChargePower then
+	local commands = self.stickController.input.commands
+
+	local powerReleased = (self.current > 0 and not commands.ChargePower)
+	local powerExceededTime = (self.current >= 100 and commands.ChargePower and commands.ChargePower < tick() - 1.45)
+
+	if powerReleased or powerExceededTime then
+		self:Release()
+	elseif commands.ChargePower then
 		self.current = math.min(self.current + self.rate * dt, self.max)
 	end
-
-	print(self.current)
 end
 
 function Power:Disable()

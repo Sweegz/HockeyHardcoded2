@@ -1,9 +1,4 @@
-local Players = game:GetService("Players")
-local StarterPlayer = game:GetService("StarterPlayer")
-local PuckController = require(StarterPlayer.StarterPlayerScripts.Controllers.PuckController)
 local Constants = require(script.Parent.Parent.Constants)
-
-local LocalPlayer = Players.LocalPlayer
 
 function higherThan(source: number?, target: number?): boolean
 	if source and target then
@@ -27,6 +22,8 @@ function DefaultState.New(stickController)
 		canCollect = true,
 		canDropOthersPuck = true,
 		canSprint = true,
+		graceTime = 0,
+		canCharge = true,
 	}
 	setmetatable(self, DefaultState)
 
@@ -49,9 +46,8 @@ function DefaultState:Enter()
 	end
 end
 
-function DefaultState:Tick(_dt: number)
+function DefaultState:Tick(dt: number)
 	local commands = self.stickController.input.commands
-	local power = self.stickController.power
 	local extended = self.stickController.extended
 	local time = tick() - self.timestamp
 
@@ -59,6 +55,12 @@ function DefaultState:Tick(_dt: number)
 
 	if time < 0.2 then
 		return
+	end
+
+	if (extended == "Right" and commands.GlideRight) or (extended == "Left" and commands.GlideLeft) then
+		self.graceTime = 0
+	else
+		self.graceTime += dt
 	end
 
 	if extended ~= "Right" and higherThan(commands.GlideRight, commands.GlideLeft) then
@@ -69,7 +71,7 @@ function DefaultState:Tick(_dt: number)
 		next_state = "Left"
 	end
 
-	if extended and not (commands.GlideLeft or commands.GlideRight) then
+	if extended and not (commands.GlideLeft or commands.GlideRight) and self.graceTime > Constants.GRACE_DURATION then
 		next_state = "Default"
 	end
 
@@ -105,19 +107,6 @@ function DefaultState:Tick(_dt: number)
 
 	if not extended and commands.SlapShot then
 		next_state = self.stickController.state_machine.states.SlapShotState
-	end
-
-	local powerReleased = (power.current > 0 and not commands.ChargePower)
-	local powerExceededTime = (power.current >= 100 and commands.ChargePower and commands.ChargePower < tick() - 1.45)
-
-	if powerReleased or powerExceededTime then
-		if PuckController:GetOwner() == LocalPlayer then
-			next_state = self.stickController.state_machine.states.ShotState
-		elseif power.current > 30 then
-			next_state = self.stickController.state_machine.states.CheckState
-		else
-			power:SetPower(0)
-		end
 	end
 
 	if not extended and commands.RaiseHand then
