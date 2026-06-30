@@ -30,6 +30,8 @@ function StickController.New(tool: Tool)
 	}
 	setmetatable(self, StickController)
 
+	print("Created StickController")
+
 	self:Initialize()
 
 	return self
@@ -92,7 +94,7 @@ function StickController:Unequip()
 
 	task.spawn(function()
 		local temp = self.tool.Parent
-		self.tool.Parent = nil
+		self.tool.Parent = game.Lighting
 		task.wait(1.5)
 		self.tool.Parent = temp
 	end)
@@ -127,6 +129,7 @@ function StickController:Initialize()
 end
 
 function StickController:Destroy()
+	print("Destroyed StickController")
 	self:Unequip()
 	disconnectAndClear(self.connections)
 	self.animator:Destroy()
