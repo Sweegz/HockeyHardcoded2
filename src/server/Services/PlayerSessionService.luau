@@ -55,7 +55,6 @@ end
 
 function PlayerSessionService:GetCooldown(player: Player)
 	local path = ("Players.%*.Cooldown"):format(player.UserId)
-	print(playerSessionChannel:Get())
 	return playerSessionChannel:Get(path)
 end
 

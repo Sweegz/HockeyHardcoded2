@@ -52,6 +52,14 @@ function KeyboardMouse.InputBegan(input: InputObject, commands)
 		commands.SlapShot = tick()
 	end
 
+	if input.KeyCode == Enum.KeyCode.Q then
+		commands.Fake = tick()
+	end
+
+	if input.KeyCode == Enum.KeyCode.E then
+		commands.Chip = tick()
+	end
+
 	if input.KeyCode == Enum.KeyCode.LeftShift then
 		commands.Sprint = tick()
 	end
@@ -116,6 +124,14 @@ function KeyboardMouse.InputEnded(input: InputObject, commands)
 
 	if input.KeyCode == Enum.KeyCode.X then
 		commands.LyingBlock = false
+	end
+
+	if input.KeyCode == Enum.KeyCode.Q then
+		commands.Fake = false
+	end
+
+	if input.KeyCode == Enum.KeyCode.E then
+		commands.Chip = false
 	end
 
 	if input.KeyCode == Enum.KeyCode.LeftShift then

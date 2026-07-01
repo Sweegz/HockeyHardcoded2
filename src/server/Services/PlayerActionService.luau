@@ -12,7 +12,7 @@ local PlayerActionService = {}
 
 function PlayerActionService:Start()
 	ShootEvent.OnServerEvent:Connect(
-		function(player: Player, power: number, mouseHit: Vector3, puckPosition: Vector3, flags: {})
+		function(player: Player, power: number, mouseHit: Vector3, puckPosition: Vector3, flags)
 			local owner = PuckService:GetOwner()
 			if owner ~= player then
 				return
@@ -27,6 +27,14 @@ function PlayerActionService:Start()
 			dir = Vector3.new(dir.X, 0, dir.Z)
 
 			local velocity, force, time = Shots.calculate_vel_and_force(power, dir, flags)
+
+			if flags.chip then
+				print("Chip")
+			end
+
+			if flags.fake then
+				return
+			end
 
 			PuckService:DropPuck()
 			Shots.apply_velocity(puck, velocity)

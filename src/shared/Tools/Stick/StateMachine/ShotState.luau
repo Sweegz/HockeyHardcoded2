@@ -48,12 +48,14 @@ function ShotState:Enter()
 	self.animation_name = GetAnimationName(self.power, extended)
 	self.track = self.stickController.animator:GetAnimationTrack(self.animation_name)
 
+	local commands = self.stickController.input.commands
+
 	task.spawn(function()
 		self.connection = self.track:GetMarkerReachedSignal("Shoot"):Once(function()
 			PlayerActionController:Shoot(self.power, {
 				wrist = false,
-				chip = false,
-				fake = false,
+				chip = typeof(commands.Chip) == "number",
+				fake = typeof(commands.Fake) == "number",
 			})
 		end)
 	end)
