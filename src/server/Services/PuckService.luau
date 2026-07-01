@@ -6,6 +6,8 @@ local Synchronizer = require(ReplicatedStorage.Packages.Synchronizer)
 
 local PuckModel = ReplicatedStorage:FindFirstChild("Models"):FindFirstChild("Pucks"):FindFirstChild("Puck")
 
+local COOLDOWN = 0.5
+
 local Channel = nil
 
 local PuckService = {}
@@ -60,7 +62,7 @@ function PuckService:SetOwner(player: Player)
 	puck.CFrame = front.CFrame * CFrame.Angles(0, 0, 0)
 	puck.weld.Part1 = front
 	Channel:Set("Owner", player)
-	Channel:Set("Cooldown", tick() + 1)
+	Channel:Set("Cooldown", tick() + COOLDOWN)
 end
 
 function PuckService:DropPuck()
@@ -72,7 +74,7 @@ function PuckService:DropPuck()
 	puck.weld.Part1 = nil
 	puck:SetNetworkOwner(nil)
 	Channel:Set("Owner", nil)
-	Channel:Set("Cooldown", tick() + 1)
+	Channel:Set("Cooldown", tick() + COOLDOWN)
 end
 
 function PuckService:GetOwner()

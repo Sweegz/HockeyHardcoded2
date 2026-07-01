@@ -10,10 +10,10 @@ function MatchController:Start()
 		Channel = channel
 
 		channel:OnChanged("Time", function(newValue: number, _oldValue: number)
-			print("Time", newValue)
+			--print("Time", newValue)
 		end)
 		channel:OnChanged("Period", function(newValue: number, _oldValue: number)
-			print("Period", newValue)
+			--print("Period", newValue)
 		end)
 	end)
 end

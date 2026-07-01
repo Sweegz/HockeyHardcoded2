@@ -56,7 +56,7 @@ function SlapShotState:Tick(_dt: number)
 		animator:PlayAnimationByName("SlapShot", 0.1)
 	end
 
-	if SHOT and tick() - SHOT > 0.4 then
+	if SHOT and tick() - SHOT > 0.45 then
 		self.stickController.state_machine:ChangeState(
 			self.stickController.state_machine.states.DefaultState.New(self.stickController)
 		)
