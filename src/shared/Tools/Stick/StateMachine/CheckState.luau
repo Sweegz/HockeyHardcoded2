@@ -29,6 +29,13 @@ function CheckState:Enter()
 
 	local humanoid = self.stickController.humanoid
 	local momentum = self.stickController.momentum
+	self.stickController.extended = false
+
+	--[[ Optional (changes stick gameplay)
+	local input = self.stickController.input
+	input:DisableCommand("GlideRight")
+	input:DisableCommand("GlideLeft")
+	--]]
 
 	local character = humanoid.Parent
 	local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
