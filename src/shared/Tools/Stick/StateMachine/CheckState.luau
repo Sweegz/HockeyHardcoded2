@@ -22,8 +22,14 @@ function CheckState.New(stickController)
 	return self
 end
 
+local FADE_TIME = 0.2
+
 function CheckState:Enter()
-	self.stickController.animator:PlayAnimationByName("Check", Constants.FADE_TIME)
+	self.stickController.animator:PlayAnimationByName("Check", FADE_TIME)
+
+	self.stickController.animator:StopAnimationByName("Idle", FADE_TIME)
+	self.stickController.animator:StopAnimationByName("Left", FADE_TIME)
+	self.stickController.animator:StopAnimationByName("Right", FADE_TIME)
 
 	local power = self.stickController.power.current
 

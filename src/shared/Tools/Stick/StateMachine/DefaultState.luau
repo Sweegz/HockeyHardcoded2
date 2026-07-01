@@ -36,10 +36,16 @@ function DefaultState:Enter()
 
 	if extended == "Right" then
 		self.stickController.animator:PlayAnimationByName("Right", Constants.FADE_TIME)
+		self.stickController.animator:StopAnimationByName("Left", Constants.FADE_TIME)
+		self.stickController.animator:StopAnimationByName("Idle", Constants.FADE_TIME)
 	elseif extended == "Left" then
 		self.stickController.animator:PlayAnimationByName("Left", Constants.FADE_TIME)
+		self.stickController.animator:StopAnimationByName("Right", Constants.FADE_TIME)
+		self.stickController.animator:StopAnimationByName("Idle", Constants.FADE_TIME)
 	else
 		self.stickController.animator:PlayAnimationByName("Idle", Constants.FADE_TIME)
+		self.stickController.animator:StopAnimationByName("Left", Constants.FADE_TIME)
+		self.stickController.animator:StopAnimationByName("Right", Constants.FADE_TIME)
 	end
 end
 
@@ -127,9 +133,6 @@ function DefaultState:Tick(dt: number)
 end
 
 function DefaultState:Exit()
-	self.stickController.animator:StopAnimationByName("Right", Constants.FADE_TIME)
-	self.stickController.animator:StopAnimationByName("Left", Constants.FADE_TIME)
-	self.stickController.animator:StopAnimationByName("Idle", Constants.FADE_TIME)
 	self.name = nil
 	self.timestamp = nil
 	setmetatable(self, nil)
