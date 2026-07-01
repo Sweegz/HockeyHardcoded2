@@ -5,7 +5,7 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local mouse = player:GetMouse()
 
-local function getValidMouseHit(): Vector3
+local function GetValidMouseHit(): Vector3
 	return mouse.Hit.Position
 
 	--[[
@@ -36,4 +36,4 @@ local function getValidMouseHit(): Vector3
 	return result and result.Position or (origin + ray.Direction * 5000) --]]
 end
 
-return getValidMouseHit
+return GetValidMouseHit

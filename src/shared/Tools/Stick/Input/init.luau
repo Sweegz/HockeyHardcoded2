@@ -1,7 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 
-local disconnectAndClear = require(ReplicatedStorage.Shared.Utility.disconnectAndClear)
+local DisconnectAndClear = require(ReplicatedStorage.Shared.Utility.DisconnectAndClear)
 
 local KeyboardMouse = require(script.KeyboardMouse)
 local Touch = require(script.Touch)
@@ -109,7 +109,7 @@ end
 
 function Input:Destroy()
 	self:Disable()
-	disconnectAndClear(self.connections)
+	DisconnectAndClear(self.connections)
 end
 
 return Input

@@ -1,5 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local getValidMouseHit = require(ReplicatedStorage.Shared.Utility.getValidMouseHit)
+local GetValidMouseHit = require(ReplicatedStorage.Shared.Utility.GetValidMouseHit)
 local Constants = require(script.Parent.Parent.Constants)
 
 local CheckState = {}
@@ -46,7 +46,7 @@ function CheckState:Enter()
 	local character = humanoid.Parent
 	local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
 
-	local targetPosition = getValidMouseHit()
+	local targetPosition = GetValidMouseHit()
 
 	local hrp_speed = humanoidRootPart.AssemblyLinearVelocity.Magnitude
 	if humanoid.WalkSpeed < hrp_speed then

@@ -13,7 +13,7 @@ local Collect = require(script.Collect)
 local Sprint = require(script.Sprint)
 local Momentum = require(script.Momentum)
 
-local disconnectAndClear = require(ReplicatedStorage.Shared.Utility.disconnectAndClear)
+local DisconnectAndClear = require(ReplicatedStorage.Shared.Utility.DisconnectAndClear)
 
 local LocalPlayer = Players.LocalPlayer
 
@@ -131,7 +131,7 @@ end
 function StickController:Destroy()
 	print("Destroyed StickController")
 	self:Unequip()
-	disconnectAndClear(self.connections)
+	DisconnectAndClear(self.connections)
 	self.animator:Destroy()
 	self.input:Destroy()
 	self.state_machine:Destroy()
