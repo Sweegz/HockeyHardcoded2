@@ -31,6 +31,9 @@ function CheckState:Enter()
 	self.stickController.animator:StopAnimationByName("Left", FADE_TIME)
 	self.stickController.animator:StopAnimationByName("Right", FADE_TIME)
 
+	local input = self.stickController.input
+	input:DisableCommand("ChargePower")
+
 	local power = self.stickController.power.current
 
 	local humanoid = self.stickController.humanoid

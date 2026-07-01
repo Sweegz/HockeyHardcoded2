@@ -75,6 +75,8 @@ end
 
 function ShotState:Exit()
 	self.stickController.animator:StopAnimationByName(self.animation_name, Constants.FADE_TIME)
+	local input = self.stickController.input
+	input:DisableCommand("ChargePower")
 
 	self.name = nil
 	self.timestamp = nil
