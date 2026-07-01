@@ -51,12 +51,12 @@ function SlapShotState:Tick(_dt: number)
 
 	if time > 0.3 and not commands.SlapShot and not SHOT then
 		SHOT = tick()
-		animator:StopAnimationByName("SlapWind2", 0.1)
+		animator:StopAnimationByName("SlapWind1", 0.1)
 		animator:StopAnimationByName("SlapWind2", 0.1)
 		animator:PlayAnimationByName("SlapShot", 0.1)
 	end
 
-	if SHOT and tick() - SHOT > 1 then
+	if SHOT and tick() - SHOT > 0.4 then
 		self.stickController.state_machine:ChangeState(
 			self.stickController.state_machine.states.DefaultState.New(self.stickController)
 		)
