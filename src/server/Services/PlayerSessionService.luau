@@ -4,6 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
 local Synchronizer = require(ReplicatedStorage.Packages.Synchronizer)
+local DeepCopy = require(ReplicatedStorage.Shared.Utility.DeepCopy)
 
 local playerSessionChannel
 
@@ -19,7 +20,9 @@ local function setupPlayer(player: Player)
 		return
 	end
 
-	playerSessionChannel:InsertOnDictionary("Players", tostring(player.UserId), SESSION_DATA_TEMPLATE)
+	local sessionData = DeepCopy(SESSION_DATA_TEMPLATE)
+
+	playerSessionChannel:InsertOnDictionary("Players", tostring(player.UserId), sessionData)
 
 	playerSessionChannel:AddListener(player)
 
@@ -41,18 +44,19 @@ function PlayerSessionService:Load()
 end
 
 function PlayerSessionService:GetPlayerSession(player: Player)
-	local index = ("Players.%*"):format(player.UserId)
-	return playerSessionChannel:Get(index)
+	local path = ("Players.%*"):format(player.UserId)
+	return playerSessionChannel:Get(path)
 end
 
 function PlayerSessionService:SetCooldown(player: Player, duration: number)
-	local index = ("Players.%*.Cooldown"):format(player.UserId)
-	return playerSessionChannel:Set(index, tick() + duration)
+	local path = ("Players.%*.Cooldown"):format(player.UserId)
+	return playerSessionChannel:Set(path, tick() + duration)
 end
 
 function PlayerSessionService:GetCooldown(player: Player)
-	local index = ("Players.%*.Cooldown"):format(player.UserId)
-	return playerSessionChannel:Get(index)
+	local path = ("Players.%*.Cooldown"):format(player.UserId)
+	print(playerSessionChannel:Get())
+	return playerSessionChannel:Get(path)
 end
 
 function PlayerSessionService:Reset()

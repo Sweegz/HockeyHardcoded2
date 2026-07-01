@@ -10,18 +10,7 @@ local DefaultStats = require(ServerScriptService.Components.DefaultStats)
 local TableUtil = require(ReplicatedStorage.Packages.TableUtil)
 
 local Synchronizer = require(ReplicatedStorage.Packages.Synchronizer)
-
-local function DeepCopy(Table)
-	local NewTable = {}
-	for Key, Value in pairs(Table) do
-		if type(Value) == "table" then
-			NewTable[Key] = DeepCopy(Value)
-		else
-			NewTable[Key] = Value
-		end
-	end
-	return NewTable
-end
+local DeepCopy = require(ReplicatedStorage.Shared.Utility.DeepCopy)
 
 function DataService:SavePlayer(player: Player)
 	local playerChannel = Synchronizer:Get(player)
