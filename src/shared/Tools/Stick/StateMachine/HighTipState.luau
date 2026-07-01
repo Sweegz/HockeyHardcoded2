@@ -31,7 +31,7 @@ function HighTipState:Tick(_dt: number)
 		)
 	end
 
-	if time < 1.6 then
+	if time < 2 then
 		return
 	end
 

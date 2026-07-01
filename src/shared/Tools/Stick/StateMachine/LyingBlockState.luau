@@ -19,6 +19,8 @@ function LyingBlockState.New(stickController)
 end
 
 function LyingBlockState:Enter()
+	self.stickController.animator:StopAnimationByName("Idle", Constants.FADE_TIME)
+
 	self.stickController.animator:PlayAnimationByName("LyingBlock", Constants.FADE_TIME)
 end
 
