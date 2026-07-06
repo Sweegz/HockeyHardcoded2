@@ -73,7 +73,9 @@ function CustomLockController:Start()
 			humanoid.AutoRotate = true
 		end
 
-		if CustomLockController.MouseLock then
+		local firstPerson = (workspace.CurrentCamera.CFrame.Position - character.Head.Position).Magnitude <= 1
+
+		if CustomLockController.MouseLock or firstPerson then
 			local _, cameraOrientationY = camera.CFrame:ToOrientation()
 			bodyGyro.CFrame = CFrame.new(camera.CFrame.Position) * CFrame.Angles(0, cameraOrientationY, 0)
 		elseif humanoid.MoveDirection.Magnitude > 0 then
