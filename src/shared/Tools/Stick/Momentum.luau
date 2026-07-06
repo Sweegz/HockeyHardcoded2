@@ -27,6 +27,7 @@ function Momentum.New(stickController)
 		isChangingDirection = false,
 		isMoving = false,
 		lastVelocityUpdate = 0,
+		calculatedVelocity = Vector3.new(0, 0, 0),
 	}, Momentum)
 
 	return self
@@ -102,30 +103,38 @@ function Momentum:Tick(dt: number)
 	end
 
 	if not self.isMoving then
-		if humanoidRootPart.AssemblyAngularVelocity.Magnitude <= ANGULAR_VELOCITY_TRESHOLD then
-			if bodyVelocity.Velocity.X ~= (0 / 0) then
-				bodyVelocity.Velocity = humanoidRootPart.AssemblyLinearVelocity
-			end
-			local walkSpeed = humanoid.WalkSpeed
-			--local alpha = 1 - (1 - glideSpeedModifier) ^ (dt / FRAME_RATE)
-			bodyVelocity.Velocity = bodyVelocity.Velocity:Lerp(moveDirection * walkSpeed, glideSpeedModifier)
-		else
-			local desiredDirectionVelocity = nil
-			if bodyVelocity.Velocity.Magnitude > 0 then
-				desiredDirectionVelocity = (bodyVelocity.Velocity / bodyVelocity.Velocity.Magnitude):Lerp(
-					moveDirection,
-					DIRECTION_LERP_FACTOR
-				)
-			else
-				desiredDirectionVelocity = Vector3.new(0, 0, 0):Lerp(moveDirection, 0.6)
-			end
-
-			if desiredDirectionVelocity then
+		if self.calculatedVelocity.Magnitude <= 1 then
+			if humanoidRootPart.AssemblyAngularVelocity.Magnitude <= ANGULAR_VELOCITY_TRESHOLD then
+				if bodyVelocity.Velocity.X ~= (0 / 0) then
+					bodyVelocity.Velocity = humanoidRootPart.AssemblyLinearVelocity
+				end
 				local walkSpeed = humanoid.WalkSpeed
 				--local alpha = 1 - (1 - glideSpeedModifier) ^ (dt / FRAME_RATE)
-				bodyVelocity.Velocity =
-					bodyVelocity.Velocity:Lerp(desiredDirectionVelocity * walkSpeed, glideSpeedModifier)
+				bodyVelocity.Velocity = bodyVelocity.Velocity:Lerp(moveDirection * walkSpeed, glideSpeedModifier)
+			else
+				local desiredDirectionVelocity = nil
+				if bodyVelocity.Velocity.Magnitude > 0 then
+					desiredDirectionVelocity = (bodyVelocity.Velocity / bodyVelocity.Velocity.Magnitude):Lerp(
+						moveDirection,
+						DIRECTION_LERP_FACTOR
+					)
+				else
+					desiredDirectionVelocity = Vector3.new(0, 0, 0):Lerp(moveDirection, 0.6)
+				end
+
+				if desiredDirectionVelocity then
+					local walkSpeed = humanoid.WalkSpeed
+					--local alpha = 1 - (1 - glideSpeedModifier) ^ (dt / FRAME_RATE)
+					bodyVelocity.Velocity =
+						bodyVelocity.Velocity:Lerp(desiredDirectionVelocity * walkSpeed, glideSpeedModifier)
+				end
 			end
+		else
+			if self.calculatedVelocity.Magnitude >= humanoid.WalkSpeed + 5 then
+				self.calculatedVelocity = self.calculatedVelocity / self.calculatedVelocity.Magnitude
+				self.calculatedVelocity = self.calculatedVelocity * (humanoid.WalkSpeed + 5)
+			end
+			bodyVelocity.Velocity = self.calculatedVelocity
 		end
 	end
 end
