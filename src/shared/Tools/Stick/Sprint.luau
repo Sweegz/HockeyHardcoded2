@@ -27,16 +27,24 @@ function Sprint:Tick(_dt: number)
 	local input = self.stickController.input
 	local state = self.stickController.state_machine.state
 
-	local movingNotBackwards = (input.commands.MoveForward or input.commands.MoveRight or input.commands.MoveLeft)
-		and not input.commands.MoveBackwards
+	local movingForward = input.commands.MoveForward -- Add (or input.commands.MoveRight or input.commands.MoveLeft) for more flexible gameplay
+	local movingBackward = input.commands.MoveBackward
 
-	if StaminaController:CanSprint() and input.commands.Sprint and state.canSprint and movingNotBackwards then
+	if
+		StaminaController:CanSprint()
+		and input.commands.Sprint
+		and state.canSprint
+		and (movingForward and not movingBackward)
+	then
 		StaminaController:SetBurning(true)
 		self.stickController.humanoid.WalkSpeed = 47
 	else
+		if not StaminaController:CanSprint() or movingBackward then -- Set to (movingForward and not movingBackward) for more flexible gameplay
+			input:DisableCommand("Sprint")
+		end
+
 		StaminaController:SetBurning(false)
 		self.stickController.humanoid.WalkSpeed = 38
-		input:DisableCommand("Sprint")
 	end
 end
 
