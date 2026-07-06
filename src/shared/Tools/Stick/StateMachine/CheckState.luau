@@ -115,9 +115,11 @@ function CheckState:Tick(dt: number)
 	local moveDirection = humanoid.MoveDirection
 
 	if time < 0.5 then
-		if (tick() - self.lastVelocityUpdate) >= (1 / 60) and humanoid.MoveDirection.Magnitude > 0.1 then
+		local deltaTime = tick() - self.lastVelocityUpdate
+
+		if deltaTime >= (1 / 60) and humanoid.MoveDirection.Magnitude > 0.1 then
 			local velocity = momentum:GetBodyVelocity()
-			velocity = velocity:Lerp(moveDirection * self.movementSpeedMultiplier, 0.8 * dt)
+			velocity = velocity:Lerp(moveDirection * self.movementSpeedMultiplier, 0.8 * deltaTime)
 			momentum:SetBodyVelocity(velocity)
 			self.lastVelocityUpdate = tick()
 		end
