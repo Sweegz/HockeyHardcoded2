@@ -27,6 +27,7 @@ function ShoveState:Tick(dt: number)
 		self.stickController.state_machine:ChangeState(
 			self.stickController.state_machine.states.DefaultState.New(self.stickController)
 		)
+		return
 	end
 
 	if self.timeElapsed > 0.8 then

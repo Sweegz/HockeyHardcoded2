@@ -70,6 +70,7 @@ function ShotState:Tick(_dt: number)
 		self.stickController.state_machine:ChangeState(
 			self.stickController.state_machine.states.DefaultState.New(self.stickController)
 		)
+		return
 	end
 end
 
