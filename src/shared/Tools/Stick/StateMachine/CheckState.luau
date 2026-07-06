@@ -12,7 +12,6 @@ function CheckState.New(stickController)
 		stickController = stickController,
 		timestamp = tick(),
 		movementSpeedMultiplier = 0,
-		lastVelocityUpdate = 0,
 		canCollect = true,
 		canDropOthersPuck = true,
 		canSprint = true,
@@ -115,13 +114,10 @@ function CheckState:Tick(dt: number)
 	local moveDirection = humanoid.MoveDirection
 
 	if time < 0.5 then
-		local deltaTime = tick() - self.lastVelocityUpdate
-
-		if deltaTime >= (1 / 60) and humanoid.MoveDirection.Magnitude > 0.1 then
+		if humanoid.MoveDirection.Magnitude > 0.1 then
 			local velocity = momentum:GetBodyVelocity()
-			velocity = velocity:Lerp(moveDirection * self.movementSpeedMultiplier, 0.8 * deltaTime)
+			velocity = velocity:Lerp(moveDirection * self.movementSpeedMultiplier, 0.8 * dt)
 			momentum:SetBodyVelocity(velocity)
-			self.lastVelocityUpdate = tick()
 		end
 	end
 

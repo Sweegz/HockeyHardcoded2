@@ -26,6 +26,7 @@ function Momentum.New(stickController)
 		enabled = false,
 		isChangingDirection = false,
 		isMoving = false,
+		lastVelocityUpdate = 0,
 	}, Momentum)
 
 	return self
@@ -49,6 +50,12 @@ function Momentum:Tick(dt: number)
 		return
 	end
 
+	-- Limit momentum to 60hz
+	local deltaTime = tick() - self.lastVelocityUpdate
+	if not (deltaTime >= (1 / 60)) then
+		return
+	end
+
 	local humanoid = self.stickController.humanoid
 	if not humanoid then
 		return
@@ -58,6 +65,8 @@ function Momentum:Tick(dt: number)
 	if not humanoidRootPart then
 		return
 	end
+
+	self.lastVelocityUpdate = tick()
 
 	local bodyVelocity = self.bodyVelocity
 	local moveDirection = humanoid.MoveDirection
@@ -98,8 +107,8 @@ function Momentum:Tick(dt: number)
 				bodyVelocity.Velocity = humanoidRootPart.AssemblyLinearVelocity
 			end
 			local walkSpeed = humanoid.WalkSpeed
-			local alpha = 1 - (1 - glideSpeedModifier) ^ (dt / FRAME_RATE)
-			bodyVelocity.Velocity = bodyVelocity.Velocity:Lerp(moveDirection * walkSpeed, alpha)
+			--local alpha = 1 - (1 - glideSpeedModifier) ^ (dt / FRAME_RATE)
+			bodyVelocity.Velocity = bodyVelocity.Velocity:Lerp(moveDirection * walkSpeed, glideSpeedModifier)
 		else
 			local desiredDirectionVelocity = nil
 			if bodyVelocity.Velocity.Magnitude > 0 then
@@ -113,8 +122,9 @@ function Momentum:Tick(dt: number)
 
 			if desiredDirectionVelocity then
 				local walkSpeed = humanoid.WalkSpeed
-				local alpha = 1 - (1 - glideSpeedModifier) ^ (dt / FRAME_RATE)
-				bodyVelocity.Velocity = bodyVelocity.Velocity:Lerp(desiredDirectionVelocity * walkSpeed, alpha)
+				--local alpha = 1 - (1 - glideSpeedModifier) ^ (dt / FRAME_RATE)
+				bodyVelocity.Velocity =
+					bodyVelocity.Velocity:Lerp(desiredDirectionVelocity * walkSpeed, glideSpeedModifier)
 			end
 		end
 	end
