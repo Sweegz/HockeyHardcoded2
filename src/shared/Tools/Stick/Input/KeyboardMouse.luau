@@ -75,6 +75,24 @@ function KeyboardMouse.InputBegan(input: InputObject, commands)
 		end
 		lastClickTime = clickTime
 	end
+
+	-- Move Direction --
+	if input.KeyCode == Enum.KeyCode.W then
+		commands.MoveForward = tick()
+	end
+
+	if input.KeyCode == Enum.KeyCode.A then
+		commands.MoveLeft = tick()
+	end
+
+	if input.KeyCode == Enum.KeyCode.S then
+		commands.MoveBackward = tick()
+	end
+
+	if input.KeyCode == Enum.KeyCode.D then
+		commands.MoveRight = tick()
+	end
+	-------------------
 end
 
 function KeyboardMouse.InputEnded(input: InputObject, commands)
@@ -141,6 +159,24 @@ function KeyboardMouse.InputEnded(input: InputObject, commands)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 then
 		commands.ChargePower = false
 	end
+
+	-- Move Direction --
+	if input.KeyCode == Enum.KeyCode.W then
+		commands.MoveForward = false
+	end
+
+	if input.KeyCode == Enum.KeyCode.A then
+		commands.MoveLeft = false
+	end
+
+	if input.KeyCode == Enum.KeyCode.S then
+		commands.MoveBackward = false
+	end
+
+	if input.KeyCode == Enum.KeyCode.D then
+		commands.MoveRight = false
+	end
+	-------------------
 end
 
 return KeyboardMouse
