@@ -42,10 +42,10 @@ function SetupCharacter(character: Instance)
 	end)
 
 	character.ChildRemoved:Connect(function(child)
-		local BodyAttach = child:FindFirstChild("BodyAttach")
+		--[[local BodyAttach = child:FindFirstChild("BodyAttach")
 		if child:IsA("Tool") and BodyAttach then
 			ToolGrip.Part1 = nil
-		end
+		end--]]
 	end)
 
 	for _, child in character:GetChildren() do
