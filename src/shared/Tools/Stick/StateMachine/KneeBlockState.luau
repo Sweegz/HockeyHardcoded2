@@ -8,7 +8,7 @@ function KneeBlockState.New(stickController)
 	local self = {
 		name = "KneeBlock",
 		stickController = stickController,
-		timestamp = tick(),
+		timeElapsed = 0,
 		canCollect = false,
 		canDropOthersPuck = false,
 		canSprint = false,
@@ -22,25 +22,24 @@ function KneeBlockState:Enter()
 	self.stickController.animator:PlayAnimationByName("KneeBlock", Constants.FADE_TIME)
 end
 
-function KneeBlockState:Tick(_dt: number)
+function KneeBlockState:Tick(dt: number)
 	local commands = self.stickController.input.commands
-	local time = tick() - self.timestamp
 
 	if self.stickController.hasPuck then
 		self.stickController.state_machine:ChangeState(
 			self.stickController.state_machine.states.DefaultState.New(self.stickController)
 		)
-	end
-
-	if time < 1.6 then
 		return
 	end
 
-	if not commands.KneeBlock then
+	if self.timeElapsed > 1.6 and not commands.KneeBlock then
 		self.stickController.state_machine:ChangeState(
 			self.stickController.state_machine.states.DefaultState.New(self.stickController)
 		)
+		return
 	end
+
+	self.timeElapsed += dt
 end
 
 function KneeBlockState:Exit()
@@ -49,7 +48,7 @@ function KneeBlockState:Exit()
 	input:DisableCommand("KneeBlock")
 
 	self.name = nil
-	self.timestamp = nil
+	self.timeElapsed = nil
 	setmetatable(self, nil)
 	self = nil
 end

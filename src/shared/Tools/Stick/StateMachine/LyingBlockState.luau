@@ -8,7 +8,7 @@ function LyingBlockState.New(stickController)
 	local self = {
 		name = "LyingBlockState",
 		stickController = stickController,
-		timestamp = tick(),
+		timeElapsed = 0,
 		canCollect = false,
 		canDropOthersPuck = false,
 		canSprint = false,
@@ -24,29 +24,28 @@ function LyingBlockState:Enter()
 	self.stickController.animator:PlayAnimationByName("LyingBlock", Constants.FADE_TIME)
 end
 
-function LyingBlockState:Tick(_dt: number)
+function LyingBlockState:Tick(dt: number)
 	local commands = self.stickController.input.commands
-	local time = tick() - self.timestamp
 
 	if self.stickController.hasPuck then
 		self.stickController.state_machine:ChangeState(
 			self.stickController.state_machine.states.DefaultState.New(self.stickController)
 		)
-	end
-
-	if time > 0.8 then
-		self.stickController.animator:AdjustSpeedByName("LyingBlock", 0)
-	end
-
-	if time < 1.6 then
 		return
 	end
 
-	if not commands.LyingBlock then
+	if self.timeElapsed > 0.8 then
+		self.stickController.animator:AdjustSpeedByName("LyingBlock", 0)
+	end
+
+	if self.timeElapsed > 1.6 and not commands.LyingBlock then
 		self.stickController.state_machine:ChangeState(
 			self.stickController.state_machine.states.DefaultState.New(self.stickController)
 		)
+		return
 	end
+
+	self.timeElapsed += dt
 end
 
 function LyingBlockState:Exit()
@@ -55,7 +54,7 @@ function LyingBlockState:Exit()
 	input:DisableCommand("LyingBlock")
 
 	self.name = nil
-	self.timestamp = nil
+	self.timeElapsed = nil
 	setmetatable(self, nil)
 	self = nil
 end

@@ -8,7 +8,7 @@ function PokeCheckState.New(stickController)
 	local self = {
 		name = "PokeCheckState",
 		stickController = stickController,
-		timestamp = tick(),
+		timeElapsed = 0,
 		canCollect = false,
 		canDropOthersPuck = true,
 		canSprint = true,
@@ -22,22 +22,22 @@ function PokeCheckState:Enter()
 	self.stickController.animator:PlayAnimationByName("PokeCheck", Constants.FADE_TIME)
 end
 
-function PokeCheckState:Tick(_dt: number)
-	local time = tick() - self.timestamp
-
+function PokeCheckState:Tick(dt: number)
 	if self.stickController.hasPuck then
 		self.stickController.state_machine:ChangeState(
 			self.stickController.state_machine.states.DefaultState.New(self.stickController)
 		)
-	end
-
-	if time < 1 then
 		return
 	end
 
-	self.stickController.state_machine:ChangeState(
-		self.stickController.state_machine.states.DefaultState.New(self.stickController)
-	)
+	if self.timeElapsed > 1 then
+		self.stickController.state_machine:ChangeState(
+			self.stickController.state_machine.states.DefaultState.New(self.stickController)
+		)
+		return
+	end
+
+	self.timeElapsed += dt
 end
 
 function PokeCheckState:Exit()
@@ -46,7 +46,7 @@ function PokeCheckState:Exit()
 	input:DisableCommand("PokeCheck")
 
 	self.name = nil
-	self.timestamp = nil
+	self.timeElapsed = nil
 	setmetatable(self, nil)
 	self = nil
 end

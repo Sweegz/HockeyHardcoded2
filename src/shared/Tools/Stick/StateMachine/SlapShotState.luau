@@ -14,7 +14,7 @@ function SlapShotState.New(stickController)
 	local self = {
 		name = "SlapShotState",
 		stickController = stickController,
-		timestamp = tick(),
+		timeElapsed = 0,
 		canCollect = false,
 		canDropOthersPuck = false,
 		canSprint = false,
@@ -34,22 +34,21 @@ function SlapShotState:Enter()
 	SHOT = false
 end
 
-function SlapShotState:Tick(_dt: number)
+function SlapShotState:Tick(dt: number)
 	local animator = self.stickController.animator
 	local commands = self.stickController.input.commands
-	local time = tick() - self.timestamp
 
-	if time > 0.3 and not PHASE_1 and not SHOT then
+	if self.timeElapsed > 0.3 and not PHASE_1 and not SHOT then
 		PHASE_1 = true
 		animator:PlayAnimationByName("SlapWind2", 1.5)
 	end
 
-	if time > 0.45 and not PHASE_2 and not SHOT then
+	if self.timeElapsed > 0.45 and not PHASE_2 and not SHOT then
 		PHASE_2 = true
 		animator:AdjustWeightByName("SlapWind2", 0, 1.5)
 	end
 
-	if time > 0.3 and not commands.SlapShot and not SHOT then
+	if self.timeElapsed > 0.3 and not commands.SlapShot and not SHOT then
 		SHOT = tick()
 		animator:StopAnimationByName("SlapWind1", 0.1)
 		animator:StopAnimationByName("SlapWind2", 0.1)
@@ -60,7 +59,10 @@ function SlapShotState:Tick(_dt: number)
 		self.stickController.state_machine:ChangeState(
 			self.stickController.state_machine.states.DefaultState.New(self.stickController)
 		)
+		return
 	end
+
+	self.timeElapsed += dt
 end
 
 function SlapShotState:Exit()
@@ -72,7 +74,7 @@ function SlapShotState:Exit()
 	input:DisableCommand("SlapShot")
 
 	self.name = nil
-	self.timestamp = nil
+	self.timeElapsed = nil
 	setmetatable(self, nil)
 	self = nil
 end

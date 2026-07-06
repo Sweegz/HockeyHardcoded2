@@ -8,7 +8,7 @@ function StandBlockState.New(stickController)
 	local self = {
 		name = "StandBlockState",
 		stickController = stickController,
-		timestamp = tick(),
+		timeElapsed = 0,
 		canCollect = false,
 		canDropOthersPuck = false,
 		canSprint = false,
@@ -22,25 +22,24 @@ function StandBlockState:Enter()
 	self.stickController.animator:PlayAnimationByName("StandBlock", Constants.FADE_TIME)
 end
 
-function StandBlockState:Tick(_dt: number)
+function StandBlockState:Tick(dt: number)
 	local commands = self.stickController.input.commands
-	local time = tick() - self.timestamp
 
 	if self.stickController.hasPuck then
 		self.stickController.state_machine:ChangeState(
 			self.stickController.state_machine.states.DefaultState.New(self.stickController)
 		)
-	end
-
-	if time < 1.6 then
 		return
 	end
 
-	if not commands.StandBlock then
+	if self.timeElapsed > 1.6 and not commands.StandBlock then
 		self.stickController.state_machine:ChangeState(
 			self.stickController.state_machine.states.DefaultState.New(self.stickController)
 		)
+		return
 	end
+
+	self.timeElapsed += dt
 end
 
 function StandBlockState:Exit()
@@ -49,7 +48,7 @@ function StandBlockState:Exit()
 	input:DisableCommand("StandBlock")
 
 	self.name = nil
-	self.timestamp = nil
+	self.timeElapsed = nil
 	setmetatable(self, nil)
 	self = nil
 end

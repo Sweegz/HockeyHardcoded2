@@ -8,7 +8,7 @@ function HighTipState.New(stickController)
 	local self = {
 		name = "HighTipState",
 		stickController = stickController,
-		timestamp = tick(),
+		timeElapsed = 0,
 		canCollect = false,
 		canDropOthersPuck = false,
 		canSprint = true,
@@ -22,22 +22,22 @@ function HighTipState:Enter()
 	self.stickController.animator:PlayAnimationByName("HighTip", Constants.FADE_TIME)
 end
 
-function HighTipState:Tick(_dt: number)
-	local time = tick() - self.timestamp
-
+function HighTipState:Tick(dt: number)
 	if self.stickController.hasPuck then
 		self.stickController.state_machine:ChangeState(
 			self.stickController.state_machine.states.DefaultState.New(self.stickController)
 		)
-	end
-
-	if time < 2 then
 		return
 	end
 
-	self.stickController.state_machine:ChangeState(
-		self.stickController.state_machine.states.DefaultState.New(self.stickController)
-	)
+	if self.timeElapsed > 2 then
+		self.stickController.state_machine:ChangeState(
+			self.stickController.state_machine.states.DefaultState.New(self.stickController)
+		)
+		return
+	end
+
+	self.timeElapsed += dt
 end
 
 function HighTipState:Exit()
@@ -46,7 +46,7 @@ function HighTipState:Exit()
 	input:DisableCommand("HighTip")
 
 	self.name = nil
-	self.timestamp = nil
+	self.timeElapsed = nil
 	setmetatable(self, nil)
 	self = nil
 end

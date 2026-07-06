@@ -8,7 +8,7 @@ function ShoveState.New(stickController)
 	local self = {
 		name = "ShoveState",
 		stickController = stickController,
-		timestamp = tick(),
+		timeElapsed = 0,
 		canCollect = false,
 		canDropOthersPuck = true,
 		canSprint = true,
@@ -22,22 +22,21 @@ function ShoveState:Enter()
 	self.stickController.animator:PlayAnimationByName("Shove", Constants.FADE_TIME)
 end
 
-function ShoveState:Tick(_dt: number)
-	local time = tick() - self.timestamp
-
+function ShoveState:Tick(dt: number)
 	if self.stickController.hasPuck then
 		self.stickController.state_machine:ChangeState(
 			self.stickController.state_machine.states.DefaultState.New(self.stickController)
 		)
 	end
 
-	if time < 0.8 then
+	if self.timeElapsed > 0.8 then
+		self.stickController.state_machine:ChangeState(
+			self.stickController.state_machine.states.DefaultState.New(self.stickController)
+		)
 		return
 	end
 
-	self.stickController.state_machine:ChangeState(
-		self.stickController.state_machine.states.DefaultState.New(self.stickController)
-	)
+	self.timeElapsed += dt
 end
 
 function ShoveState:Exit()
@@ -46,7 +45,7 @@ function ShoveState:Exit()
 	input:DisableCommand("Shove")
 
 	self.name = nil
-	self.timestamp = nil
+	self.timeElapsed = nil
 	setmetatable(self, nil)
 	self = nil
 end

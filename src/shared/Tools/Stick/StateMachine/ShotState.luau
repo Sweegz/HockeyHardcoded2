@@ -10,7 +10,7 @@ function ShotState.New(stickController)
 	local self = {
 		name = "ShotState",
 		stickController = stickController,
-		timestamp = tick(),
+		timeElapsed = 0,
 		canCollect = false,
 		canDropOthersPuck = false,
 		canSprint = true,
@@ -79,7 +79,7 @@ function ShotState:Exit()
 	input:DisableCommand("ChargePower")
 
 	self.name = nil
-	self.timestamp = nil
+	self.timeElapsed = nil
 	self.animation_name = nil
 	self.track = nil
 	if self.connection then

@@ -10,8 +10,8 @@ function CheckState.New(stickController)
 	local self = {
 		name = "CheckState",
 		stickController = stickController,
-		timestamp = tick(),
 		movementSpeedMultiplier = 0,
+		timeElapsed = 0,
 		canCollect = true,
 		canDropOthersPuck = true,
 		canSprint = true,
@@ -33,7 +33,7 @@ function CheckState:Enter()
 	local input = self.stickController.input
 	input:DisableCommand("ChargePower")
 
-	local power = self.stickController.power.current
+	local power = self.stickController.power.current / 2
 
 	local humanoid = self.stickController.humanoid
 	local momentum = self.stickController.momentum
@@ -107,13 +107,11 @@ function CheckState:Enter()
 end
 
 function CheckState:Tick(dt: number)
-	local time = tick() - self.timestamp
-
 	local humanoid = self.stickController.humanoid
 	local momentum = self.stickController.momentum
 	local moveDirection = humanoid.MoveDirection
 
-	if time < 0.5 then
+	if self.timeElapsed < 0.5 then
 		if humanoid.MoveDirection.Magnitude > 0.1 then
 			local velocity = momentum:GetBodyVelocity()
 			velocity = velocity:Lerp(moveDirection * self.movementSpeedMultiplier, 0.8 * dt)
@@ -121,24 +119,25 @@ function CheckState:Tick(dt: number)
 		end
 	end
 
-	if time > 0.5 then
+	if self.timeElapsed > 0.5 then
 		momentum:SetMoving(false)
 	end
 
-	if time < 0.75 then
+	if self.timeElapsed > 0.75 then
+		self.stickController.state_machine:ChangeState(
+			self.stickController.state_machine.states.DefaultState.New(self.stickController)
+		)
 		return
 	end
 
-	self.stickController.state_machine:ChangeState(
-		self.stickController.state_machine.states.DefaultState.New(self.stickController)
-	)
+	self.timeElapsed += dt
 end
 
 function CheckState:Exit()
 	self.stickController.animator:StopAnimationByName("Check", Constants.FADE_TIME)
 
 	self.name = nil
-	self.timestamp = nil
+	self.timeElapsed = nil
 	setmetatable(self, nil)
 	self = nil
 end

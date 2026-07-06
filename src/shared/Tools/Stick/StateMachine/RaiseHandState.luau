@@ -8,7 +8,7 @@ function RaiseHandState.New(stickController)
 	local self = {
 		name = "RaiseHandState",
 		stickController = stickController,
-		timestamp = tick(),
+		timeElapsed = 0,
 		canCollect = false,
 		canDropOthersPuck = true,
 		canSprint = true,
@@ -22,19 +22,17 @@ function RaiseHandState:Enter()
 	self.stickController.animator:PlayAnimationByName("RaiseHand", Constants.FADE_TIME)
 end
 
-function RaiseHandState:Tick(_dt: number)
+function RaiseHandState:Tick(dt: number)
 	local commands = self.stickController.input.commands
-	local time = tick() - self.timestamp
 
-	if time < 0.2 then
-		return
-	end
-
-	if not commands.RaiseHand then
+	if self.timeElapsed > 0.2 and not commands.RaiseHand then
 		self.stickController.state_machine:ChangeState(
 			self.stickController.state_machine.states.DefaultState.New(self.stickController)
 		)
+		return
 	end
+
+	self.timeElapsed += dt
 end
 
 function RaiseHandState:Exit()
@@ -43,7 +41,7 @@ function RaiseHandState:Exit()
 	input:DisableCommand("ChargePower")
 
 	self.name = nil
-	self.timestamp = nil
+	self.timeElapsed = nil
 	setmetatable(self, nil)
 	self = nil
 end
