@@ -39,22 +39,23 @@ function StickController.New(tool: Tool)
 	return self
 end
 
+local FIXED_RATE = 1 / 60
+
 function StickController:Update(dt: number)
 	self.hasPuck = PuckController:GetOwner() == LocalPlayer
 
-	self.power:Tick(dt)
-	self.state_machine:Tick(dt)
-	self.collect:Tick(dt)
-	self.sprint:Tick(dt)
+	while self.accumulatedTime >= FIXED_RATE do
+		self.input:Tick(FIXED_RATE)
 
-	-- Limit to 60hz
-	if self.accumulatedTime >= (1 / 60) then
-		-- Run systems
-		self.momentum:Tick(self.accumulatedTime)
-		self.customLockController:Tick(self.accumulatedTime)
+		self.power:Tick(FIXED_RATE)
+		self.state_machine:Tick(FIXED_RATE)
+		self.collect:Tick(FIXED_RATE)
+		self.sprint:Tick(FIXED_RATE)
+		self.momentum:Tick(FIXED_RATE)
+		self.customLockController:Tick(FIXED_RATE)
 
 		-- Reset time
-		self.accumulatedTime = 0
+		self.accumulatedTime -= FIXED_RATE
 	end
 
 	self.accumulatedTime += dt
