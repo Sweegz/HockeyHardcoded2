@@ -73,6 +73,10 @@ end
 function Power:Disable()
 	self:SetPower(0)
 	self.enabled = false
+
+	if self.UI then
+		self.UI:Disable()
+	end
 end
 
 function Power:SetPower(power: number)
@@ -90,11 +94,15 @@ end
 
 function Power:Initialize()
 	self.UI = PowerBar.New(self.max)
-	self.UI:Enable()
 end
 
 function Power:Destroy()
 	self:Disable()
+
+	if self.UI then
+		self.UI:Destroy()
+	end
+
 	self.enabled = nil
 	self.current = nil
 	self.max = nil

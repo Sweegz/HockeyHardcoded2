@@ -49,6 +49,10 @@ end
 
 function PowerBar:Destroy()
 	self:Disable()
+	self.gui:Destroy()
+	self.gui = nil
+	self.maxPower = nil
+	self.enabled = nil
 end
 
 return PowerBar
