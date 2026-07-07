@@ -9,7 +9,7 @@ function RaiseHandState.New(stickController)
 		name = "RaiseHandState",
 		stickController = stickController,
 		timeElapsed = 0,
-		canCollect = false,
+		canCollect = true,
 		canDropOthersPuck = true,
 		canSprint = true,
 	}
