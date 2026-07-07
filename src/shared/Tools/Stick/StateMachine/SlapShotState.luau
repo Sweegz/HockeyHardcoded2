@@ -73,9 +73,15 @@ function SlapShotState:Exit()
 	local input = self.stickController.input
 	input:DisableCommand("SlapShot")
 	input:DisableCommand("DropPuck")
+end
 
+function SlapShotState:Destroy()
 	self.name = nil
+	self.stickController = nil
 	self.timeElapsed = nil
+	self.canCollect = nil
+	self.canDropOthersPuck = nil
+	self.canSprint = nil
 	setmetatable(self, nil)
 	self = nil
 end

@@ -39,9 +39,15 @@ function RaiseHandState:Exit()
 	self.stickController.animator:StopAnimationByName("RaiseHand", Constants.FADE_TIME)
 	local input = self.stickController.input
 	input:DisableCommand("ChargePower")
+end
 
+function RaiseHandState:Destroy()
 	self.name = nil
+	self.stickController = nil
 	self.timeElapsed = nil
+	self.canCollect = nil
+	self.canDropOthersPuck = nil
+	self.canSprint = nil
 	setmetatable(self, nil)
 	self = nil
 end

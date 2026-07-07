@@ -23,6 +23,9 @@ end
 
 function StateMachine:ChangeState(state)
 	self.state:Exit()
+	if self.previous_state then
+		self.previous_state:Destroy()
+	end
 	self.previous_state = self.state
 	self.state = state
 	self.state:Enter()

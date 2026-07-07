@@ -37,9 +37,15 @@ function LowTipState:Exit()
 	self.stickController.animator:StopAnimationByName("LowTip", Constants.FADE_TIME)
 	local input = self.stickController.input
 	input:DisableCommand("LowTip")
+end
 
+function LowTipState:Destroy()
 	self.name = nil
+	self.stickController = nil
 	self.timeElapsed = nil
+	self.canCollect = nil
+	self.canDropOthersPuck = nil
+	self.canSprint = nil
 	setmetatable(self, nil)
 	self = nil
 end

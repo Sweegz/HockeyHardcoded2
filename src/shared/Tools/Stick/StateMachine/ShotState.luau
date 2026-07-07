@@ -14,7 +14,6 @@ function ShotState.New(stickController)
 		canCollect = false,
 		canDropOthersPuck = false,
 		canSprint = true,
-		freezePower = true, -- flag to prevent Power from reseting
 	}
 	setmetatable(self, ShotState)
 
@@ -79,14 +78,21 @@ function ShotState:Exit()
 	self.stickController.animator:StopAnimationByName(self.animation_name, Constants.FADE_TIME)
 	local input = self.stickController.input
 	input:DisableCommand("ChargePower")
+end
 
+function ShotState:Destroy()
 	self.name = nil
-	self.timeElapsed = nil
+	self.power = nil
 	self.animation_name = nil
 	self.track = nil
 	if self.connection then
 		self.connection:Disconnect()
 	end
+	self.stickController = nil
+	self.timeElapsed = nil
+	self.canCollect = nil
+	self.canDropOthersPuck = nil
+	self.canSprint = nil
 	setmetatable(self, nil)
 	self = nil
 end

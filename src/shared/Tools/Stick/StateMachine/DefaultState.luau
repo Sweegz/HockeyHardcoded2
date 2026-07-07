@@ -21,7 +21,7 @@ function DefaultState.New(stickController)
 		name = "DefaultState",
 		stickController = stickController,
 		timeElapsed = 0,
-		canCollect = true,
+		canCollect = false,
 		canDropOthersPuck = true,
 		canSprint = true,
 		graceTime = 0,
@@ -34,6 +34,14 @@ end
 
 function DefaultState:Enter()
 	local extended = self.stickController.extended
+	local prev = self.stickController.state_machine.previous_state
+
+	-- If previous state was default or could collect then no need to wait for transition to finish
+	if prev and (prev.canCollect or prev.name == "DefaultState") then
+		self.canCollect = true
+	else
+		self.canCollect = false
+	end
 
 	if extended == "Right" then
 		self.stickController.animator:PlayAnimationByName("Right", Constants.FADE_TIME)
@@ -63,6 +71,8 @@ function DefaultState:Tick(dt: number)
 	local next_state = nil
 
 	if self:TransitionFinished() then
+		self.canCollect = true
+
 		if (extended == "Right" and commands.GlideRight) or (extended == "Left" and commands.GlideLeft) then
 			self.graceTime = 0
 		else
@@ -147,9 +157,17 @@ function DefaultState:Tick(dt: number)
 	self.timeElapsed += dt
 end
 
-function DefaultState:Exit()
+function DefaultState:Exit() end
+
+function DefaultState:Destroy()
 	self.name = nil
-	self.timestamp = nil
+	self.stickController = nil
+	self.timeElapsed = nil
+	self.canCollect = nil
+	self.canDropOthersPuck = nil
+	self.canSprint = nil
+	self.graceTime = nil
+	self.canCharge = nil
 	setmetatable(self, nil)
 	self = nil
 end

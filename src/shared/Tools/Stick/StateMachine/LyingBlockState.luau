@@ -52,9 +52,15 @@ function LyingBlockState:Exit()
 	self.stickController.animator:StopAnimationByName("LyingBlock", Constants.FADE_TIME)
 	local input = self.stickController.input
 	input:DisableCommand("LyingBlock")
+end
 
+function LyingBlockState:Destroy()
 	self.name = nil
+	self.stickController = nil
 	self.timeElapsed = nil
+	self.canCollect = nil
+	self.canDropOthersPuck = nil
+	self.canSprint = nil
 	setmetatable(self, nil)
 	self = nil
 end

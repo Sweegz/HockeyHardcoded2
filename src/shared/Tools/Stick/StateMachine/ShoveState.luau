@@ -44,9 +44,15 @@ function ShoveState:Exit()
 	self.stickController.animator:StopAnimationByName("Shove", Constants.FADE_TIME)
 	local input = self.stickController.input
 	input:DisableCommand("Shove")
+end
 
+function ShoveState:Destroy()
 	self.name = nil
+	self.stickController = nil
 	self.timeElapsed = nil
+	self.canCollect = nil
+	self.canDropOthersPuck = nil
+	self.canSprint = nil
 	setmetatable(self, nil)
 	self = nil
 end

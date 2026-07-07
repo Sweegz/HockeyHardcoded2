@@ -135,9 +135,16 @@ end
 
 function CheckState:Exit()
 	self.stickController.animator:StopAnimationByName("Check", Constants.FADE_TIME)
+end
 
+function CheckState:Destroy()
 	self.name = nil
+	self.stickController = nil
+	self.movementSpeedMultiplier = nil
 	self.timeElapsed = nil
+	self.canCollect = nil
+	self.canDropOthersPuck = nil
+	self.canSprint = nil
 	setmetatable(self, nil)
 	self = nil
 end
