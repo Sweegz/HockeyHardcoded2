@@ -10,13 +10,13 @@ local LocalPlayer = Players.LocalPlayer
 
 local CollectController = {}
 
-function CollectController:Collect()
+function CollectController:Collect(pickup: boolean)
 	if PuckController:GetOwner() == LocalPlayer then
 		return
 	end
 
 	task.spawn(function()
-		CollectEvent:InvokeServer()
+		CollectEvent:InvokeServer(pickup)
 	end)
 end
 

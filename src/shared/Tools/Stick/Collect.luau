@@ -68,9 +68,9 @@ function Collect:Tick(_dt: number)
 
 	if collect then
 		if state.canCollect then
-			CollectController:Collect()
+			CollectController:Collect(true)
 		elseif state.canDropOthersPuck then
-			CollectController:Drop()
+			CollectController:Collect(false)
 		end
 	end
 end

@@ -37,20 +37,18 @@ local function AddPuckVelocity(puck: BasePart, player1: Player, player2: Player)
 end
 
 function CollectService:Start()
-	CollectEvent.OnServerInvoke = function(player: Player)
+	CollectEvent.OnServerInvoke = function(player: Player, pickup: boolean)
 		local owner = PuckService:GetOwner()
 
 		if tick() < PuckService:GetCooldown() then
-			--print(player, "tried collect, puck was on cooldown", PuckService:GetCooldown() - tick())
 			return
 		end
 
 		if tick() < PlayerSessionService:GetCooldown(player) then
-			--print(player, "tried collect, player was on cooldown", PlayerSessionService:GetCooldown(player) - tick())
 			return
 		end
 
-		if not owner then
+		if not owner and pickup then
 			PuckService:SetOwner(player)
 		elseif owner and owner ~= player then
 			PuckService:DropPuck()
@@ -62,8 +60,8 @@ function CollectService:Start()
 	DropEvent.OnServerEvent:Connect(function(player: Player)
 		local owner = PuckService:GetOwner()
 
-		PuckService:DropPuck()
-		if owner then
+		if owner == player then
+			PuckService:DropPuck()
 			PlayerSessionService:SetCooldown(owner, PLAYER_COOLDOWN)
 			AddPuckVelocity(PuckService:GetPuckInstance(), player, owner)
 		end

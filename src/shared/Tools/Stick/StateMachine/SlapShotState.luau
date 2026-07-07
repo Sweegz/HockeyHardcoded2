@@ -72,6 +72,7 @@ function SlapShotState:Exit()
 	animator:StopAnimationByName("SlapShot", Constants.FADE_TIME)
 	local input = self.stickController.input
 	input:DisableCommand("SlapShot")
+	input:DisableCommand("DropPuck")
 
 	self.name = nil
 	self.timeElapsed = nil

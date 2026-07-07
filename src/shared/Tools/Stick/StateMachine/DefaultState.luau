@@ -1,3 +1,5 @@
+local StarterPlayer = game:GetService("StarterPlayer")
+local CollectController = require(StarterPlayer.StarterPlayerScripts.Controllers.CollectController)
 local Constants = require(script.Parent.Parent.Constants)
 
 function higherThan(source: number?, target: number?): boolean
@@ -55,6 +57,8 @@ end
 function DefaultState:Tick(dt: number)
 	local commands = self.stickController.input.commands
 	local extended = self.stickController.extended
+	local hasPuck = self.stickController.hasPuck
+	local input = self.stickController.input
 
 	local next_state = nil
 
@@ -81,7 +85,7 @@ function DefaultState:Tick(dt: number)
 			next_state = "Default"
 		end
 
-		if not extended and not self.stickController.hasPuck then
+		if not extended and not hasPuck then
 			if commands.PokeCheck and commands.PokeCheck > tick() - 0.5 then
 				next_state = self.stickController.state_machine.states.PokeCheckState
 			end
@@ -109,10 +113,17 @@ function DefaultState:Tick(dt: number)
 			if commands.Shove then
 				next_state = self.stickController.state_machine.states.ShoveState
 			end
+
+			if commands.SlapShot then
+				next_state = self.stickController.state_machine.states.SlapShotState
+			end
 		end
 
-		if not extended and commands.SlapShot then
-			next_state = self.stickController.state_machine.states.SlapShotState
+		-- Make sure this only drops the localplayers puck
+		if hasPuck and commands.DropPuck then
+			input:DisableCommand("DropPuck")
+			input:DisableCommand("SlapShot")
+			CollectController:Drop()
 		end
 
 		if not extended and commands.RaiseHand then

@@ -67,6 +67,10 @@ function KeyboardMouse.InputBeganFixed(input: InputObject, commands)
 		commands.SlapShot = tick()
 	end
 
+	if input.KeyCode == Enum.KeyCode.Z then
+		commands.DropPuck = tick()
+	end
+
 	if input.KeyCode == Enum.KeyCode.Q then
 		commands.Fake = tick()
 	end
@@ -142,6 +146,10 @@ function KeyboardMouse.InputEndedFixed(input: InputObject, commands)
 
 	if input.KeyCode == Enum.KeyCode.Z then
 		commands.SlapShot = false
+	end
+
+	if input.KeyCode == Enum.KeyCode.Z then
+		commands.DropPuck = false
 	end
 
 	if input.KeyCode == Enum.KeyCode.C then
