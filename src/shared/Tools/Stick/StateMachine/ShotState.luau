@@ -77,8 +77,6 @@ end
 
 function ShotState:Exit()
 	self.stickController.animator:StopAnimationByName(self.animation_name, Constants.FADE_TIME)
-	-- Manually reset Power
-	self.stickController.power:SetPower(0)
 	local input = self.stickController.input
 	input:DisableCommand("ChargePower")
 

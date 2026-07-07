@@ -31,18 +31,16 @@ function Power:Release()
 	local owner = PuckController:GetOwner()
 
 	if owner == LocalPlayer then
-		-- ShotState manually handles the reseting of the power to 0
 		self.stickController.state_machine:ChangeState(
 			self.stickController.state_machine.states.ShotState.New(self.stickController)
 		)
 	elseif self.current > 30 then
-		-- CheckState manually handles the reseting of the power to 0
 		self.stickController.state_machine:ChangeState(
 			self.stickController.state_machine.states.CheckState.New(self.stickController)
 		)
-	else
-		self:SetPower(0)
 	end
+
+	self:SetPower(0)
 end
 
 function Power:Enable()
@@ -63,10 +61,7 @@ function Power:Tick(dt)
 	local state = self.stickController.state_machine.state
 
 	if not state.canCharge then
-		-- For states such as Shooting/Checking where we dont want to automatically reset Power (for things such as the PowerBar)
-		if not state.freezePower then
-			self:SetPower(0)
-		end
+		self:SetPower(0)
 		return
 	end
 
@@ -76,7 +71,7 @@ function Power:Tick(dt)
 	local powerExceededTime = (self.current >= 100 and commands.ChargePower and commands.ChargePower < tick() - 1.45)
 
 	if powerReleased or powerExceededTime then
-		if state:TransitionFinished() and state.canCharge then
+		if state:TransitionFinished() then
 			self:Release()
 		end
 	elseif commands.ChargePower then
