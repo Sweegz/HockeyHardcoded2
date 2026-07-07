@@ -44,18 +44,19 @@ local FIXED_RATE = 1 / 60
 function StickController:Update(dt: number)
 	self.hasPuck = PuckController:GetOwner() == LocalPlayer
 
+	self.collect:Tick(dt)
+
+	-- Systems running at fixed rate
 	while self.accumulatedTime >= FIXED_RATE do
 		local deltaTime = FIXED_RATE
-		self.input:Tick(deltaTime)
 
+		self.input:Tick(deltaTime)
 		self.power:Tick(deltaTime)
 		self.state_machine:Tick(deltaTime)
-		self.collect:Tick(deltaTime)
 		self.sprint:Tick(deltaTime)
 		self.momentum:Tick(deltaTime)
 		self.customLockController:Tick(deltaTime)
 
-		-- Reset time
 		self.accumulatedTime -= FIXED_RATE
 	end
 
