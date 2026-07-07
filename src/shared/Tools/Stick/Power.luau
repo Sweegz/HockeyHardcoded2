@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
 local StarterPlayer = game:GetService("StarterPlayer")
+local PowerBar = require(script.Parent.PowerBar)
 local PuckController = require(StarterPlayer.StarterPlayerScripts.Controllers.PuckController)
 local Power = {}
 
@@ -17,11 +18,13 @@ function Power.New(stickController)
 	}
 	setmetatable(self, Power)
 
+	self:Initialize()
+
 	return self
 end
 
 function Power:Enable()
-	self.current = 0
+	self:SetPower(0)
 	self.enabled = true
 end
 
@@ -38,7 +41,7 @@ function Power:Release()
 		)
 	end
 
-	self.current = 0
+	self:SetPower(0)
 end
 
 function Power:Tick(dt)
@@ -49,7 +52,7 @@ function Power:Tick(dt)
 	local state = self.stickController.state_machine.state
 
 	if not state.canCharge then
-		self.current = 0
+		self:SetPower(0)
 		return
 	end
 
@@ -63,17 +66,31 @@ function Power:Tick(dt)
 			self:Release()
 		end
 	elseif commands.ChargePower then
-		self.current = math.min(self.current + self.rate * dt, self.max)
+		self:SetPower((math.min(self.current + self.rate * dt, self.max)))
 	end
 end
 
 function Power:Disable()
-	self.current = 0
+	self:SetPower(0)
 	self.enabled = false
 end
 
 function Power:SetPower(power: number)
 	self.current = power
+	if self.UI then
+		self.UI:Update(power)
+
+		if power > 0 then
+			self.UI:Enable()
+		else
+			self.UI:Disable()
+		end
+	end
+end
+
+function Power:Initialize()
+	self.UI = PowerBar.New(self.max)
+	self.UI:Enable()
 end
 
 function Power:Destroy()
