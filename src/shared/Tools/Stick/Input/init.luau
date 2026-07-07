@@ -70,9 +70,48 @@ function Input:Initialize()
 			self.preferredInput = UserInputService.PreferredInput
 		end)
 	)
+
+	table.insert(
+		self.connections,
+		UserInputService.InputBegan:Connect(function(input: InputObject, gameProcessedEvent: boolean)
+			if gameProcessedEvent then
+				return
+			end
+
+			if not self.enabled then
+				return
+			end
+
+			local handler = getHandler(self.preferredInput)
+			if handler then
+				handler.InputBegan(input, self.commands)
+			end
+		end)
+	)
+
+	table.insert(
+		self.connections,
+		UserInputService.InputEnded:Connect(function(input: InputObject, gameProcessedEvent: boolean)
+			if gameProcessedEvent then
+				return
+			end
+
+			if not self.enabled then
+				return
+			end
+
+			local handler = getHandler(self.preferredInput)
+			if handler then
+				handler.InputEnded(input, self.commands)
+			end
+		end)
+	)
 end
 
 function Input:Tick(_dt)
+	-- Runs at Fixed Rate
+
+	-- Fixed InputBegan
 	for input: InputObject, gameProcessedEvent: boolean in self.inputBegan do
 		if gameProcessedEvent then
 			return
@@ -84,10 +123,11 @@ function Input:Tick(_dt)
 
 		local handler = getHandler(self.preferredInput)
 		if handler then
-			handler.InputBegan(input, self.commands)
+			handler.InputBeganFixed(input, self.commands)
 		end
 	end
 
+	-- Fixed InputEnded
 	for input: InputObject, gameProcessedEvent: boolean in self.inputEnded do
 		if gameProcessedEvent then
 			return
@@ -99,7 +139,7 @@ function Input:Tick(_dt)
 
 		local handler = getHandler(self.preferredInput)
 		if handler then
-			handler.InputEnded(input, self.commands)
+			handler.InputEndedFixed(input, self.commands)
 		end
 	end
 end

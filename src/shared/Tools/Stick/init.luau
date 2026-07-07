@@ -44,11 +44,12 @@ local FIXED_RATE = 1 / 60
 function StickController:Update(dt: number)
 	self.hasPuck = PuckController:GetOwner() == LocalPlayer
 
+	self.power:Tick(dt)
+
 	while self.accumulatedTime >= FIXED_RATE do
 		local deltaTime = FIXED_RATE
 		self.input:Tick(deltaTime)
 
-		self.power:Tick(deltaTime)
 		self.state_machine:Tick(deltaTime)
 		self.collect:Tick(deltaTime)
 		self.sprint:Tick(deltaTime)

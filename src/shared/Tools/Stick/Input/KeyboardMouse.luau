@@ -4,6 +4,18 @@ local lastClickTime = 0
 local doubleClickTime = 0.25
 
 function KeyboardMouse.InputBegan(input: InputObject, commands)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		commands.ChargePower = tick()
+	end
+end
+
+function KeyboardMouse.InputEnded(input: InputObject, commands)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		commands.ChargePower = false
+	end
+end
+
+function KeyboardMouse.InputBeganFixed(input: InputObject, commands)
 	if input.KeyCode == Enum.KeyCode.Space then
 		commands.Aim = tick()
 	end
@@ -65,10 +77,6 @@ function KeyboardMouse.InputBegan(input: InputObject, commands)
 	end
 
 	if input.UserInputType == Enum.UserInputType.MouseButton1 then
-		commands.ChargePower = tick()
-	end
-
-	if input.UserInputType == Enum.UserInputType.MouseButton1 then
 		local clickTime = tick()
 		if (clickTime - lastClickTime) < doubleClickTime then
 			commands.PokeCheck = tick()
@@ -95,7 +103,7 @@ function KeyboardMouse.InputBegan(input: InputObject, commands)
 	-------------------
 end
 
-function KeyboardMouse.InputEnded(input: InputObject, commands)
+function KeyboardMouse.InputEndedFixed(input: InputObject, commands)
 	if input.KeyCode == Enum.KeyCode.Space then
 		commands.Aim = false
 	end
@@ -154,10 +162,6 @@ function KeyboardMouse.InputEnded(input: InputObject, commands)
 
 	if input.KeyCode == Enum.KeyCode.LeftShift then
 		commands.Sprint = false
-	end
-
-	if input.UserInputType == Enum.UserInputType.MouseButton1 then
-		commands.ChargePower = false
 	end
 
 	-- Move Direction --
