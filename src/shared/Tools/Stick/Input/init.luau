@@ -71,6 +71,7 @@ function Input:Initialize()
 		end)
 	)
 
+	-- Non-fixed InputBegan (can poll between ticks)
 	table.insert(
 		self.connections,
 		UserInputService.InputBegan:Connect(function(input: InputObject, gameProcessedEvent: boolean)
@@ -89,6 +90,7 @@ function Input:Initialize()
 		end)
 	)
 
+	-- Non-fixed InputEnded (can poll between ticks)
 	table.insert(
 		self.connections,
 		UserInputService.InputEnded:Connect(function(input: InputObject, gameProcessedEvent: boolean)

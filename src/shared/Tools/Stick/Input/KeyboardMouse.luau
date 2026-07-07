@@ -3,18 +3,21 @@ local KeyboardMouse = {}
 local lastClickTime = 0
 local doubleClickTime = 0.25
 
+-- For inputs that can occur between frames
 function KeyboardMouse.InputBegan(input: InputObject, commands)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 then
 		commands.ChargePower = tick()
 	end
 end
 
+-- For inputs that can occur between frames
 function KeyboardMouse.InputEnded(input: InputObject, commands)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 then
 		commands.ChargePower = false
 	end
 end
 
+-- For inputs that can occur at a fixed rate
 function KeyboardMouse.InputBeganFixed(input: InputObject, commands)
 	if input.KeyCode == Enum.KeyCode.Space then
 		commands.Aim = tick()
@@ -103,6 +106,7 @@ function KeyboardMouse.InputBeganFixed(input: InputObject, commands)
 	-------------------
 end
 
+-- For inputs that can occur at a fixed rate
 function KeyboardMouse.InputEndedFixed(input: InputObject, commands)
 	if input.KeyCode == Enum.KeyCode.Space then
 		commands.Aim = false
