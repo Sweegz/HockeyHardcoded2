@@ -27,7 +27,6 @@ function StickController.New(tool: Tool)
 		connections = {},
 		extended = nil,
 		hasPuck = false,
-		lastUpdate = 0,
 		accumulatedTime = 0,
 	}
 	setmetatable(self, StickController)
