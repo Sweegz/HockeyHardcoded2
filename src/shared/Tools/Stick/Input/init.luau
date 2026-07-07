@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 
+local CollectEvents = require(ReplicatedStorage.Shared.Utility.CollectEvents)
 local DisconnectAndClear = require(ReplicatedStorage.Shared.Utility.DisconnectAndClear)
 
 local KeyboardMouse = require(script.KeyboardMouse)
@@ -51,6 +52,17 @@ function Input.New(stickController)
 end
 
 function Input:Initialize()
+	local inputBegan, inputBeganConnection = CollectEvents(UserInputService.InputBegan)
+	local inputEnded, inputEndedConnection = CollectEvents(UserInputService.InputEnded)
+
+	-- Event functions
+	self.inputBegan = inputBegan
+	self.inputEnded = inputEnded
+
+	-- Event connections
+	table.insert(self.connections, inputBeganConnection)
+	table.insert(self.connections, inputEndedConnection)
+
 	table.insert(
 		self.connections,
 		UserInputService:GetPropertyChangedSignal("PreferredInput"):Connect(function()
@@ -58,40 +70,38 @@ function Input:Initialize()
 			self.preferredInput = UserInputService.PreferredInput
 		end)
 	)
-	table.insert(
-		self.connections,
-		UserInputService.InputBegan:Connect(function(input: InputObject, gameProcessedEvent: boolean)
-			if gameProcessedEvent then
-				return
-			end
+end
 
-			if not self.enabled then
-				return
-			end
+function Input:Tick(_dt)
+	for input: InputObject, gameProcessedEvent: boolean in self.inputBegan do
+		if gameProcessedEvent then
+			return
+		end
 
-			local handler = getHandler(self.preferredInput)
-			if handler then
-				handler.InputBegan(input, self.commands)
-			end
-		end)
-	)
-	table.insert(
-		self.connections,
-		UserInputService.InputEnded:Connect(function(input: InputObject, gameProcessedEvent: boolean)
-			if gameProcessedEvent then
-				return
-			end
+		if not self.enabled then
+			return
+		end
 
-			if not self.enabled then
-				return
-			end
+		local handler = getHandler(self.preferredInput)
+		if handler then
+			handler.InputBegan(input, self.commands)
+		end
+	end
 
-			local handler = getHandler(self.preferredInput)
-			if handler then
-				handler.InputEnded(input, self.commands)
-			end
-		end)
-	)
+	for input: InputObject, gameProcessedEvent: boolean in self.inputEnded do
+		if gameProcessedEvent then
+			return
+		end
+
+		if not self.enabled then
+			return
+		end
+
+		local handler = getHandler(self.preferredInput)
+		if handler then
+			handler.InputEnded(input, self.commands)
+		end
+	end
 end
 
 function Input:DisableCommand(command)
