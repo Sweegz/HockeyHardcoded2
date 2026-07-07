@@ -51,12 +51,6 @@ function Momentum:Tick(dt: number)
 		return
 	end
 
-	-- Limit momentum to 60hz
-	local deltaTime = tick() - self.lastVelocityUpdate
-	if not (deltaTime >= (1 / 60)) then
-		return
-	end
-
 	local humanoid = self.stickController.humanoid
 	if not humanoid then
 		return
@@ -66,8 +60,6 @@ function Momentum:Tick(dt: number)
 	if not humanoidRootPart then
 		return
 	end
-
-	self.lastVelocityUpdate = tick()
 
 	local bodyVelocity = self.bodyVelocity
 	local moveDirection = humanoid.MoveDirection

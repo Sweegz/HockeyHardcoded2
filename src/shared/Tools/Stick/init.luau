@@ -3,13 +3,13 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local StarterPlayer = game:GetService("StarterPlayer")
 
-local CustomLockController = require(StarterPlayer.StarterPlayerScripts.Controllers.CustomLockController)
 local PuckController = require(StarterPlayer.StarterPlayerScripts.Controllers.PuckController)
 local Animator = require(script.Animator)
 local Input = require(script.Input)
 local StateMachine = require(script.StateMachine)
 local Power = require(script.Power)
 local Collect = require(script.Collect)
+local CustomLockController = require(script.CustomLockController)
 local Sprint = require(script.Sprint)
 local Momentum = require(script.Momentum)
 
@@ -27,6 +27,8 @@ function StickController.New(tool: Tool)
 		connections = {},
 		extended = nil,
 		hasPuck = false,
+		lastUpdate = 0,
+		accumulatedTime = 0,
 	}
 	setmetatable(self, StickController)
 
@@ -44,7 +46,18 @@ function StickController:Update(dt: number)
 	self.state_machine:Tick(dt)
 	self.collect:Tick(dt)
 	self.sprint:Tick(dt)
-	self.momentum:Tick(dt)
+
+	-- Limit to 60hz
+	if self.accumulatedTime >= (1 / 60) then
+		-- Run systems
+		self.momentum:Tick(self.accumulatedTime)
+		self.customLockController:Tick(self.accumulatedTime)
+
+		-- Reset time
+		self.accumulatedTime = 0
+	end
+
+	self.accumulatedTime += dt
 end
 
 function StickController:Equip()
@@ -66,7 +79,7 @@ function StickController:Equip()
 	self.collect:Enable()
 	self.sprint:Enable()
 	self.momentum:Enable()
-	CustomLockController:Enable()
+	self.customLockController:Enable()
 
 	self.update_connection = RunService.Heartbeat:Connect(function(dt)
 		self:Update(dt)
@@ -90,7 +103,7 @@ function StickController:Unequip()
 	self.collect:Disable()
 	self.sprint:Disable()
 	self.momentum:Disable()
-	CustomLockController:Disable()
+	self.customLockController:Disable()
 
 	task.spawn(function()
 		local temp = self.tool.Parent
@@ -113,6 +126,7 @@ function StickController:Initialize()
 	self.collect = Collect.New(self)
 	self.sprint = Sprint.New(self)
 	self.momentum = Momentum.New(self)
+	self.customLockController = CustomLockController.New(self)
 
 	table.insert(
 		self.connections,
