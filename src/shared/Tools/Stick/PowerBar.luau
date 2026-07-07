@@ -27,19 +27,24 @@ end
 function PowerBar:Initialize()
 	self.gui = PowerUI:Clone()
 	self.gui.Parent = PlayerGui
-
-	print("Init")
-end
-
-function PowerBar:Update(value: number)
-	local bar = self.gui.Container.Power.Bar
-
-	bar.Size = UDim2.fromScale(value / self.maxPower, 1)
 end
 
 function PowerBar:Enable()
-	self.gui.Enabled = true
 	self.enabled = true
+end
+
+function PowerBar:Update(value: number)
+	if self.enabled then
+		if value > 0 then
+			self.gui.Enabled = true
+		else
+			self.gui.Enabled = false
+		end
+	end
+
+	local bar = self.gui.Container.Power.Bar
+
+	bar.Size = UDim2.fromScale(value / self.maxPower, 1)
 end
 
 function PowerBar:Disable()

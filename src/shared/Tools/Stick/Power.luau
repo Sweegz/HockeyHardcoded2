@@ -23,9 +23,8 @@ function Power.New(stickController)
 	return self
 end
 
-function Power:Enable()
-	self:SetPower(0)
-	self.enabled = true
+function Power:Initialize()
+	self.UI = PowerBar.New(self.max)
 end
 
 function Power:Release()
@@ -42,6 +41,16 @@ function Power:Release()
 	end
 
 	self:SetPower(0)
+end
+
+function Power:Enable()
+	self:SetPower(0)
+	self.enabled = true
+
+	-- Enable PowerBar
+	if self.UI then
+		self.UI:Enable()
+	end
 end
 
 function Power:Tick(dt)
@@ -74,6 +83,7 @@ function Power:Disable()
 	self:SetPower(0)
 	self.enabled = false
 
+	-- Disable PowerBar
 	if self.UI then
 		self.UI:Disable()
 	end
@@ -81,19 +91,11 @@ end
 
 function Power:SetPower(power: number)
 	self.current = power
+
+	-- Update PowerBar
 	if self.UI then
-		self.UI:Update(power)
-
-		if power > 0 then
-			self.UI:Enable()
-		else
-			self.UI:Disable()
-		end
+		self.UI:Update(self.current)
 	end
-end
-
-function Power:Initialize()
-	self.UI = PowerBar.New(self.max)
 end
 
 function Power:Destroy()
