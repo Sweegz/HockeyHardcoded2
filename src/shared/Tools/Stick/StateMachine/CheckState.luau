@@ -15,6 +15,7 @@ function CheckState.New(stickController)
 		canCollect = true,
 		canDropOthersPuck = true,
 		canSprint = true,
+		freezePower = true,
 	}
 	setmetatable(self, CheckState)
 
@@ -135,6 +136,7 @@ end
 
 function CheckState:Exit()
 	self.stickController.animator:StopAnimationByName("Check", Constants.FADE_TIME)
+	self.stickController.power:SetPower(0)
 
 	self.name = nil
 	self.timeElapsed = nil

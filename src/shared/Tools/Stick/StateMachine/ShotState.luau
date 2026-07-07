@@ -14,6 +14,7 @@ function ShotState.New(stickController)
 		canCollect = false,
 		canDropOthersPuck = false,
 		canSprint = true,
+		freezePower = true,
 	}
 	setmetatable(self, ShotState)
 
@@ -76,6 +77,7 @@ end
 
 function ShotState:Exit()
 	self.stickController.animator:StopAnimationByName(self.animation_name, Constants.FADE_TIME)
+	self.stickController.power:SetPower(0)
 	local input = self.stickController.input
 	input:DisableCommand("ChargePower")
 

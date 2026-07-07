@@ -38,9 +38,9 @@ function Power:Release()
 		self.stickController.state_machine:ChangeState(
 			self.stickController.state_machine.states.CheckState.New(self.stickController)
 		)
+	else
+		self:SetPower(0)
 	end
-
-	self:SetPower(0)
 end
 
 function Power:Enable()
@@ -61,7 +61,9 @@ function Power:Tick(dt)
 	local state = self.stickController.state_machine.state
 
 	if not state.canCharge then
-		self:SetPower(0)
+		if not state.freezePower then
+			self:SetPower(0)
+		end
 		return
 	end
 
@@ -71,7 +73,7 @@ function Power:Tick(dt)
 	local powerExceededTime = (self.current >= 100 and commands.ChargePower and commands.ChargePower < tick() - 1.45)
 
 	if powerReleased or powerExceededTime then
-		if state:TransitionFinished() then
+		if state:TransitionFinished() and state.canCharge then
 			self:Release()
 		end
 	elseif commands.ChargePower then
