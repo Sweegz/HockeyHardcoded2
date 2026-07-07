@@ -45,14 +45,15 @@ function StickController:Update(dt: number)
 	self.hasPuck = PuckController:GetOwner() == LocalPlayer
 
 	while self.accumulatedTime >= FIXED_RATE do
-		self.input:Tick(FIXED_RATE)
+		local deltaTime = FIXED_RATE
+		self.input:Tick(deltaTime)
 
-		self.power:Tick(FIXED_RATE)
-		self.state_machine:Tick(FIXED_RATE)
-		self.collect:Tick(FIXED_RATE)
-		self.sprint:Tick(FIXED_RATE)
-		self.momentum:Tick(FIXED_RATE)
-		self.customLockController:Tick(FIXED_RATE)
+		self.power:Tick(deltaTime)
+		self.state_machine:Tick(deltaTime)
+		self.collect:Tick(deltaTime)
+		self.sprint:Tick(deltaTime)
+		self.momentum:Tick(deltaTime)
+		self.customLockController:Tick(deltaTime)
 
 		-- Reset time
 		self.accumulatedTime -= FIXED_RATE
