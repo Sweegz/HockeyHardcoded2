@@ -35,7 +35,7 @@ function KneeBlockState:Tick(dt: number)
 		return
 	end
 
-	if self.timeElapsed > 1.6 and not commands.KneeBlock then
+	if self.timeElapsed > 0.8 and not commands.KneeBlock then
 		self.stickController.state_machine:ChangeState(
 			self.stickController.state_machine.states.DefaultState.New(self.stickController)
 		)
