@@ -13,7 +13,6 @@ function Power.New(stickController)
 		stickController = stickController,
 		enabled = false,
 		chargeValue = 0,
-		max = 100,
 		holdStartTime = 0,
 	}
 	setmetatable(self, Power)
@@ -24,7 +23,7 @@ function Power.New(stickController)
 end
 
 function Power:Initialize()
-	self.UI = PowerBar.New(self.max)
+	self.UI = PowerBar.New()
 end
 
 function Power:Release(chargeValue: number)
@@ -79,15 +78,15 @@ function Power:Tick(dt)
 		local chargeTime = time() - self.holdStartTime
 
 		local powerReleased = not commands.ChargePower
-		local powerExceededTime = commands.ChargePower and time() - self.holdStartTime >= 1.45
+		local powerExceededTime = commands.ChargePower and chargeTime >= 1.45
+
+		self.UI:Update(chargeTime / 1.45)
 
 		if chargeTime > 1.15 then
 			chargeTime = 1.15
 		end
 
 		self.chargeValue = (chargeTime / 1.15) * 100
-
-		self.UI:Update(self.chargeValue)
 
 		if powerReleased or powerExceededTime then
 			if state:TransitionFinished() then
@@ -122,7 +121,6 @@ function Power:Destroy()
 	self.holdStartTime = 0
 
 	self.enabled = nil
-	self.max = nil
 end
 
 return Power

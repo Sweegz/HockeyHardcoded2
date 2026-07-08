@@ -11,10 +11,9 @@ local PowerBar = {}
 
 PowerBar.__index = PowerBar
 
-function PowerBar.New(maxPower: number)
+function PowerBar.New()
 	local self = {
 		enabled = false,
-		maxPower = maxPower,
 		gui = nil,
 	}
 	setmetatable(self, PowerBar)
@@ -44,7 +43,7 @@ function PowerBar:Update(value: number)
 
 	local bar = self.gui.Container.Power.Bar
 
-	bar.Size = UDim2.fromScale(value / self.maxPower, 1)
+	bar.Size = UDim2.fromScale(value, 1)
 end
 
 function PowerBar:Disable()
