@@ -14,7 +14,7 @@ function Power.New(stickController)
 		enabled = false,
 		chargeValue = 0,
 		max = 100,
-		holdStart = 0,
+		holdStartTime = 0,
 	}
 	setmetatable(self, Power)
 
@@ -40,12 +40,12 @@ function Power:Release(chargeValue: number)
 		)
 	end
 
-	self.holdStart = 0
+	self.holdStartTime = 0
 end
 
 function Power:Enable()
 	self.enabled = true
-	self.holdStart = 0
+	self.holdStartTime = 0
 
 	-- Enable UI
 	if self.UI then
@@ -61,25 +61,25 @@ function Power:Tick(dt)
 	local state = self.stickController.state_machine.state
 
 	if not state.canCharge then
-		self.holdStart = 0
+		self.holdStartTime = 0
 		return
 	end
 
 	local commands = self.stickController.input.commands
 
-	if commands.ChargePower and self.holdStart == 0 then
-		self.holdStart = time()
+	if commands.ChargePower and self.holdStartTime == 0 then
+		self.holdStartTime = time()
 	end
 
-	if self.holdStart > 0 then
+	if self.holdStartTime > 0 then
 		if self.UI then
 			self.UI:Enable()
 		end
 
-		local chargeTime = time() - self.holdStart
+		local chargeTime = time() - self.holdStartTime
 
 		local powerReleased = not commands.ChargePower
-		local powerExceededTime = commands.ChargePower and time() - self.holdStart >= 1.45
+		local powerExceededTime = commands.ChargePower and time() - self.holdStartTime >= 1.45
 
 		if chargeTime > 1.15 then
 			chargeTime = 1.15
@@ -103,7 +103,7 @@ end
 
 function Power:Disable()
 	self.enabled = false
-	self.holdStart = 0
+	self.holdStartTime = 0
 
 	-- Disable UI
 	if self.UI then
@@ -118,10 +118,11 @@ function Power:Destroy()
 		self.UI:Destroy()
 	end
 
+	self.chargeValue = nil
+	self.holdStartTime = 0
+
 	self.enabled = nil
-	self.current = nil
 	self.max = nil
-	self.rate = nil
 end
 
 return Power
