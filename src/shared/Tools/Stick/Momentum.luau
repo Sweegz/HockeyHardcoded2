@@ -35,6 +35,7 @@ end
 
 function Momentum:Enable()
 	self.enabled = true
+	self.movementDisabled = false
 
 	local humanoidRootPart = getHumanoidRootPart()
 	local bodyVelocity = humanoidRootPart and humanoidRootPart:FindFirstChild("Momentum")
@@ -150,6 +151,7 @@ function Momentum:Disable()
 	self.isMoving = false
 	self.isChangingDirection = false
 	self.bodyVelocity.Parent = nil
+	self.movementDisabled = false
 end
 
 function Momentum:Destroy()

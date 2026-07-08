@@ -29,6 +29,11 @@ function SlapShotState:Enter()
 	local animator = self.stickController.animator
 	animator:PlayAnimationByName("SlapWind1", 0.3)
 
+	self.stickController.customLockController:ForceMouseLock(true)
+
+	self.stickController.movementDisabled = true
+	self.stickController.humanoid.WalkSpeed = 16
+
 	PHASE_1 = false
 	PHASE_2 = false
 	SHOT = false
@@ -73,6 +78,10 @@ function SlapShotState:Exit()
 	local input = self.stickController.input
 	input:DisableCommand("SlapShot")
 	input:DisableCommand("DropPuck")
+
+	self.stickController.movementDisabled = false
+
+	self.stickController.customLockController:ForceMouseLock(false)
 end
 
 function SlapShotState:Destroy()

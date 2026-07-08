@@ -9,6 +9,7 @@ local Input = require(script.Input)
 local StateMachine = require(script.StateMachine)
 local Power = require(script.Power)
 local Collect = require(script.Collect)
+local Constants = require(script.Constants)
 local CustomLockController = require(script.CustomLockController)
 local Sprint = require(script.Sprint)
 local Momentum = require(script.Momentum)
@@ -28,6 +29,7 @@ function StickController.New(tool: Tool)
 		extended = nil,
 		hasPuck = false,
 		accumulatedTime = 0,
+		movementDisabled = false,
 	}
 	setmetatable(self, StickController)
 
@@ -72,7 +74,7 @@ function StickController:Equip()
 	self.humanoid = self.tool.Parent:FindFirstChildOfClass("Humanoid")
 	self.humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, false)
 	self.humanoid.JumpHeight = 0
-	self.humanoid.WalkSpeed = 38
+	self.humanoid.WalkSpeed = Constants.WALKSPEED
 
 	self.animator:Enable()
 	self.input:Enable()

@@ -23,6 +23,7 @@ function CustomLockController.New(stickController)
 		stickController = stickController,
 		enabled = false,
 		MouseLock = false,
+		forcedMouseLock = false,
 		connections = {},
 		bodyGyro = nil,
 	}
@@ -60,7 +61,7 @@ function CustomLockController:Tick(dt: number)
 
 	local firstPerson = (workspace.CurrentCamera.CFrame.Position - character.Head.Position).Magnitude <= 1
 
-	if self.MouseLock or firstPerson then
+	if self.MouseLock or self.forcedMouseLock or firstPerson then
 		local _, cameraOrientationY = camera.CFrame:ToOrientation()
 		self.bodyGyro.CFrame = CFrame.new(camera.CFrame.Position) * CFrame.Angles(0, cameraOrientationY, 0)
 	elseif humanoid.MoveDirection.Magnitude > 0 then
@@ -88,15 +89,21 @@ end
 function CustomLockController:Enable()
 	self.enabled = true
 	self.MouseLock = false
+	self.forcedMouseLock = false
 end
 
 function CustomLockController:Disable()
 	self.enabled = false
 	self.MouseLock = false
+	self.forcedMouseLock = false
 	self.bodyGyro:Destroy()
 	self.bodyGyro = nil
 
 	self.stickController.humanoid.AutoRotate = true
+end
+
+function CustomLockController:ForceMouseLock(forced: boolean)
+	self.forcedMouseLock = forced
 end
 
 function CustomLockController:Destroy()

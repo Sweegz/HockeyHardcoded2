@@ -20,6 +20,9 @@ end
 
 function StandBlockState:Enter()
 	self.stickController.animator:PlayAnimationByName("StandBlock", Constants.FADE_TIME)
+
+	self.stickController.movementDisabled = true
+	self.stickController.humanoid.WalkSpeed = 0
 end
 
 function StandBlockState:Tick(dt: number)
@@ -46,6 +49,8 @@ function StandBlockState:Exit()
 	self.stickController.animator:StopAnimationByName("StandBlock", Constants.FADE_TIME)
 	local input = self.stickController.input
 	input:DisableCommand("StandBlock")
+
+	self.stickController.movementDisabled = false
 end
 
 function StandBlockState:Destroy()

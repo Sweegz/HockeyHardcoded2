@@ -20,6 +20,9 @@ end
 
 function KneeBlockState:Enter()
 	self.stickController.animator:PlayAnimationByName("KneeBlock", Constants.FADE_TIME)
+
+	self.stickController.movementDisabled = true
+	self.stickController.humanoid.WalkSpeed = 0
 end
 
 function KneeBlockState:Tick(dt: number)
@@ -46,6 +49,8 @@ function KneeBlockState:Exit()
 	self.stickController.animator:StopAnimationByName("KneeBlock", Constants.FADE_TIME)
 	local input = self.stickController.input
 	input:DisableCommand("KneeBlock")
+
+	self.stickController.movementDisabled = false
 end
 
 function KneeBlockState:Destroy()

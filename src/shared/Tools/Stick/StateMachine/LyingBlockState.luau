@@ -20,8 +20,10 @@ end
 
 function LyingBlockState:Enter()
 	self.stickController.animator:StopAnimationByName("Idle", Constants.FADE_TIME)
-
 	self.stickController.animator:PlayAnimationByName("LyingBlock", Constants.FADE_TIME)
+
+	self.stickController.movementDisabled = true
+	self.stickController.humanoid.WalkSpeed = 0
 end
 
 function LyingBlockState:Tick(dt: number)
@@ -52,6 +54,8 @@ function LyingBlockState:Exit()
 	self.stickController.animator:StopAnimationByName("LyingBlock", Constants.FADE_TIME)
 	local input = self.stickController.input
 	input:DisableCommand("LyingBlock")
+
+	self.stickController.movementDisabled = false
 end
 
 function LyingBlockState:Destroy()
