@@ -33,7 +33,7 @@ function CheckState:Enter()
 	local input = self.stickController.input
 	input:DisableCommand("ChargePower")
 
-	local power = self.stickController.power.current / 2
+	local power = self.stickController.power.chargeValue / 2
 
 	local humanoid = self.stickController.humanoid
 	local momentum = self.stickController.momentum

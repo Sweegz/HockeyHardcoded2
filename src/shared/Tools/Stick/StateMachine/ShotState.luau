@@ -44,7 +44,7 @@ end
 
 function ShotState:Enter()
 	local extended = self.stickController.extended
-	self.power = self.stickController.power.current
+	self.power = self.stickController.power.chargeValue
 	self.animation_name = GetAnimationName(self.power, extended)
 	self.track = self.stickController.animator:GetAnimationTrack(self.animation_name)
 
