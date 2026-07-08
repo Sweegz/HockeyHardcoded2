@@ -71,16 +71,15 @@ function Power:Tick(dt)
 	end
 
 	if self.holdStartTime > 0 then
-		if self.UI then
-			self.UI:Enable()
-		end
-
 		local chargeTime = time() - self.holdStartTime
 
 		local powerReleased = not commands.ChargePower
 		local powerExceededTime = commands.ChargePower and chargeTime >= 1.45
 
-		self.UI:Update(chargeTime / 1.45)
+		if self.UI then
+			self.UI:Enable()
+			self.UI:Update(chargeTime / 1.45)
+		end
 
 		if chargeTime > 1.15 then
 			chargeTime = 1.15
