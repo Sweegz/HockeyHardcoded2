@@ -4,11 +4,15 @@ local Workspace = game:GetService("Workspace")
 
 local DisconnectAndClear = require(ReplicatedStorage.Shared.Utility.DisconnectAndClear)
 
+local BODYGYRO_D = 500
+local BODYGYRO_MAXTORQUE = Vector3.new(0, 1000000000, 0)
+local BODYGYRO_P = 10000
+
 local function CreateBodyGyro(humanoidRootPart: BasePart)
 	local bodyGyro = Instance.new("BodyGyro")
-	bodyGyro.D = 500
-	bodyGyro.MaxTorque = Vector3.new(0, 1000000000, 0)
-	bodyGyro.P = 10000
+	bodyGyro.D = BODYGYRO_D
+	bodyGyro.MaxTorque = BODYGYRO_MAXTORQUE
+	bodyGyro.P = BODYGYRO_P
 	bodyGyro.Parent = humanoidRootPart
 
 	return bodyGyro
@@ -90,6 +94,14 @@ function CustomLockController:Enable()
 	self.enabled = true
 	self.MouseLock = false
 	self.forcedMouseLock = false
+end
+
+function CustomLockController:SetTorquePower(value: number)
+	self.bodyGyro.P = value
+end
+
+function CustomLockController:ResetTorquePower()
+	self.bodyGyro.P = BODYGYRO_P
 end
 
 function CustomLockController:Disable()

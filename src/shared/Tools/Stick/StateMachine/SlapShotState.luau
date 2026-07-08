@@ -29,6 +29,7 @@ function SlapShotState:Enter()
 	local animator = self.stickController.animator
 	animator:PlayAnimationByName("SlapWind1", 0.3)
 
+	self.stickController.customLockController:SetTorquePower(2000)
 	self.stickController.customLockController:ForceMouseLock(true)
 
 	self.stickController.movementDisabled = true
@@ -81,6 +82,7 @@ function SlapShotState:Exit()
 
 	self.stickController.movementDisabled = false
 
+	self.stickController.customLockController:ResetTorquePower()
 	self.stickController.customLockController:ForceMouseLock(false)
 end
 
