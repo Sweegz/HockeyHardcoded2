@@ -1,3 +1,4 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
@@ -7,6 +8,8 @@ local Shots = require(ServerScriptService.Shots)
 
 local Net = ReplicatedStorage.Net
 local ShootEvent = Net:FindFirstChild("Shoot") :: RemoteEvent
+local ShoveEvent = Net:FindFirstChild("Shove") :: RemoteEvent
+local RagdollEvent = Net:FindFirstChild("Ragdoll") :: RemoteEvent
 
 local PlayerActionService = {}
 
@@ -42,6 +45,31 @@ function PlayerActionService:Start()
 			PlayerSessionService:SetCooldown(player, 2)
 		end
 	)
+
+	ShoveEvent.OnServerEvent:Connect(function(player: Player, hit: BasePart, velocity: Vector3, direction: Vector3)
+		local parent = hit.Parent
+		if not parent then
+			return
+		end
+
+		local hitPlayer = Players:GetPlayerFromCharacter(parent)
+		if not hitPlayer then
+			return
+		end
+
+		local velocityMagnitude = Vector3.new(velocity.X, 0, velocity.Z).Magnitude
+		direction = Vector3.new(direction.X, 0, direction.Z)
+
+		local final_velocity = direction * math.max(30, velocityMagnitude)
+
+		RagdollEvent:FireClient(hitPlayer, 20, final_velocity, 0.2, true)
+
+		if PuckService:GetOwner() == hitPlayer then
+			PuckService:DropPuck()
+		end
+
+		PlayerSessionService:SetCooldown(hitPlayer, 2)
+	end)
 end
 
 return PlayerActionService

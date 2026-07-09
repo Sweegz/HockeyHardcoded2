@@ -1,4 +1,6 @@
+local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 local Momentum = {}
 Momentum.__index = Momentum
 
@@ -19,9 +21,9 @@ local function getHumanoidRootPart()
 	return character and character:FindFirstChild("HumanoidRootPart")
 end
 
-function Momentum.New(stickController)
+function Momentum.New(ctx)
 	local self = setmetatable({
-		stickController = stickController,
+		ctx = ctx,
 		bodyVelocity = nil,
 		enabled = false,
 		isChangingDirection = false,
@@ -52,7 +54,7 @@ function Momentum:Tick(dt: number)
 		return
 	end
 
-	local humanoid = self.stickController.humanoid
+	local humanoid = self.ctx.humanoid
 	if not humanoid then
 		return
 	end
@@ -64,7 +66,7 @@ function Momentum:Tick(dt: number)
 
 	local bodyVelocity = self.bodyVelocity
 	local moveDirection = humanoid.MoveDirection
-	local extended = self.stickController.extended ~= nil
+	local extended = self.ctx.extended ~= nil
 
 	local glideSpeedModifier = nil
 	if moveDirection.Magnitude > 0 then
@@ -99,11 +101,11 @@ function Momentum:Tick(dt: number)
 		if self.calculatedVelocity.Magnitude <= 1 then
 			if humanoidRootPart.AssemblyAngularVelocity.Magnitude <= ANGULAR_VELOCITY_TRESHOLD then
 				if bodyVelocity.Velocity.X ~= (0 / 0) then
-					bodyVelocity.Velocity = humanoidRootPart.AssemblyLinearVelocity
+					self:SetBodyVelocity(humanoidRootPart.AssemblyLinearVelocity)
 				end
 				local walkSpeed = humanoid.WalkSpeed
 				--local alpha = 1 - (1 - glideSpeedModifier) ^ (dt / FRAME_RATE)
-				bodyVelocity.Velocity = bodyVelocity.Velocity:Lerp(moveDirection * walkSpeed, glideSpeedModifier)
+				self:SetBodyVelocity(bodyVelocity.Velocity:Lerp(moveDirection * walkSpeed, glideSpeedModifier))
 			else
 				local desiredDirectionVelocity = nil
 				if bodyVelocity.Velocity.Magnitude > 0 then
@@ -118,8 +120,9 @@ function Momentum:Tick(dt: number)
 				if desiredDirectionVelocity then
 					local walkSpeed = humanoid.WalkSpeed
 					--local alpha = 1 - (1 - glideSpeedModifier) ^ (dt / FRAME_RATE)
-					bodyVelocity.Velocity =
+					self:SetBodyVelocity(
 						bodyVelocity.Velocity:Lerp(desiredDirectionVelocity * walkSpeed, glideSpeedModifier)
+					)
 				end
 			end
 		else
@@ -127,9 +130,27 @@ function Momentum:Tick(dt: number)
 				self.calculatedVelocity = self.calculatedVelocity / self.calculatedVelocity.Magnitude
 				self.calculatedVelocity = self.calculatedVelocity * (humanoid.WalkSpeed + 5)
 			end
-			bodyVelocity.Velocity = self.calculatedVelocity
+			self:SetBodyVelocity(self.calculatedVelocity)
 		end
 	end
+
+	--[[
+
+	local XD = false
+
+	local parts = self.ctx.tool.Blade:GetTouchingParts()
+	for _, part in parts do
+		if CollectionService:HasTag(part, "PhysicalObject") then
+			--self:SetBodyVelocity(Vector3.new(0, 0, 0))
+			self.bodyVelocity.MaxForce = Vector3.new
+			XD = true
+			break
+		end
+	end
+
+	if not XD then
+		self.bodyVelocity.MaxForce = MAX_FORCE
+	end]]
 end
 
 function Momentum:SetBodyVelocity(velocity: Vector3)
@@ -137,6 +158,54 @@ function Momentum:SetBodyVelocity(velocity: Vector3)
 		self.bodyVelocity.Velocity = velocity
 	end
 end
+
+RunService.PostSimulation:Connect(function()
+	local character = LocalPlayer.Character
+	local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
+
+	local stick = character:FindFirstChild("Stick")
+
+	if not stick then
+		return
+	end
+
+	local primaryPart = stick.PrimaryPart
+
+	if humanoidRootPart then
+		local pos = humanoidRootPart.Position
+		local _, y, z = humanoidRootPart.CFrame:ToEulerAnglesYXZ()
+
+		--humanoidRootPart.AssemblyLinearVelocity = humanoidRootPart.AssemblyLinearVelocity * Vector3.new(1, 0, 1)
+		humanoidRootPart.CFrame = CFrame.new(pos.X, pos.Y, pos.Z) * CFrame.Angles(0, y, 0)
+	end
+
+	local weld = stick:FindFirstChild("AAAA").Weld
+
+	if primaryPart then
+		local pos = primaryPart.Position
+		local x, y, z = primaryPart.CFrame:ToEulerAnglesYXZ()
+
+		if primaryPart.AssemblyLinearVelocity.Y > 0 then
+			primaryPart.AssemblyLinearVelocity = primaryPart.AssemblyLinearVelocity * Vector3.new(1, 0, 1)
+		end
+
+		local cf = primaryPart.CFrame
+
+		local look = cf.LookVector
+		local flatLook = Vector3.new(look.X, 0, look.Z)
+
+		if flatLook.Magnitude > 0 then
+			local yawOnlyWorld = CFrame.lookAt(Vector3.zero, flatLook.Unit)
+
+			weld.C0 = primaryPart.CFrame:ToObjectSpace(
+				CFrame.new(primaryPart.Position + Vector3.new(0, 1.6, 0)) * yawOnlyWorld
+			)
+		end
+		--AAAA.CFrame = CFrame.new(pos.X, pos.Y + 2, pos.Z) * CFrame.Angles(0, y, 0)
+
+		--primaryPart.CFrame = CFrame.new(pos.X, pos.Y, pos.Z) * CFrame.Angles(0, y, 0)
+	end
+end)
 
 function Momentum:SetMoving(isMoving: boolean)
 	self.isMoving = isMoving

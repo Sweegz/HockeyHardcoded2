@@ -29,7 +29,14 @@ function SetupCharacter(character: Instance)
 	CollectGrip.Part0 = HumanoidRootPart
 	CollectGrip.Parent = HumanoidRootPart
 
+	--HumanoidRootPart.CustomPhysicalProperties = PhysicalProperties.new(3, 0.3, 0.5)
+
 	character.ChildAdded:Connect(function(child)
+		character["Right Arm"].CanCollide = true
+		character["Left Arm"].CanCollide = true
+		character["Head"].CanCollide = true
+		character["Torso"].CanCollide = true
+
 		local BodyAttach = child:FindFirstChild("BodyAttach")
 		if child:IsA("Tool") and BodyAttach then
 			ToolGrip.Part1 = BodyAttach
@@ -39,6 +46,8 @@ function SetupCharacter(character: Instance)
 		if child:IsA("Tool") and Front then
 			CollectGrip.Part1 = Front
 		end
+
+		CollectionService:AddTag(child, "Hittable")
 	end)
 
 	character.ChildRemoved:Connect(function(child)
@@ -52,6 +61,8 @@ function SetupCharacter(character: Instance)
 		if child:IsA("BasePart") then
 			child.CollisionGroup = "Character"
 		end
+
+		CollectionService:AddTag(child, "Hittable")
 	end
 
 	local humanoid = character:FindFirstChild("Humanoid")
