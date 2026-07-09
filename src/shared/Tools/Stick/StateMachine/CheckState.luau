@@ -124,7 +124,7 @@ function CheckState:Tick(dt: number)
 	end
 
 	if self.timeElapsed > 0.75 then
-		self.ctx.state_machine:ChangeState(self.ctx.state_machine.states.DefaultState.New(self.ctx))
+		self.ctx.stateMachine:ChangeState(self.ctx.stateMachine.states.DefaultState.New(self.ctx))
 		return
 	end
 

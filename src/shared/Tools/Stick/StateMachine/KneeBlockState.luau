@@ -29,12 +29,12 @@ function KneeBlockState:Tick(dt: number)
 	local commands = self.ctx.input.commands
 
 	if self.ctx:HasPuck() or self.ctx:IsHit() then
-		self.ctx.state_machine:ChangeState(self.ctx.state_machine.states.DefaultState.New(self.ctx))
+		self.ctx.stateMachine:ChangeState(self.ctx.stateMachine.states.DefaultState.New(self.ctx))
 		return
 	end
 
 	if self.timeElapsed > 0.8 and not commands.KneeBlock then
-		self.ctx.state_machine:ChangeState(self.ctx.state_machine.states.DefaultState.New(self.ctx))
+		self.ctx.stateMachine:ChangeState(self.ctx.stateMachine.states.DefaultState.New(self.ctx))
 		return
 	end
 

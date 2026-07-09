@@ -30,7 +30,7 @@ function LyingBlockState:Tick(dt: number)
 	local commands = self.ctx.input.commands
 
 	if self.ctx:HasPuck() or self.ctx:IsHit() then
-		self.ctx.state_machine:ChangeState(self.ctx.state_machine.states.DefaultState.New(self.ctx))
+		self.ctx.stateMachine:ChangeState(self.ctx.stateMachine.states.DefaultState.New(self.ctx))
 		return
 	end
 
@@ -39,7 +39,7 @@ function LyingBlockState:Tick(dt: number)
 	end
 
 	if self.timeElapsed > 1.6 and not commands.LyingBlock then
-		self.ctx.state_machine:ChangeState(self.ctx.state_machine.states.DefaultState.New(self.ctx))
+		self.ctx.stateMachine:ChangeState(self.ctx.stateMachine.states.DefaultState.New(self.ctx))
 		return
 	end
 

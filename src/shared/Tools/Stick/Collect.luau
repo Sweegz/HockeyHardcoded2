@@ -64,7 +64,7 @@ function Collect:Tick(_dt: number)
 		end
 	end
 
-	local state = self.ctx.state_machine.state
+	local state = self.ctx.stateMachine.state
 
 	if collect then
 		if state.canCollect then

@@ -29,8 +29,8 @@ function SlapShotState:Enter()
 	local animator = self.ctx.animator
 	animator:PlayAnimationByName("SlapWind1", 0.3)
 
-	self.ctx.customLockController:SetTorquePower(2000)
-	self.ctx.customLockController:ForceMouseLock(true)
+	self.ctx.customLock:SetTorquePower(2000)
+	self.ctx.customLock:ForceMouseLock(true)
 
 	self.ctx.movementDisabled = true
 	self.ctx.humanoid.WalkSpeed = 16
@@ -45,7 +45,7 @@ function SlapShotState:Tick(dt: number)
 	local commands = self.ctx.input.commands
 
 	if self.ctx:IsHit() then
-		self.ctx.state_machine:ChangeState(self.ctx.state_machine.states.DefaultState.New(self.ctx))
+		self.ctx.stateMachine:ChangeState(self.ctx.stateMachine.states.DefaultState.New(self.ctx))
 		return
 	end
 
@@ -67,7 +67,7 @@ function SlapShotState:Tick(dt: number)
 	end
 
 	if SHOT and time() - SHOT > 0.45 then
-		self.ctx.state_machine:ChangeState(self.ctx.state_machine.states.DefaultState.New(self.ctx))
+		self.ctx.stateMachine:ChangeState(self.ctx.stateMachine.states.DefaultState.New(self.ctx))
 		return
 	end
 
@@ -85,8 +85,8 @@ function SlapShotState:Exit()
 
 	self.ctx.movementDisabled = false
 
-	self.ctx.customLockController:ResetTorquePower()
-	self.ctx.customLockController:ForceMouseLock(false)
+	self.ctx.customLock:ResetTorquePower()
+	self.ctx.customLock:ForceMouseLock(false)
 end
 
 function SlapShotState:Destroy()

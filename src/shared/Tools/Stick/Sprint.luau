@@ -26,7 +26,7 @@ function Sprint:Tick(_dt: number)
 	end
 
 	local input = self.ctx.input
-	local state = self.ctx.state_machine.state
+	local state = self.ctx.stateMachine.state
 
 	local movingForward = input.commands.MoveForward -- Add (or input.commands.MoveRight or input.commands.MoveLeft) for more flexible gameplay
 	local movingBackward = input.commands.MoveBackward

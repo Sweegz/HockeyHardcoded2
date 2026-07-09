@@ -34,7 +34,7 @@ end
 
 function DefaultState:Enter()
 	local extended = self.ctx.extended
-	local prev = self.ctx.state_machine.previous_state
+	local prev = self.ctx.stateMachine.previous_state
 
 	-- If previous state was default or could collect then no need to wait for transition to finish
 	if prev and (prev.canCollect or prev.name == "DefaultState") then
@@ -97,35 +97,35 @@ function DefaultState:Tick(dt: number)
 
 		if not extended and not hasPuck then
 			if commands.PokeCheck and commands.PokeCheck > time() - 0.5 then
-				next_state = self.ctx.state_machine.states.PokeCheckState
+				next_state = self.ctx.stateMachine.states.PokeCheckState
 			end
 
 			if commands.HighTip then
-				next_state = self.ctx.state_machine.states.HighTipState
+				next_state = self.ctx.stateMachine.states.HighTipState
 			end
 
 			if commands.LowTip then
-				next_state = self.ctx.state_machine.states.LowTipState
+				next_state = self.ctx.stateMachine.states.LowTipState
 			end
 
 			if commands.LyingBlock then
-				next_state = self.ctx.state_machine.states.LyingBlockState
+				next_state = self.ctx.stateMachine.states.LyingBlockState
 			end
 
 			if commands.StandBlock then
-				next_state = self.ctx.state_machine.states.StandBlockState
+				next_state = self.ctx.stateMachine.states.StandBlockState
 			end
 
 			if commands.KneeBlock then
-				next_state = self.ctx.state_machine.states.KneeBlockState
+				next_state = self.ctx.stateMachine.states.KneeBlockState
 			end
 
 			if commands.Shove then
-				next_state = self.ctx.state_machine.states.ShoveState
+				next_state = self.ctx.stateMachine.states.ShoveState
 			end
 
 			if commands.SlapShot then
-				next_state = self.ctx.state_machine.states.SlapShotState
+				next_state = self.ctx.stateMachine.states.SlapShotState
 			end
 		end
 
@@ -137,18 +137,18 @@ function DefaultState:Tick(dt: number)
 		end
 
 		if not extended and commands.RaiseHand then
-			next_state = self.ctx.state_machine.states.RaiseHandState
+			next_state = self.ctx.stateMachine.states.RaiseHandState
 		end
 
 		if next_state then
 			if next_state == "Default" then
 				self.ctx.extended = nil
-				self.ctx.state_machine:ChangeState(DefaultState.New(self.ctx))
+				self.ctx.stateMachine:ChangeState(DefaultState.New(self.ctx))
 			elseif next_state == "Left" or next_state == "Right" then
 				self.ctx.extended = next_state
-				self.ctx.state_machine:ChangeState(DefaultState.New(self.ctx))
+				self.ctx.stateMachine:ChangeState(DefaultState.New(self.ctx))
 			else
-				self.ctx.state_machine:ChangeState(next_state.New(self.ctx))
+				self.ctx.stateMachine:ChangeState(next_state.New(self.ctx))
 			end
 			return
 		end

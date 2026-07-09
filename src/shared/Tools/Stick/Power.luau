@@ -30,9 +30,9 @@ function Power:Release(chargeValue: number)
 	local owner = PuckController:GetOwner()
 
 	if owner == LocalPlayer then
-		self.ctx.state_machine:ChangeState(self.ctx.state_machine.states.ShotState.New(self.ctx))
+		self.ctx.stateMachine:ChangeState(self.ctx.stateMachine.states.ShotState.New(self.ctx))
 	elseif chargeValue > 30 then
-		self.ctx.state_machine:ChangeState(self.ctx.state_machine.states.CheckState.New(self.ctx))
+		self.ctx.stateMachine:ChangeState(self.ctx.stateMachine.states.CheckState.New(self.ctx))
 	end
 
 	self.holdStartTime = 0
@@ -53,7 +53,7 @@ function Power:Tick(dt)
 		return
 	end
 
-	local state = self.ctx.state_machine.state
+	local state = self.ctx.stateMachine.state
 
 	if not state.canCharge then
 		self.holdStartTime = 0

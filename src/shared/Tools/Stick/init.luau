@@ -10,7 +10,7 @@ local StateMachine = require(script.StateMachine)
 local Power = require(script.Power)
 local Collect = require(script.Collect)
 local Constants = require(script.Constants)
-local CustomLockController = require(script.CustomLockController)
+local CustomLock = require(script.CustomLock)
 local Sprint = require(script.Sprint)
 local Momentum = require(script.Momentum)
 
@@ -55,11 +55,11 @@ function Stick:Update(dt: number)
 		local deltaTime = FIXED_RATE
 		self.input:Tick(deltaTime)
 
-		self.state_machine:Tick(deltaTime)
+		self.stateMachine:Tick(deltaTime)
 		self.collect:Tick(deltaTime)
 		self.sprint:Tick(deltaTime)
 		self.momentum:Tick(deltaTime)
-		self.customLockController:Tick(deltaTime)
+		self.customLock:Tick(deltaTime)
 
 		-- Reset time
 		self.accumulatedTime -= FIXED_RATE
@@ -82,12 +82,12 @@ function Stick:Equip()
 
 	self.animator:Enable()
 	self.input:Enable()
-	self.state_machine:Enable(require(script.StateMachine.DefaultState).New(self))
+	self.stateMachine:Enable(require(script.StateMachine.DefaultState).New(self))
 	self.power:Enable()
 	self.collect:Enable()
 	self.sprint:Enable()
 	self.momentum:Enable()
-	self.customLockController:Enable()
+	self.customLock:Enable()
 
 	self.update_connection = RunService.Heartbeat:Connect(function(dt)
 		self:Update(dt)
@@ -106,12 +106,12 @@ function Stick:Unequip()
 
 	self.animator:Disable()
 	self.input:Disable()
-	self.state_machine:Disable()
+	self.stateMachine:Disable()
 	self.power:Disable()
 	self.collect:Disable()
 	self.sprint:Disable()
 	self.momentum:Disable()
-	self.customLockController:Disable()
+	self.customLock:Disable()
 
 	task.spawn(function()
 		local temp = self.tool.Parent
@@ -129,12 +129,12 @@ end
 function Stick:Initialize()
 	self.animator = Animator.New(self)
 	self.input = Input.New(self)
-	self.state_machine = StateMachine.New(require(script.StateMachine.DefaultState).New(self))
+	self.stateMachine = StateMachine.New(require(script.StateMachine.DefaultState).New(self))
 	self.power = Power.New(self)
 	self.collect = Collect.New(self)
 	self.sprint = Sprint.New(self)
 	self.momentum = Momentum.New(self)
-	self.customLockController = CustomLockController.New(self)
+	self.customLock = CustomLock.New(self)
 
 	table.insert(
 		self.connections,
@@ -175,7 +175,7 @@ function Stick:Destroy()
 	DisconnectAndClear(self.connections)
 	self.animator:Destroy()
 	self.input:Destroy()
-	self.state_machine:Destroy()
+	self.stateMachine:Destroy()
 	self.power:Destroy()
 	self.collect:Destroy()
 	self.sprint:Destroy()

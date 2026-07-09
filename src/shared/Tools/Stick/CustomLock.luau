@@ -18,11 +18,11 @@ local function CreateBodyGyro(humanoidRootPart: BasePart)
 	return bodyGyro
 end
 
-local CustomLockController = {}
+local CustomLock = {}
 
-CustomLockController.__index = CustomLockController
+CustomLock.__index = CustomLock
 
-function CustomLockController.New(ctx)
+function CustomLock.New(ctx)
 	local self = {
 		ctx = ctx,
 		enabled = false,
@@ -32,14 +32,14 @@ function CustomLockController.New(ctx)
 		bodyGyro = nil,
 	}
 
-	setmetatable(self, CustomLockController)
+	setmetatable(self, CustomLock)
 
 	self:Initialize()
 
 	return self
 end
 
-function CustomLockController:Tick(dt: number)
+function CustomLock:Tick(dt: number)
 	local humanoid = self.ctx.humanoid
 	local character = humanoid.Parent
 
@@ -75,7 +75,7 @@ function CustomLockController:Tick(dt: number)
 	end
 end
 
-function CustomLockController:Initialize()
+function CustomLock:Initialize()
 	table.insert(
 		self.connections,
 		UserInputService.InputBegan:Connect(function(input: InputObject, gameProcessedEvent: boolean)
@@ -90,21 +90,21 @@ function CustomLockController:Initialize()
 	)
 end
 
-function CustomLockController:Enable()
+function CustomLock:Enable()
 	self.enabled = true
 	self.MouseLock = false
 	self.forcedMouseLock = false
 end
 
-function CustomLockController:SetTorquePower(value: number)
+function CustomLock:SetTorquePower(value: number)
 	self.bodyGyro.P = value
 end
 
-function CustomLockController:ResetTorquePower()
+function CustomLock:ResetTorquePower()
 	self.bodyGyro.P = BODYGYRO_P
 end
 
-function CustomLockController:Disable()
+function CustomLock:Disable()
 	self.enabled = false
 	self.MouseLock = false
 	self.forcedMouseLock = false
@@ -114,13 +114,13 @@ function CustomLockController:Disable()
 	self.ctx.humanoid.AutoRotate = true
 end
 
-function CustomLockController:ForceMouseLock(forced: boolean)
+function CustomLock:ForceMouseLock(forced: boolean)
 	self.forcedMouseLock = forced
 end
 
-function CustomLockController:Destroy()
+function CustomLock:Destroy()
 	self:Disable()
 	DisconnectAndClear(self.connections)
 end
 
-return CustomLockController
+return CustomLock
