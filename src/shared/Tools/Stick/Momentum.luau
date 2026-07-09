@@ -169,22 +169,24 @@ RunService.PostSimulation:Connect(function()
 		return
 	end
 
-	local primaryPart = stick.PrimaryPart
-
 	if humanoidRootPart then
 		local pos = humanoidRootPart.Position
 		local _, y, z = humanoidRootPart.CFrame:ToEulerAnglesYXZ()
 
 		--humanoidRootPart.AssemblyLinearVelocity = humanoidRootPart.AssemblyLinearVelocity * Vector3.new(1, 0, 1)
+
+		--[[ KEEPS THE PLAYER UPRIGHT ]]
 		humanoidRootPart.CFrame = CFrame.new(pos.X, pos.Y, pos.Z) * CFrame.Angles(0, y, 0)
 	end
 
 	local weld = stick:FindFirstChild("AAAA").Weld
 
+	local primaryPart = stick.PrimaryPart
 	if primaryPart then
 		local pos = primaryPart.Position
 		local x, y, z = primaryPart.CFrame:ToEulerAnglesYXZ()
 
+		--[[ STICK CANT HAVE UPWARDS VELOCITY ]]
 		if primaryPart.AssemblyLinearVelocity.Y > 0 then
 			primaryPart.AssemblyLinearVelocity = primaryPart.AssemblyLinearVelocity * Vector3.new(1, 0, 1)
 		end
@@ -197,12 +199,13 @@ RunService.PostSimulation:Connect(function()
 		if flatLook.Magnitude > 0 then
 			local yawOnlyWorld = CFrame.lookAt(Vector3.zero, flatLook.Unit)
 
+			-- [[ WELD BLADE HITBOX PART ABOVE BLADE NEGATING ORIENTATION ]]
 			weld.C0 = primaryPart.CFrame:ToObjectSpace(
 				CFrame.new(primaryPart.Position + Vector3.new(0, 1.6, 0)) * yawOnlyWorld
 			)
 		end
-		--AAAA.CFrame = CFrame.new(pos.X, pos.Y + 2, pos.Z) * CFrame.Angles(0, y, 0)
 
+		--AAAA.CFrame = CFrame.new(pos.X, pos.Y + 2, pos.Z) * CFrame.Angles(0, y, 0)
 		--primaryPart.CFrame = CFrame.new(pos.X, pos.Y, pos.Z) * CFrame.Angles(0, y, 0)
 	end
 end)
