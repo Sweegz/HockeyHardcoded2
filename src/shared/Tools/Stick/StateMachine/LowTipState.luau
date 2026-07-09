@@ -4,10 +4,10 @@ local LowTipState = {}
 
 LowTipState.__index = LowTipState
 
-function LowTipState.New(stickController)
+function LowTipState.New(ctx)
 	local self = {
 		name = "LowTipState",
-		stickController = stickController,
+		ctx = ctx,
 		timeElapsed = 0,
 		canCollect = false,
 		canDropOthersPuck = false,
@@ -19,14 +19,17 @@ function LowTipState.New(stickController)
 end
 
 function LowTipState:Enter()
-	self.stickController.animator:PlayAnimationByName("LowTip", Constants.FADE_TIME)
+	self.ctx.animator:PlayAnimationByName("LowTip", Constants.FADE_TIME)
 end
 
 function LowTipState:Tick(dt: number)
+	if self.ctx:HasPuck() or self.ctx:IsHit() then
+		self.ctx.state_machine:ChangeState(self.ctx.state_machine.states.DefaultState.New(self.ctx))
+		return
+	end
+
 	if self.timeElapsed > 2 then
-		self.stickController.state_machine:ChangeState(
-			self.stickController.state_machine.states.DefaultState.New(self.stickController)
-		)
+		self.ctx.state_machine:ChangeState(self.ctx.state_machine.states.DefaultState.New(self.ctx))
 		return
 	end
 
@@ -34,14 +37,14 @@ function LowTipState:Tick(dt: number)
 end
 
 function LowTipState:Exit()
-	self.stickController.animator:StopAnimationByName("LowTip", Constants.FADE_TIME)
-	local input = self.stickController.input
+	self.ctx.animator:StopAnimationByName("LowTip", Constants.FADE_TIME)
+	local input = self.ctx.input
 	input:DisableCommand("LowTip")
 end
 
 function LowTipState:Destroy()
 	self.name = nil
-	self.stickController = nil
+	self.ctx = nil
 	self.timeElapsed = nil
 	self.canCollect = nil
 	self.canDropOthersPuck = nil

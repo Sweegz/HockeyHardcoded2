@@ -50,7 +50,7 @@ end
 
 function PlayerSessionService:SetCooldown(player: Player, duration: number)
 	local path = ("Players.%*.Cooldown"):format(player.UserId)
-	return playerSessionChannel:Set(path, tick() + duration)
+	return playerSessionChannel:Set(path, time() + duration)
 end
 
 function PlayerSessionService:GetCooldown(player: Player)

@@ -4,10 +4,10 @@ local PokeCheckState = {}
 
 PokeCheckState.__index = PokeCheckState
 
-function PokeCheckState.New(stickController)
+function PokeCheckState.New(ctx)
 	local self = {
 		name = "PokeCheckState",
-		stickController = stickController,
+		ctx = ctx,
 		timeElapsed = 0,
 		canCollect = false,
 		canDropOthersPuck = true,
@@ -19,21 +19,17 @@ function PokeCheckState.New(stickController)
 end
 
 function PokeCheckState:Enter()
-	self.stickController.animator:PlayAnimationByName("PokeCheck", Constants.FADE_TIME)
+	self.ctx.animator:PlayAnimationByName("PokeCheck", Constants.FADE_TIME)
 end
 
 function PokeCheckState:Tick(dt: number)
-	if self.stickController.hasPuck then
-		self.stickController.state_machine:ChangeState(
-			self.stickController.state_machine.states.DefaultState.New(self.stickController)
-		)
+	if self.ctx:HasPuck() or self.ctx:IsHit() then
+		self.ctx.state_machine:ChangeState(self.ctx.state_machine.states.DefaultState.New(self.ctx))
 		return
 	end
 
 	if self.timeElapsed > 1 then
-		self.stickController.state_machine:ChangeState(
-			self.stickController.state_machine.states.DefaultState.New(self.stickController)
-		)
+		self.ctx.state_machine:ChangeState(self.ctx.state_machine.states.DefaultState.New(self.ctx))
 		return
 	end
 
@@ -41,14 +37,14 @@ function PokeCheckState:Tick(dt: number)
 end
 
 function PokeCheckState:Exit()
-	self.stickController.animator:StopAnimationByName("PokeCheck", Constants.FADE_TIME)
-	local input = self.stickController.input
+	self.ctx.animator:StopAnimationByName("PokeCheck", Constants.FADE_TIME)
+	local input = self.ctx.input
 	input:DisableCommand("PokeCheck")
 end
 
 function PokeCheckState:Destroy()
 	self.name = nil
-	self.stickController = nil
+	self.ctx = nil
 	self.timeElapsed = nil
 	self.canCollect = nil
 	self.canDropOthersPuck = nil

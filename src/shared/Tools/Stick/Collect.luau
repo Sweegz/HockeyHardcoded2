@@ -11,9 +11,9 @@ local Collect = {}
 
 Collect.__index = Collect
 
-function Collect.New(stickController)
+function Collect.New(ctx)
 	local self = {
-		stickController = stickController,
+		ctx = ctx,
 		enabled = false,
 	}
 	setmetatable(self, Collect)
@@ -64,7 +64,7 @@ function Collect:Tick(_dt: number)
 		end
 	end
 
-	local state = self.stickController.state_machine.state
+	local state = self.ctx.state_machine.state
 
 	if collect then
 		if state.canCollect then

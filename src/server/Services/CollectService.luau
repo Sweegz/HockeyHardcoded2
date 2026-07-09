@@ -40,11 +40,11 @@ function CollectService:Start()
 	CollectEvent.OnServerInvoke = function(player: Player, pickup: boolean)
 		local owner = PuckService:GetOwner()
 
-		if tick() < PuckService:GetCooldown() then
+		if time() < PuckService:GetCooldown() then
 			return
 		end
 
-		if tick() < PlayerSessionService:GetCooldown(player) then
+		if time() < PlayerSessionService:GetCooldown(player) then
 			return
 		end
 

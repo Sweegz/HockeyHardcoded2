@@ -14,14 +14,17 @@ local CustomLockController = require(script.CustomLockController)
 local Sprint = require(script.Sprint)
 local Momentum = require(script.Momentum)
 
+local Net = ReplicatedStorage.Net
+local RagdollEvent = Net:FindFirstChild("Ragdoll") :: RemoteEvent
+
 local DisconnectAndClear = require(ReplicatedStorage.Shared.Utility.DisconnectAndClear)
 
 local LocalPlayer = Players.LocalPlayer
 
-local StickController = {}
-StickController.__index = StickController
+local Stick = {}
+Stick.__index = Stick
 
-function StickController.New(tool: Tool)
+function Stick.New(tool: Tool)
 	local self = {
 		tool = tool,
 		equipped = false,
@@ -29,11 +32,12 @@ function StickController.New(tool: Tool)
 		extended = nil,
 		hasPuck = false,
 		accumulatedTime = 0,
+		isHit = time(),
 		movementDisabled = false,
 	}
-	setmetatable(self, StickController)
+	setmetatable(self, Stick)
 
-	print("Created StickController")
+	print("Created Stick")
 
 	self:Initialize()
 
@@ -42,7 +46,7 @@ end
 
 local FIXED_RATE = 1 / 60
 
-function StickController:Update(dt: number)
+function Stick:Update(dt: number)
 	self.hasPuck = PuckController:GetOwner() == LocalPlayer
 
 	self.power:Tick(dt)
@@ -64,7 +68,7 @@ function StickController:Update(dt: number)
 	self.accumulatedTime += dt
 end
 
-function StickController:Equip()
+function Stick:Equip()
 	if self.equipped then
 		return
 	end
@@ -90,7 +94,7 @@ function StickController:Equip()
 	end)
 end
 
-function StickController:Unequip()
+function Stick:Unequip()
 	if not self.equipped then
 		return
 	end
@@ -122,7 +126,7 @@ function StickController:Unequip()
 	end
 end
 
-function StickController:Initialize()
+function Stick:Initialize()
 	self.animator = Animator.New(self)
 	self.input = Input.New(self)
 	self.state_machine = StateMachine.New(require(script.StateMachine.DefaultState).New(self))
@@ -144,10 +148,29 @@ function StickController:Initialize()
 			self:Unequip()
 		end)
 	)
+
+	table.insert(
+		self.connections,
+		RagdollEvent.OnClientEvent:Connect(function(power: number, velocity: Vector3, duration: number, shove: boolean)
+			print("LOLLLL", power, velocity, duration)
+
+			self.momentum.bodyVelocity.Velocity = velocity
+
+			self.isHit = time() + duration
+		end)
+	)
 end
 
-function StickController:Destroy()
-	print("Destroyed StickController")
+function Stick:IsHit()
+	return time() < self.isHit
+end
+
+function Stick:HasPuck()
+	return self.hasPuck
+end
+
+function Stick:Destroy()
+	print("Destroyed Stick")
 	self:Unequip()
 	DisconnectAndClear(self.connections)
 	self.animator:Destroy()
@@ -159,4 +182,4 @@ function StickController:Destroy()
 	self.momentum:Destroy()
 end
 
-return StickController
+return Stick

@@ -10,10 +10,10 @@ local SlapShotState = {}
 
 SlapShotState.__index = SlapShotState
 
-function SlapShotState.New(stickController)
+function SlapShotState.New(ctx)
 	local self = {
 		name = "SlapShotState",
-		stickController = stickController,
+		ctx = ctx,
 		timeElapsed = 0,
 		canCollect = false,
 		canDropOthersPuck = false,
@@ -26,14 +26,14 @@ end
 
 function SlapShotState:Enter()
 	CollectController:Drop()
-	local animator = self.stickController.animator
+	local animator = self.ctx.animator
 	animator:PlayAnimationByName("SlapWind1", 0.3)
 
-	self.stickController.customLockController:SetTorquePower(2000)
-	self.stickController.customLockController:ForceMouseLock(true)
+	self.ctx.customLockController:SetTorquePower(2000)
+	self.ctx.customLockController:ForceMouseLock(true)
 
-	self.stickController.movementDisabled = true
-	self.stickController.humanoid.WalkSpeed = 16
+	self.ctx.movementDisabled = true
+	self.ctx.humanoid.WalkSpeed = 16
 
 	PHASE_1 = false
 	PHASE_2 = false
@@ -41,8 +41,13 @@ function SlapShotState:Enter()
 end
 
 function SlapShotState:Tick(dt: number)
-	local animator = self.stickController.animator
-	local commands = self.stickController.input.commands
+	local animator = self.ctx.animator
+	local commands = self.ctx.input.commands
+
+	if self.ctx:IsHit() then
+		self.ctx.state_machine:ChangeState(self.ctx.state_machine.states.DefaultState.New(self.ctx))
+		return
+	end
 
 	if self.timeElapsed > 0.3 and not PHASE_1 and not SHOT then
 		PHASE_1 = true
@@ -55,16 +60,14 @@ function SlapShotState:Tick(dt: number)
 	end
 
 	if self.timeElapsed > 0.3 and not commands.SlapShot and not SHOT then
-		SHOT = tick()
+		SHOT = time()
 		animator:StopAnimationByName("SlapWind1", 0.1)
 		animator:StopAnimationByName("SlapWind2", 0.1)
 		animator:PlayAnimationByName("SlapShot", 0.1)
 	end
 
-	if SHOT and tick() - SHOT > 0.45 then
-		self.stickController.state_machine:ChangeState(
-			self.stickController.state_machine.states.DefaultState.New(self.stickController)
-		)
+	if SHOT and time() - SHOT > 0.45 then
+		self.ctx.state_machine:ChangeState(self.ctx.state_machine.states.DefaultState.New(self.ctx))
 		return
 	end
 
@@ -72,23 +75,23 @@ function SlapShotState:Tick(dt: number)
 end
 
 function SlapShotState:Exit()
-	local animator = self.stickController.animator
+	local animator = self.ctx.animator
 	animator:StopAnimationByName("SlapWind1", Constants.FADE_TIME)
 	animator:StopAnimationByName("SlapWind2", Constants.FADE_TIME)
 	animator:StopAnimationByName("SlapShot", Constants.FADE_TIME)
-	local input = self.stickController.input
+	local input = self.ctx.input
 	input:DisableCommand("SlapShot")
 	input:DisableCommand("DropPuck")
 
-	self.stickController.movementDisabled = false
+	self.ctx.movementDisabled = false
 
-	self.stickController.customLockController:ResetTorquePower()
-	self.stickController.customLockController:ForceMouseLock(false)
+	self.ctx.customLockController:ResetTorquePower()
+	self.ctx.customLockController:ForceMouseLock(false)
 end
 
 function SlapShotState:Destroy()
 	self.name = nil
-	self.stickController = nil
+	self.ctx = nil
 	self.timeElapsed = nil
 	self.canCollect = nil
 	self.canDropOthersPuck = nil

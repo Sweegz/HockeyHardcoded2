@@ -1,9 +1,9 @@
 local Animator = {}
 Animator.__index = Animator
 
-function Animator.New(stickController)
+function Animator.New(ctx)
 	local self = {
-		stickController = stickController,
+		ctx = ctx,
 		enabled = false,
 		loadedAnimations = false,
 		animationTracks = {},
@@ -58,9 +58,9 @@ function Animator:LoadAnimations()
 
 	self.loadedAnimations = true
 
-	local animationsFolder = self.stickController.tool.Animations
+	local animationsFolder = self.ctx.tool.Animations
 	-- This should only be called when the blaster has been equipped
-	local humanoid = self.stickController.tool.Parent:FindFirstChildOfClass("Humanoid")
+	local humanoid = self.ctx.tool.Parent:FindFirstChildOfClass("Humanoid")
 	assert(humanoid, "Tool is not equipped")
 	local animator = humanoid.Animator
 

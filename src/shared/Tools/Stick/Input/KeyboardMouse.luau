@@ -6,7 +6,7 @@ local doubleClickTime = 0.25
 -- For inputs that can occur between frames
 function KeyboardMouse.InputBegan(input: InputObject, commands)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 then
-		commands.ChargePower = tick()
+		commands.ChargePower = time()
 	end
 end
 
@@ -20,92 +20,92 @@ end
 -- For inputs that can occur at a fixed rate
 function KeyboardMouse.InputBeganFixed(input: InputObject, commands)
 	if input.KeyCode == Enum.KeyCode.Space then
-		commands.Aim = tick()
+		commands.Aim = time()
 	end
 
 	if input.KeyCode == Enum.KeyCode.F then
-		commands.GlideLeft = tick()
+		commands.GlideLeft = time()
 	end
 
 	if input.KeyCode == Enum.KeyCode.G then
-		commands.GlideRight = tick()
+		commands.GlideRight = time()
 	end
 
 	if input.KeyCode == Enum.KeyCode.Space then
-		commands.RaiseHand = tick()
+		commands.RaiseHand = time()
 	end
 
 	if input.KeyCode == Enum.KeyCode.Q then
-		commands.Shove = tick()
+		commands.Shove = time()
 	end
 
 	if input.KeyCode == Enum.KeyCode.R then
-		commands.HighTip = tick()
+		commands.HighTip = time()
 	end
 
 	if input.KeyCode == Enum.KeyCode.E then
-		commands.LowTip = tick()
+		commands.LowTip = time()
 	end
 
 	if input.KeyCode == Enum.KeyCode.X then
-		commands.LyingBlock = tick()
+		commands.LyingBlock = time()
 	end
 
 	if input.KeyCode == Enum.KeyCode.C then
-		commands.KneeBlock = tick()
+		commands.KneeBlock = time()
 	end
 
 	if input.KeyCode == Enum.KeyCode.V then
-		commands.StandBlock = tick()
+		commands.StandBlock = time()
 	end
 
 	if input.KeyCode == Enum.KeyCode.X then
-		commands.LyingBlock = tick()
+		commands.LyingBlock = time()
 	end
 
 	if input.KeyCode == Enum.KeyCode.Z then
-		commands.SlapShot = tick()
+		commands.SlapShot = time()
 	end
 
 	if input.KeyCode == Enum.KeyCode.Z then
-		commands.DropPuck = tick()
+		commands.DropPuck = time()
 	end
 
 	if input.KeyCode == Enum.KeyCode.Q then
-		commands.Fake = tick()
+		commands.Fake = time()
 	end
 
 	if input.KeyCode == Enum.KeyCode.E then
-		commands.Chip = tick()
+		commands.Chip = time()
 	end
 
 	if input.KeyCode == Enum.KeyCode.LeftShift then
-		commands.Sprint = tick()
+		commands.Sprint = time()
 	end
 
 	if input.UserInputType == Enum.UserInputType.MouseButton1 then
-		local clickTime = tick()
+		local clickTime = time()
 		if (clickTime - lastClickTime) < doubleClickTime then
-			commands.PokeCheck = tick()
+			commands.PokeCheck = time()
 		end
 		lastClickTime = clickTime
 	end
 
 	-- Move Direction --
 	if input.KeyCode == Enum.KeyCode.W then
-		commands.MoveForward = tick()
+		commands.MoveForward = time()
 	end
 
 	if input.KeyCode == Enum.KeyCode.A then
-		commands.MoveLeft = tick()
+		commands.MoveLeft = time()
 	end
 
 	if input.KeyCode == Enum.KeyCode.S then
-		commands.MoveBackward = tick()
+		commands.MoveBackward = time()
 	end
 
 	if input.KeyCode == Enum.KeyCode.D then
-		commands.MoveRight = tick()
+		commands.MoveRight = time()
 	end
 	-------------------
 end

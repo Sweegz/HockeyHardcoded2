@@ -8,9 +8,9 @@ local LocalPlayer = Players.LocalPlayer
 
 Power.__index = Power
 
-function Power.New(stickController)
+function Power.New(ctx)
 	local self = {
-		stickController = stickController,
+		ctx = ctx,
 		enabled = false,
 		chargeValue = 0,
 		holdStartTime = 0,
@@ -30,13 +30,9 @@ function Power:Release(chargeValue: number)
 	local owner = PuckController:GetOwner()
 
 	if owner == LocalPlayer then
-		self.stickController.state_machine:ChangeState(
-			self.stickController.state_machine.states.ShotState.New(self.stickController)
-		)
+		self.ctx.state_machine:ChangeState(self.ctx.state_machine.states.ShotState.New(self.ctx))
 	elseif chargeValue > 30 then
-		self.stickController.state_machine:ChangeState(
-			self.stickController.state_machine.states.CheckState.New(self.stickController)
-		)
+		self.ctx.state_machine:ChangeState(self.ctx.state_machine.states.CheckState.New(self.ctx))
 	end
 
 	self.holdStartTime = 0
@@ -57,14 +53,14 @@ function Power:Tick(dt)
 		return
 	end
 
-	local state = self.stickController.state_machine.state
+	local state = self.ctx.state_machine.state
 
 	if not state.canCharge then
 		self.holdStartTime = 0
 		return
 	end
 
-	local commands = self.stickController.input.commands
+	local commands = self.ctx.input.commands
 
 	if commands.ChargePower and self.holdStartTime == 0 then
 		self.holdStartTime = time()

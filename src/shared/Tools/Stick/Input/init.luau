@@ -36,9 +36,9 @@ end
 local Input = {}
 Input.__index = Input
 
-function Input.New(stickController)
+function Input.New(ctx)
 	local self = {
-		stickController = stickController,
+		ctx = ctx,
 		connections = {},
 		enabled = false,
 		commands = getCommands(),

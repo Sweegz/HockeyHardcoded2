@@ -6,10 +6,10 @@ local CheckState = {}
 
 CheckState.__index = CheckState
 
-function CheckState.New(stickController)
+function CheckState.New(ctx)
 	local self = {
 		name = "CheckState",
-		stickController = stickController,
+		ctx = ctx,
 		movementSpeedMultiplier = 0,
 		timeElapsed = 0,
 		canCollect = true,
@@ -24,23 +24,23 @@ end
 local FADE_TIME = 0.2
 
 function CheckState:Enter()
-	self.stickController.animator:PlayAnimationByName("Check", FADE_TIME)
+	self.ctx.animator:PlayAnimationByName("Check", FADE_TIME)
 
-	self.stickController.animator:StopAnimationByName("Idle", FADE_TIME)
-	self.stickController.animator:StopAnimationByName("Left", FADE_TIME)
-	self.stickController.animator:StopAnimationByName("Right", FADE_TIME)
+	self.ctx.animator:StopAnimationByName("Idle", FADE_TIME)
+	self.ctx.animator:StopAnimationByName("Left", FADE_TIME)
+	self.ctx.animator:StopAnimationByName("Right", FADE_TIME)
 
-	local input = self.stickController.input
+	local input = self.ctx.input
 	input:DisableCommand("ChargePower")
 
-	local power = self.stickController.power.chargeValue / 2
+	local power = self.ctx.power.chargeValue / 2
 
-	local humanoid = self.stickController.humanoid
-	local momentum = self.stickController.momentum
-	self.stickController.extended = false
+	local humanoid = self.ctx.humanoid
+	local momentum = self.ctx.momentum
+	self.ctx.extended = false
 
 	--[[ Optional (changes stick gameplay)
-	local input = self.stickController.input
+	local input = self.ctx.input
 	input:DisableCommand("GlideRight")
 	input:DisableCommand("GlideLeft")
 	--]]
@@ -107,8 +107,8 @@ function CheckState:Enter()
 end
 
 function CheckState:Tick(dt: number)
-	local humanoid = self.stickController.humanoid
-	local momentum = self.stickController.momentum
+	local humanoid = self.ctx.humanoid
+	local momentum = self.ctx.momentum
 	local moveDirection = humanoid.MoveDirection
 
 	if self.timeElapsed < 0.5 then
@@ -124,9 +124,7 @@ function CheckState:Tick(dt: number)
 	end
 
 	if self.timeElapsed > 0.75 then
-		self.stickController.state_machine:ChangeState(
-			self.stickController.state_machine.states.DefaultState.New(self.stickController)
-		)
+		self.ctx.state_machine:ChangeState(self.ctx.state_machine.states.DefaultState.New(self.ctx))
 		return
 	end
 
@@ -134,12 +132,12 @@ function CheckState:Tick(dt: number)
 end
 
 function CheckState:Exit()
-	self.stickController.animator:StopAnimationByName("Check", Constants.FADE_TIME)
+	self.ctx.animator:StopAnimationByName("Check", Constants.FADE_TIME)
 end
 
 function CheckState:Destroy()
 	self.name = nil
-	self.stickController = nil
+	self.ctx = nil
 	self.movementSpeedMultiplier = nil
 	self.timeElapsed = nil
 	self.canCollect = nil

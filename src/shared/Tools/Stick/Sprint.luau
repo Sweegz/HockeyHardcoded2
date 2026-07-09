@@ -6,9 +6,9 @@ local Sprint = {}
 
 Sprint.__index = Sprint
 
-function Sprint.New(stickController)
+function Sprint.New(ctx)
 	local self = {
-		stickController = stickController,
+		ctx = ctx,
 		enabled = false,
 	}
 	setmetatable(self, Sprint)
@@ -25,13 +25,13 @@ function Sprint:Tick(_dt: number)
 		return
 	end
 
-	local input = self.stickController.input
-	local state = self.stickController.state_machine.state
+	local input = self.ctx.input
+	local state = self.ctx.state_machine.state
 
 	local movingForward = input.commands.MoveForward -- Add (or input.commands.MoveRight or input.commands.MoveLeft) for more flexible gameplay
 	local movingBackward = input.commands.MoveBackward
 
-	local movementDisabled = self.stickController.movementDisabled
+	local movementDisabled = self.ctx.movementDisabled
 
 	if
 		StaminaController:CanSprint()
@@ -40,7 +40,7 @@ function Sprint:Tick(_dt: number)
 		and (movingForward and not movingBackward)
 	then
 		StaminaController:SetBurning(true)
-		self.stickController.humanoid.WalkSpeed = Constants.SPRINTSPEED
+		self.ctx.humanoid.WalkSpeed = Constants.SPRINTSPEED
 	else
 		if not StaminaController:CanSprint() or movingBackward then -- Set to (movingForward and not movingBackward) for more flexible gameplay
 			input:DisableCommand("Sprint")
@@ -48,7 +48,7 @@ function Sprint:Tick(_dt: number)
 
 		StaminaController:SetBurning(false)
 		if not movementDisabled then
-			self.stickController.humanoid.WalkSpeed = Constants.WALKSPEED
+			self.ctx.humanoid.WalkSpeed = Constants.WALKSPEED
 		end
 	end
 end

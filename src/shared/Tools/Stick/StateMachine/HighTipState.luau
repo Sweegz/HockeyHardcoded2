@@ -4,10 +4,10 @@ local HighTipState = {}
 
 HighTipState.__index = HighTipState
 
-function HighTipState.New(stickController)
+function HighTipState.New(ctx)
 	local self = {
 		name = "HighTipState",
-		stickController = stickController,
+		ctx = ctx,
 		timeElapsed = 0,
 		canCollect = false,
 		canDropOthersPuck = false,
@@ -19,21 +19,17 @@ function HighTipState.New(stickController)
 end
 
 function HighTipState:Enter()
-	self.stickController.animator:PlayAnimationByName("HighTip", Constants.FADE_TIME)
+	self.ctx.animator:PlayAnimationByName("HighTip", Constants.FADE_TIME)
 end
 
 function HighTipState:Tick(dt: number)
-	if self.stickController.hasPuck then
-		self.stickController.state_machine:ChangeState(
-			self.stickController.state_machine.states.DefaultState.New(self.stickController)
-		)
+	if self.ctx:HasPuck() or self.ctx:IsHit() then
+		self.ctx.state_machine:ChangeState(self.ctx.state_machine.states.DefaultState.New(self.ctx))
 		return
 	end
 
-	if self.timeElapsed > 2 then
-		self.stickController.state_machine:ChangeState(
-			self.stickController.state_machine.states.DefaultState.New(self.stickController)
-		)
+	if self.timeElapsed > 200 then
+		self.ctx.state_machine:ChangeState(self.ctx.state_machine.states.DefaultState.New(self.ctx))
 		return
 	end
 
@@ -41,14 +37,14 @@ function HighTipState:Tick(dt: number)
 end
 
 function HighTipState:Exit()
-	self.stickController.animator:StopAnimationByName("HighTip", Constants.FADE_TIME)
-	local input = self.stickController.input
+	self.ctx.animator:StopAnimationByName("HighTip", Constants.FADE_TIME)
+	local input = self.ctx.input
 	input:DisableCommand("HighTip")
 end
 
 function HighTipState:Destroy()
 	self.name = nil
-	self.stickController = nil
+	self.ctx = nil
 	self.timeElapsed = nil
 	self.canCollect = nil
 	self.canDropOthersPuck = nil

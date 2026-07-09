@@ -16,10 +16,10 @@ local DefaultState = {}
 
 DefaultState.__index = DefaultState
 
-function DefaultState.New(stickController)
+function DefaultState.New(ctx)
 	local self = {
 		name = "DefaultState",
-		stickController = stickController,
+		ctx = ctx,
 		timeElapsed = 0,
 		canCollect = false,
 		canDropOthersPuck = true,
@@ -33,8 +33,8 @@ function DefaultState.New(stickController)
 end
 
 function DefaultState:Enter()
-	local extended = self.stickController.extended
-	local prev = self.stickController.state_machine.previous_state
+	local extended = self.ctx.extended
+	local prev = self.ctx.state_machine.previous_state
 
 	-- If previous state was default or could collect then no need to wait for transition to finish
 	if prev and (prev.canCollect or prev.name == "DefaultState") then
@@ -44,17 +44,17 @@ function DefaultState:Enter()
 	end
 
 	if extended == "Right" then
-		self.stickController.animator:PlayAnimationByName("Right", Constants.FADE_TIME)
-		self.stickController.animator:StopAnimationByName("Left", Constants.FADE_TIME)
-		self.stickController.animator:StopAnimationByName("Idle", Constants.FADE_TIME)
+		self.ctx.animator:PlayAnimationByName("Right", Constants.FADE_TIME)
+		self.ctx.animator:StopAnimationByName("Left", Constants.FADE_TIME)
+		self.ctx.animator:StopAnimationByName("Idle", Constants.FADE_TIME)
 	elseif extended == "Left" then
-		self.stickController.animator:PlayAnimationByName("Left", Constants.FADE_TIME)
-		self.stickController.animator:StopAnimationByName("Right", Constants.FADE_TIME)
-		self.stickController.animator:StopAnimationByName("Idle", Constants.FADE_TIME)
+		self.ctx.animator:PlayAnimationByName("Left", Constants.FADE_TIME)
+		self.ctx.animator:StopAnimationByName("Right", Constants.FADE_TIME)
+		self.ctx.animator:StopAnimationByName("Idle", Constants.FADE_TIME)
 	else
-		self.stickController.animator:PlayAnimationByName("Idle", Constants.FADE_TIME)
-		self.stickController.animator:StopAnimationByName("Left", Constants.FADE_TIME)
-		self.stickController.animator:StopAnimationByName("Right", Constants.FADE_TIME)
+		self.ctx.animator:PlayAnimationByName("Idle", Constants.FADE_TIME)
+		self.ctx.animator:StopAnimationByName("Left", Constants.FADE_TIME)
+		self.ctx.animator:StopAnimationByName("Right", Constants.FADE_TIME)
 	end
 end
 
@@ -63,14 +63,14 @@ function DefaultState:TransitionFinished()
 end
 
 function DefaultState:Tick(dt: number)
-	local commands = self.stickController.input.commands
-	local extended = self.stickController.extended
-	local hasPuck = self.stickController.hasPuck
-	local input = self.stickController.input
+	local commands = self.ctx.input.commands
+	local extended = self.ctx.extended
+	local hasPuck = self.ctx.hasPuck
+	local input = self.ctx.input
 
 	local next_state = nil
 
-	if self:TransitionFinished() then
+	if self:TransitionFinished() and not self.ctx:IsHit() then
 		self.canCollect = true
 
 		if (extended == "Right" and commands.GlideRight) or (extended == "Left" and commands.GlideLeft) then
@@ -96,36 +96,36 @@ function DefaultState:Tick(dt: number)
 		end
 
 		if not extended and not hasPuck then
-			if commands.PokeCheck and commands.PokeCheck > tick() - 0.5 then
-				next_state = self.stickController.state_machine.states.PokeCheckState
+			if commands.PokeCheck and commands.PokeCheck > time() - 0.5 then
+				next_state = self.ctx.state_machine.states.PokeCheckState
 			end
 
 			if commands.HighTip then
-				next_state = self.stickController.state_machine.states.HighTipState
+				next_state = self.ctx.state_machine.states.HighTipState
 			end
 
 			if commands.LowTip then
-				next_state = self.stickController.state_machine.states.LowTipState
+				next_state = self.ctx.state_machine.states.LowTipState
 			end
 
 			if commands.LyingBlock then
-				next_state = self.stickController.state_machine.states.LyingBlockState
+				next_state = self.ctx.state_machine.states.LyingBlockState
 			end
 
 			if commands.StandBlock then
-				next_state = self.stickController.state_machine.states.StandBlockState
+				next_state = self.ctx.state_machine.states.StandBlockState
 			end
 
 			if commands.KneeBlock then
-				next_state = self.stickController.state_machine.states.KneeBlockState
+				next_state = self.ctx.state_machine.states.KneeBlockState
 			end
 
 			if commands.Shove then
-				next_state = self.stickController.state_machine.states.ShoveState
+				next_state = self.ctx.state_machine.states.ShoveState
 			end
 
 			if commands.SlapShot then
-				next_state = self.stickController.state_machine.states.SlapShotState
+				next_state = self.ctx.state_machine.states.SlapShotState
 			end
 		end
 
@@ -137,18 +137,18 @@ function DefaultState:Tick(dt: number)
 		end
 
 		if not extended and commands.RaiseHand then
-			next_state = self.stickController.state_machine.states.RaiseHandState
+			next_state = self.ctx.state_machine.states.RaiseHandState
 		end
 
 		if next_state then
 			if next_state == "Default" then
-				self.stickController.extended = nil
-				self.stickController.state_machine:ChangeState(DefaultState.New(self.stickController))
+				self.ctx.extended = nil
+				self.ctx.state_machine:ChangeState(DefaultState.New(self.ctx))
 			elseif next_state == "Left" or next_state == "Right" then
-				self.stickController.extended = next_state
-				self.stickController.state_machine:ChangeState(DefaultState.New(self.stickController))
+				self.ctx.extended = next_state
+				self.ctx.state_machine:ChangeState(DefaultState.New(self.ctx))
 			else
-				self.stickController.state_machine:ChangeState(next_state.New(self.stickController))
+				self.ctx.state_machine:ChangeState(next_state.New(self.ctx))
 			end
 			return
 		end
@@ -161,7 +161,7 @@ function DefaultState:Exit() end
 
 function DefaultState:Destroy()
 	self.name = nil
-	self.stickController = nil
+	self.ctx = nil
 	self.timeElapsed = nil
 	self.canCollect = nil
 	self.canDropOthersPuck = nil

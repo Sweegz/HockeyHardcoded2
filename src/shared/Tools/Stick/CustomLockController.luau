@@ -22,9 +22,9 @@ local CustomLockController = {}
 
 CustomLockController.__index = CustomLockController
 
-function CustomLockController.New(stickController)
+function CustomLockController.New(ctx)
 	local self = {
-		stickController = stickController,
+		ctx = ctx,
 		enabled = false,
 		MouseLock = false,
 		forcedMouseLock = false,
@@ -40,7 +40,7 @@ function CustomLockController.New(stickController)
 end
 
 function CustomLockController:Tick(dt: number)
-	local humanoid = self.stickController.humanoid
+	local humanoid = self.ctx.humanoid
 	local character = humanoid.Parent
 
 	local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
@@ -111,7 +111,7 @@ function CustomLockController:Disable()
 	self.bodyGyro:Destroy()
 	self.bodyGyro = nil
 
-	self.stickController.humanoid.AutoRotate = true
+	self.ctx.humanoid.AutoRotate = true
 end
 
 function CustomLockController:ForceMouseLock(forced: boolean)
