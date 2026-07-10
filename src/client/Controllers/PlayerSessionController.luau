@@ -17,8 +17,8 @@ function PlayerSessionController:GetPlayerSession(player: Player)
 	return playerSessionChannel:Get(index)
 end
 
-function PlayerSessionController:GetCooldown(player: Player)
-	local index = ("Players.%*.Cooldown"):format(player.UserId)
+function PlayerSessionController:GetCollectCooldown(player: Player)
+	local index = ("Players.%*.CollectCooldown"):format(player.UserId)
 	return playerSessionChannel:Get(index)
 end
 

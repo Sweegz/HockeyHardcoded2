@@ -1,3 +1,4 @@
+local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
@@ -34,6 +35,7 @@ function Stick.New(tool: Tool)
 		accumulatedTime = 0,
 		isHit = time(),
 		movementDisabled = false,
+		ragdolled = false,
 	}
 	setmetatable(self, Stick)
 
@@ -65,6 +67,16 @@ function Stick:Update(dt: number)
 		self.accumulatedTime -= FIXED_RATE
 	end
 
+	if not self:IsHit() and self.ragdolled then
+		self.ragdolled = false
+		task.spawn(function()
+			task.wait(0.25)
+			self.humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
+			self.humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp, true)
+			self.humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+		end)
+	end
+
 	self.accumulatedTime += dt
 end
 
@@ -88,6 +100,21 @@ function Stick:Equip()
 	self.sprint:Enable()
 	self.momentum:Enable()
 	self.customLock:Enable()
+
+	local stickhitbox: BasePart = self.tool:FindFirstChild("ShaftHitbox")
+	stickhitbox:GetPropertyChangedSignal("CollisionGroup"):Connect(function(a)
+		print(stickhitbox.CollisionGroup)
+	end)
+
+	-- ShaftHitbox keeps reverting back to the Stick CollisionGroup unless there's a delay?
+	-- Quick fix: Introduces races conditions of setting the CollisionGroup in functions Equip/Unequip
+	task.delay(0.1, function()
+		for _, descendant in self.tool:GetDescendants() do
+			if descendant:IsA("BasePart") then
+				descendant.CollisionGroup = "ClientStick"
+			end
+		end
+	end)
 
 	self.update_connection = RunService.Heartbeat:Connect(function(dt)
 		self:Update(dt)
@@ -120,6 +147,12 @@ function Stick:Unequip()
 		self.tool.Parent = temp
 	end)
 
+	for _, descendant in self.tool:GetDescendants() do
+		if descendant:IsA("BasePart") then
+			descendant.CollisionGroup = "Default"
+		end
+	end
+
 	if self.update_connection then
 		self.update_connection:Disconnect()
 		self.update_connection = nil
@@ -151,12 +184,42 @@ function Stick:Initialize()
 
 	table.insert(
 		self.connections,
-		RagdollEvent.OnClientEvent:Connect(function(power: number, velocity: Vector3, duration: number, shove: boolean)
-			print("LOLLLL", power, velocity, duration)
-
+		RagdollEvent.OnClientEvent:Connect(function(velocity: Vector3, duration: number, shove: boolean)
+			if not shove then
+				self.humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, true)
+				self.humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp, false)
+				self.humanoid:ChangeState(Enum.HumanoidStateType.Ragdoll)
+			end
 			self.momentum.bodyVelocity.Velocity = velocity
 
+			local character = LocalPlayer.Character
+			if not character then
+				return
+			end
+
+			local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+			if not humanoidRootPart then
+				return
+			end
+
+			--[[local raycastParams = RaycastParams.new()
+			raycastParams.FilterType = Enum.RaycastFilterType.Include
+			raycastParams.FilterDescendantsInstances = {
+				workspace.Boards,
+			}
+
+			self.bodyVelocity.Velocity = velocity
+			local raycastResult = workspace:Raycast(
+				humanoidRootPart.Position,
+				self.bodyVelocity.Velocity * Vector3.new(1, 0, 1),
+				raycastParams
+			)
+			if raycastResult and raycastResult.Distance <= 2 then
+				self.bodyVelocity.MaxForce = Vector3.new(0, 0, 0)
+			end --]]
+
 			self.isHit = time() + duration
+			self.ragdolled = true
 		end)
 	)
 end

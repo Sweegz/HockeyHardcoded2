@@ -44,7 +44,7 @@ function CollectService:Start()
 			return
 		end
 
-		if time() < PlayerSessionService:GetCooldown(player) then
+		if time() < PlayerSessionService:GetCollectCooldown(player) then
 			return
 		end
 
@@ -52,7 +52,7 @@ function CollectService:Start()
 			PuckService:SetOwner(player)
 		elseif owner and owner ~= player then
 			PuckService:DropPuck()
-			PlayerSessionService:SetCooldown(owner, PLAYER_COOLDOWN)
+			PlayerSessionService:SetCollectCooldown(owner, PLAYER_COOLDOWN)
 			AddPuckVelocity(PuckService:GetPuckInstance(), player, owner)
 		end
 	end
@@ -62,7 +62,7 @@ function CollectService:Start()
 
 		if owner == player then
 			PuckService:DropPuck()
-			PlayerSessionService:SetCooldown(owner, PLAYER_COOLDOWN)
+			PlayerSessionService:SetCollectCooldown(owner, PLAYER_COOLDOWN)
 			AddPuckVelocity(PuckService:GetPuckInstance(), player, owner)
 		end
 	end)

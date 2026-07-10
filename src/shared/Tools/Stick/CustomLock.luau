@@ -52,6 +52,13 @@ function CustomLock:Tick(dt: number)
 		self.bodyGyro = CreateBodyGyro(humanoidRootPart)
 	end
 
+	if self.ctx:IsHit() then
+		print("aaa")
+		self.bodyGyro.P = 0
+	else
+		self.bodyGyro.P = BODYGYRO_P
+	end
+
 	local camera = Workspace:FindFirstChild("Camera")
 	if not camera then
 		return

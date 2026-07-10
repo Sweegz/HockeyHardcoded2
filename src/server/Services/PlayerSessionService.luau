@@ -11,7 +11,8 @@ local playerSessionChannel
 local SESSION_DATA_TEMPLATE = {
 	Stamina = 100,
 	Benched = false,
-	Cooldown = 0,
+	CollectCooldown = 0,
+	CheckCooldown = 0,
 	Stats = {},
 }
 
@@ -48,13 +49,23 @@ function PlayerSessionService:GetPlayerSession(player: Player)
 	return playerSessionChannel:Get(path)
 end
 
-function PlayerSessionService:SetCooldown(player: Player, duration: number)
-	local path = ("Players.%*.Cooldown"):format(player.UserId)
+function PlayerSessionService:SetCollectCooldown(player: Player, duration: number)
+	local path = ("Players.%*.CollectCooldown"):format(player.UserId)
 	return playerSessionChannel:Set(path, time() + duration)
 end
 
-function PlayerSessionService:GetCooldown(player: Player)
-	local path = ("Players.%*.Cooldown"):format(player.UserId)
+function PlayerSessionService:GetCollectCooldown(player: Player)
+	local path = ("Players.%*.CollectCooldown"):format(player.UserId)
+	return playerSessionChannel:Get(path)
+end
+
+function PlayerSessionService:SetCheckCooldown(player: Player, duration: number)
+	local path = ("Players.%*.CheckCooldown"):format(player.UserId)
+	return playerSessionChannel:Set(path, time() + duration)
+end
+
+function PlayerSessionService:GetCheckCooldown(player: Player)
+	local path = ("Players.%*.CheckCooldown"):format(player.UserId)
 	return playerSessionChannel:Get(path)
 end
 
