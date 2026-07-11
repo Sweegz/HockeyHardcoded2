@@ -1,10 +1,222 @@
 local CollectionService = game:GetService("CollectionService")
+local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local StarterPlayer = game:GetService("StarterPlayer")
 local Workspace = game:GetService("Workspace")
 local PlayerActionController = require(StarterPlayer.StarterPlayerScripts.Controllers.PlayerActionController)
 local Constants = require(script.Parent.Parent.Constants)
 
+local LocalPlayer = Players.LocalPlayer
+
+local function shove(hitPart: BasePart)
+	local character = LocalPlayer.Character
+	if not character then
+		return
+	end
+
+	local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+	if not humanoidRootPart then
+		return
+	end
+
+	local hitPartParent = hitPart.Parent
+	if not hitPartParent:FindFirstChild("Humanoid") then
+		return
+	end
+
+	local hitPlayer = Players:GetPlayerFromCharacter(hitPartParent)
+	if not hitPlayer then
+		return
+	end
+
+	PlayerActionController:Shove(hitPlayer, hitPart, humanoidRootPart.CFrame.lookVector)
+end
+
+local function shoveCollisionDetection(self)
+	local character = LocalPlayer.Character
+	if not character then
+		return
+	end
+
+	local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+
+	local listOfCharacters = {}
+
+	for _, player: Player in Players:getPlayers() do
+		if player == LocalPlayer then -- or player.Team == LocalPlayer.Team
+			continue
+		end
+
+		table.insert(listOfCharacters, player.Character)
+	end
+
+	while self.shoving do
+		RunService.RenderStepped:Wait()
+		if not humanoidRootPart then
+			return
+		end
+
+		local attackDataList = {}
+		local closestPart = nil
+
+		local tool = self.ctx.tool
+		local shaft = tool:FindFirstChild("ShaftHitbox")
+
+		local humanoidRootPartLookVector = humanoidRootPart.CFrame.lookVector
+		local shaftPositions = {
+			shaft.Position,
+			(shaft.CFrame * CFrame.new(0, -2, 0)).Position,
+			(shaft.CFrame * CFrame.new(0, 2, 0)).Position,
+		}
+
+		for _, shaftPosition in pairs(shaftPositions) do
+			for _, potentialTarget in pairs(listOfCharacters) do
+				if
+					potentialTarget:FindFirstChild("HumanoidRootPart")
+					and potentialTarget:FindFirstChild("Right Arm")
+					and potentialTarget:FindFirstChild("Left Arm")
+					and potentialTarget:FindFirstChild("Stick")
+					and potentialTarget.Stick:FindFirstChild("Shaft")
+				then
+					local unitVectorToTarget = (potentialTarget.HumanoidRootPart.Position - humanoidRootPart.Position).Unit
+					if math.deg((math.acos((humanoidRootPartLookVector.Unit:Dot(unitVectorToTarget))))) < 95 then
+						local magnitudeForward = (shaftPosition - (potentialTarget.HumanoidRootPart.CFrame * CFrame.new(
+							0,
+							0,
+							-0.5
+						)).Position).Magnitude
+						local magnitudeBackward = (shaftPosition - (
+							potentialTarget.HumanoidRootPart.CFrame * CFrame.new(0, 0, 0.5)
+						).Position).Magnitude
+						local magnitudeLeft = (shaftPosition - (potentialTarget.HumanoidRootPart.CFrame * CFrame.new(
+							-1,
+							0,
+							0
+						)).Position).Magnitude
+						local magnitudeRight = (shaftPosition - (potentialTarget.HumanoidRootPart.CFrame * CFrame.new(
+							1,
+							0,
+							0
+						)).Position).Magnitude
+						local magnitudeRightArm = (shaftPosition - potentialTarget["Right Arm"].Position).Magnitude
+						local magnitudeRightArmDown = (shaftPosition - (
+							potentialTarget["Right Arm"].CFrame * CFrame.new(0, -1, 0)
+						).Position).Magnitude
+						local magnitudeLeftArm = (shaftPosition - potentialTarget["Left Arm"].Position).Magnitude
+						local magnitudeLeftArmDown = (shaftPosition - (potentialTarget["Left Arm"].CFrame * CFrame.new(
+							0,
+							-1,
+							0
+						)).Position).Magnitude
+						local magnitudeStickShaft = (shaftPosition - potentialTarget.Stick.ShaftHitbox.Position).Magnitude
+						local magnitudeStickShaftUp = (shaftPosition - (
+							potentialTarget.Stick.ShaftHitbox.CFrame * CFrame.new(0, 2.5, 0)
+						).Position).Magnitude
+						local magnitudeStickShaftDown = (shaftPosition - (
+							potentialTarget.Stick.ShaftHitbox.CFrame * CFrame.new(0, -2.5, 0)
+						).Position).Magnitude
+						if
+							magnitudeForward <= 20
+							and magnitudeBackward <= 20
+							and magnitudeLeft <= 20
+							and magnitudeRight <= 20
+							and magnitudeRightArm <= 20
+							and magnitudeRightArmDown <= 20
+							and magnitudeLeftArm <= 20
+							and magnitudeLeftArmDown <= 20
+							and magnitudeStickShaft <= 20
+							and magnitudeStickShaftUp <= 20
+							and magnitudeStickShaftDown <= 20
+						then
+							table.insert(attackDataList, {
+								magnitudeForward,
+								potentialTarget,
+								3,
+							})
+							table.insert(attackDataList, {
+								magnitudeBackward,
+								potentialTarget,
+								3,
+							})
+							table.insert(attackDataList, {
+								magnitudeLeft,
+								potentialTarget,
+								3,
+							})
+							table.insert(attackDataList, {
+								magnitudeRight,
+								potentialTarget,
+								3,
+							})
+							table.insert(attackDataList, {
+								magnitudeRightArm,
+								potentialTarget,
+								3,
+							})
+							table.insert(attackDataList, {
+								magnitudeRightArmDown,
+								potentialTarget,
+								3,
+							})
+							table.insert(attackDataList, {
+								magnitudeLeftArm,
+								potentialTarget,
+								3,
+							})
+							table.insert(attackDataList, {
+								magnitudeLeftArmDown,
+								potentialTarget,
+								3,
+							})
+							table.insert(attackDataList, {
+								magnitudeStickShaft,
+								potentialTarget,
+								3,
+							})
+							table.insert(attackDataList, {
+								magnitudeStickShaftUp,
+								potentialTarget,
+								3,
+							})
+							table.insert(attackDataList, {
+								magnitudeStickShaftDown,
+								potentialTarget,
+								3,
+							})
+						end
+					end
+				end
+			end
+			if #attackDataList > 0 then
+				table.sort(attackDataList, function(itemA, itemB) --[[ Line: 1803 ]]
+					return itemA[1] < itemB[1]
+				end)
+				if attackDataList[1][1] <= attackDataList[1][3] then
+					local characterModel = attackDataList[1][2]
+					local closestEnemyMagnitude = nil
+					for _, childPart in pairs(characterModel:GetChildren()) do
+						if childPart:IsA("BasePart") then
+							local distanceToPart = (humanoidRootPart.Position - childPart.Position).Magnitude
+							if
+								not closestEnemyMagnitude and distanceToPart <= 3.5
+								or closestEnemyMagnitude and distanceToPart < closestEnemyMagnitude
+							then
+								closestEnemyMagnitude = distanceToPart
+								closestPart = childPart
+							end
+						end
+					end
+					if closestPart then
+						shove(closestPart)
+						return
+					end
+				end
+			end
+		end
+	end
+end
+
+--[[ GetPartsInPart implementation with ShaftHitbox
 local function shove(self)
 	while self.shoving do
 		RunService.RenderStepped:Wait()
@@ -35,7 +247,7 @@ local function shove(self)
 			end
 		end
 	end
-end
+end--]]
 
 local ShoveState = {}
 
@@ -67,7 +279,7 @@ function ShoveState:Tick(dt: number)
 		if not self.shoving then
 			self.shoving = true
 			task.spawn(function()
-				shove(self)
+				shoveCollisionDetection(self)
 			end)
 		end
 	end
