@@ -64,6 +64,8 @@ function Momentum:Tick(dt: number)
 		return
 	end
 
+	--print(humanoidRootPart.AssemblyLinearVelocity.Magnitude)
+
 	local bodyVelocity = self.bodyVelocity
 	local moveDirection = humanoid.MoveDirection
 	local extended = self.ctx.extended ~= nil
@@ -180,7 +182,7 @@ RunService.PostSimulation:Connect(function()
 
 		--humanoidRootPart.AssemblyLinearVelocity = humanoidRootPart.AssemblyLinearVelocity * Vector3.new(1, 0, 1)
 
-		-- KEEPS THE PLAYER UPRIGHT 
+		-- KEEPS THE PLAYER UPRIGHT
 		humanoidRootPart.CFrame = CFrame.new(pos.X, pos.Y, pos.Z) * CFrame.Angles(0, y, 0)
 	end
 
@@ -191,9 +193,9 @@ RunService.PostSimulation:Connect(function()
 		local pos = primaryPart.Position
 		local x, y, z = primaryPart.CFrame:ToEulerAnglesYXZ()
 
-		-- STICK CANT HAVE UPWARDS VELOCITY 
+		-- STICK CANT HAVE UPWARDS VELOCITY
 		if primaryPart.AssemblyLinearVelocity.Y > 0 then
-			primaryPart.AssemblyLinearVelocity = primaryPart.AssemblyLinearVelocity * Vector3.new(1, 0, 1)
+			--primaryPart.AssemblyLinearVelocity = primaryPart.AssemblyLinearVelocity * Vector3.new(1, 0, 1)
 		end
 
 		local cf = primaryPart.CFrame
@@ -204,7 +206,7 @@ RunService.PostSimulation:Connect(function()
 		if flatLook.Magnitude > 0 then
 			local yawOnlyWorld = CFrame.lookAt(Vector3.zero, flatLook.Unit)
 
-			--  WELD BLADE HITBOX PART ABOVE BLADE NEGATING ORIENTATION 
+			--  WELD BLADE HITBOX PART ABOVE BLADE NEGATING ORIENTATION
 			weld.C0 = primaryPart.CFrame:ToObjectSpace(
 				CFrame.new(primaryPart.Position + Vector3.new(0, 1.6, 0)) * yawOnlyWorld
 			)

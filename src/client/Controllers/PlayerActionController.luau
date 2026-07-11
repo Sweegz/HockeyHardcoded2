@@ -24,8 +24,8 @@ function PlayerActionController:Shoot(power: number, flags: {})
 	ShootEvent:FireServer(power, mouseHit, puckPosition, flags)
 end
 
-function PlayerActionController:Shove(hit: BasePart, velocity: Vector3, direction: Vector3)
-	ShoveEvent:FireServer(hit, velocity, direction)
+function PlayerActionController:Shove(hitPlayer: Player, hitPart: BasePart, lookDirection: Vector3)
+	ShoveEvent:FireServer(hitPlayer, hitPart, lookDirection)
 end
 
 function PlayerActionController:Check(hitPlayer: Player, hitPart, movementDirection: Vector3, power: number)

@@ -3,7 +3,9 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local StarterPlayer = game:GetService("StarterPlayer")
+local Workspace = game:GetService("Workspace")
 
+local MouseLockController = require(StarterPlayer.StarterPlayerScripts.Controllers.MouseLockController)
 local PuckController = require(StarterPlayer.StarterPlayerScripts.Controllers.PuckController)
 local Animator = require(script.Animator)
 local Input = require(script.Input)
@@ -11,7 +13,7 @@ local StateMachine = require(script.StateMachine)
 local Power = require(script.Power)
 local Collect = require(script.Collect)
 local Constants = require(script.Constants)
-local CustomLock = require(script.CustomLock)
+--local CustomLock = require(script.CustomLock)
 local Sprint = require(script.Sprint)
 local Momentum = require(script.Momentum)
 
@@ -36,6 +38,7 @@ function Stick.New(tool: Tool)
 		isHit = time(),
 		movementDisabled = false,
 		ragdolled = false,
+		customLock = MouseLockController,
 	}
 	setmetatable(self, Stick)
 
@@ -61,7 +64,6 @@ function Stick:Update(dt: number)
 		self.collect:Tick(deltaTime)
 		self.sprint:Tick(deltaTime)
 		self.momentum:Tick(deltaTime)
-		self.customLock:Tick(deltaTime)
 
 		-- Reset time
 		self.accumulatedTime -= FIXED_RATE
@@ -74,6 +76,8 @@ function Stick:Update(dt: number)
 			self.humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
 			self.humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp, true)
 			self.humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+			self.humanoid.PlatformStand = false
+			self.customLock:ResetTorquePower()
 		end)
 	end
 
@@ -99,12 +103,6 @@ function Stick:Equip()
 	self.collect:Enable()
 	self.sprint:Enable()
 	self.momentum:Enable()
-	self.customLock:Enable()
-
-	local stickhitbox: BasePart = self.tool:FindFirstChild("ShaftHitbox")
-	stickhitbox:GetPropertyChangedSignal("CollisionGroup"):Connect(function(a)
-		print(stickhitbox.CollisionGroup)
-	end)
 
 	-- ShaftHitbox keeps reverting back to the Stick CollisionGroup unless there's a delay?
 	-- Quick fix: Introduces races conditions of setting the CollisionGroup in functions Equip/Unequip
@@ -119,6 +117,12 @@ function Stick:Equip()
 	self.update_connection = RunService.Heartbeat:Connect(function(dt)
 		self:Update(dt)
 	end)
+
+	self.humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
+	self.humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall, false)
+
+	self.humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp, true)
+	self.humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
 end
 
 function Stick:Unequip()
@@ -138,7 +142,6 @@ function Stick:Unequip()
 	self.collect:Disable()
 	self.sprint:Disable()
 	self.momentum:Disable()
-	self.customLock:Disable()
 
 	task.spawn(function()
 		local temp = self.tool.Parent
@@ -167,7 +170,6 @@ function Stick:Initialize()
 	self.collect = Collect.New(self)
 	self.sprint = Sprint.New(self)
 	self.momentum = Momentum.New(self)
-	self.customLock = CustomLock.New(self)
 
 	table.insert(
 		self.connections,
@@ -186,9 +188,12 @@ function Stick:Initialize()
 		self.connections,
 		RagdollEvent.OnClientEvent:Connect(function(velocity: Vector3, duration: number, shove: boolean)
 			if not shove then
+				self.humanoid.PlatformStand = true
 				self.humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, true)
 				self.humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp, false)
 				self.humanoid:ChangeState(Enum.HumanoidStateType.Ragdoll)
+				self.humanoid:ChangeState(Enum.HumanoidStateType.Ragdoll)
+				self.humanoid.PlatformStand = true
 			end
 			self.momentum.bodyVelocity.Velocity = velocity
 
@@ -202,22 +207,9 @@ function Stick:Initialize()
 				return
 			end
 
-			--[[local raycastParams = RaycastParams.new()
-			raycastParams.FilterType = Enum.RaycastFilterType.Include
-			raycastParams.FilterDescendantsInstances = {
-				workspace.Boards,
-			}
+			self.customLock:SetTorquePower(0)
 
-			self.bodyVelocity.Velocity = velocity
-			local raycastResult = workspace:Raycast(
-				humanoidRootPart.Position,
-				self.bodyVelocity.Velocity * Vector3.new(1, 0, 1),
-				raycastParams
-			)
-			if raycastResult and raycastResult.Distance <= 2 then
-				self.bodyVelocity.MaxForce = Vector3.new(0, 0, 0)
-			end --]]
-
+			print("Hit")
 			self.isHit = time() + duration
 			self.ragdolled = true
 		end)

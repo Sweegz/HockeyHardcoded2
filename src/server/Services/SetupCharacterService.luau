@@ -32,10 +32,11 @@ function SetupCharacter(character: Instance)
 	--HumanoidRootPart.CustomPhysicalProperties = PhysicalProperties.new(3, 0.3, 0.5)
 
 	character.ChildAdded:Connect(function(child)
+		task.wait(0.5)
 		character["Right Arm"].CanCollide = true
 		character["Left Arm"].CanCollide = true
 		character["Head"].CanCollide = true
-		character["Torso"].CanCollide = true
+		--character["Torso"].CanCollide = true
 
 		local BodyAttach = child:FindFirstChild("BodyAttach")
 		if child:IsA("Tool") and BodyAttach then
@@ -80,6 +81,30 @@ function SetupCharacter(character: Instance)
 			end
 		end)
 	end
+
+	local ControllerManager = character:WaitForChild("ControllerManager")
+
+	if ControllerManager then
+		local GroundController: GroundController = ControllerManager:WaitForChild("GroundController")
+		if GroundController then
+			-- Double the move and turn speeds
+			--GroundController.MoveSpeedFactor *= 2
+			--GroundController.TurnSpeedFactor *= 2
+			-- Add slight acceleration and deceleration
+			--GroundController.AccelerationTime = 0
+			--GroundController.DecelerationTime = 0
+			GroundController.Friction = 2
+			GroundController.FrictionWeight = 100
+			GroundController.MoveSpeedFactor = 1
+			GroundController.TurnSpeedFactor = 1
+			GroundController.BalanceMaxTorque = 1000000
+			GroundController.BalanceSpeed = 10
+			--GroundController.BalanceRigidityEnabled = true
+			print("Set GroundController")
+		end
+	end
+
+	--humanoid.EvaluateStateMachine = true
 end
 
 local SetupCharacterService = {}
