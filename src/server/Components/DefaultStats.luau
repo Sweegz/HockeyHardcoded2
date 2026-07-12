@@ -7,6 +7,6 @@ return {
 
 	Settings = {
 		["Music"] = true,
-		["Sound Effects"] = true,
+		["Sound Effects"] = false,
 	},
 }

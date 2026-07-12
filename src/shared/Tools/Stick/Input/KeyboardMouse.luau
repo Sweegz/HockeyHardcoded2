@@ -8,12 +8,36 @@ function KeyboardMouse.InputBegan(input: InputObject, commands)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 then
 		commands.ChargePower = time()
 	end
+
+	if input.KeyCode == Enum.KeyCode.Q then
+		commands.Fake = time()
+	end
+
+	if input.KeyCode == Enum.KeyCode.E then
+		commands.Chip = time()
+	end
+
+	if input.KeyCode == Enum.KeyCode.X then
+		commands.WristShot = time()
+	end
 end
 
 -- For inputs that can occur between frames
 function KeyboardMouse.InputEnded(input: InputObject, commands)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 then
 		commands.ChargePower = false
+	end
+
+	if input.KeyCode == Enum.KeyCode.Q then
+		commands.Fake = false
+	end
+
+	if input.KeyCode == Enum.KeyCode.E then
+		commands.Chip = false
+	end
+
+	if input.KeyCode == Enum.KeyCode.X then
+		commands.WristShot = false
 	end
 end
 
@@ -69,14 +93,6 @@ function KeyboardMouse.InputBeganFixed(input: InputObject, commands)
 
 	if input.KeyCode == Enum.KeyCode.Z then
 		commands.DropPuck = time()
-	end
-
-	if input.KeyCode == Enum.KeyCode.Q then
-		commands.Fake = time()
-	end
-
-	if input.KeyCode == Enum.KeyCode.E then
-		commands.Chip = time()
 	end
 
 	if input.KeyCode == Enum.KeyCode.LeftShift then
@@ -162,14 +178,6 @@ function KeyboardMouse.InputEndedFixed(input: InputObject, commands)
 
 	if input.KeyCode == Enum.KeyCode.X then
 		commands.LyingBlock = false
-	end
-
-	if input.KeyCode == Enum.KeyCode.Q then
-		commands.Fake = false
-	end
-
-	if input.KeyCode == Enum.KeyCode.E then
-		commands.Chip = false
 	end
 
 	if input.KeyCode == Enum.KeyCode.LeftShift then

@@ -28,7 +28,7 @@ function HighTipState:Tick(dt: number)
 		return
 	end
 
-	if self.timeElapsed > 200 then
+	if self.timeElapsed > 2 then
 		self.ctx.stateMachine:ChangeState(self.ctx.stateMachine.states.DefaultState.New(self.ctx))
 		return
 	end

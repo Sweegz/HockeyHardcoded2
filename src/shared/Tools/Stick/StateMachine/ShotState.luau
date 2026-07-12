@@ -20,21 +20,21 @@ function ShotState.New(ctx)
 	return self
 end
 
-local function GetAnimationName(power, extended)
+local function GetAnimationName(power, extended, isWristShot)
 	if extended == "Right" then
-		if power < 50 then
+		if power < 50 or isWristShot then
 			return "RightWrist"
 		else
 			return "RightSlap"
 		end
 	elseif extended == "Left" then
-		if power < 50 then
+		if power < 50 or isWristShot then
 			return "LeftWrist"
 		else
 			return "LeftSlap"
 		end
 	else
-		if power < 50 then
+		if power < 50 or isWristShot then
 			return "Wrist"
 		else
 			return "Slap"
@@ -44,11 +44,13 @@ end
 
 function ShotState:Enter()
 	local extended = self.ctx.extended
-	self.power = self.ctx.power.chargeValue
-	self.animation_name = GetAnimationName(self.power, extended)
-	self.track = self.ctx.animator:GetAnimationTrack(self.animation_name)
-
 	local commands = self.ctx.input.commands
+	self.power = self.ctx.power.chargeValue
+
+	local isWristShot = self.ctx.stateMachine.previous_state.timeElapsed <= 0.25 or commands.WristShot
+
+	self.animation_name = GetAnimationName(self.power, extended, isWristShot)
+	self.track = self.ctx.animator:GetAnimationTrack(self.animation_name)
 
 	task.spawn(function()
 		self.connection = self.track:GetMarkerReachedSignal("Shoot"):Once(function()

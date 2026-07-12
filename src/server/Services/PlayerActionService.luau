@@ -1,6 +1,8 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
+local SoundService = game:GetService("SoundService")
+local Workspace = game:GetService("Workspace")
 
 local PuckService = require(ServerScriptService.Services.PuckService)
 local PlayerSessionService = require(ServerScriptService.Services.PlayerSessionService)
@@ -11,6 +13,10 @@ local ShootEvent = Net:FindFirstChild("Shoot") :: RemoteEvent
 local ShoveEvent = Net:FindFirstChild("Shove") :: RemoteEvent
 local RagdollEvent = Net:FindFirstChild("Ragdoll") :: RemoteEvent
 local CheckEvent = Net:FindFirstChild("Check") :: RemoteEvent
+
+local sound_folder = SoundService.SFX:FindFirstChild("Shots")
+local SHOT_SOUND = sound_folder:FindFirstChild("Shot")
+local SLAPSHOT_SOUND = sound_folder:FindFirstChild("Slapshot")
 
 local PlayerActionService = {}
 
@@ -40,10 +46,29 @@ function PlayerActionService:Start()
 				return
 			end
 
+			local Sound = nil
+
+			if power >= 50 then
+				Sound = SLAPSHOT_SOUND:Clone()
+			else
+				Sound = SHOT_SOUND:Clone()
+			end
+
+			if Sound then
+				Sound.Parent = puck
+				Sound:Play()
+				Sound.Parent = puck
+				Sound.Ended:Once(function()
+					Sound:Destroy()
+				end)
+			end
+
+			puck.Position = puckPosition
+
 			PuckService:DropPuck()
 			Shots.apply_velocity(puck, velocity)
 			Shots.apply_force(puck, force, time)
-			PlayerSessionService:SetCollectCooldown(player, 2)
+			PlayerSessionService:SetCollectCooldown(player, 1.5)
 		end
 	)
 
@@ -61,14 +86,7 @@ function PlayerActionService:Start()
 				PuckService:DropPuck()
 			end
 
-			local character = hitPlayer.Character
-			if character then
-				local hitHumanoid = character:FindFirstChild("Humanoid")
-				if hitHumanoid then
-				end
-			end
-
-			PlayerSessionService:SetCollectCooldown(hitPlayer, 2)
+			PlayerSessionService:SetCollectCooldown(hitPlayer, 1.5)
 			PlayerSessionService:SetCheckCooldown(player, 0.5)
 
 			local output = ("%* shoved %*'s %* with %* power"):format(player.Name, hitPlayer.Name, hitPart.Name, 20)
@@ -90,7 +108,7 @@ function PlayerActionService:Start()
 				PuckService:DropPuck()
 			end
 
-			PlayerSessionService:SetCollectCooldown(hitPlayer, 2)
+			PlayerSessionService:SetCollectCooldown(hitPlayer, 1.5)
 			PlayerSessionService:SetCheckCooldown(player, 0.5)
 
 			local output = ("%* hit %*'s %* with %* power"):format(player.Name, hitPlayer.Name, hitPart.Name, power)

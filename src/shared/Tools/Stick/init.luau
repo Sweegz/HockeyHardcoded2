@@ -103,6 +103,7 @@ function Stick:Equip()
 	self.collect:Enable()
 	self.sprint:Enable()
 	self.momentum:Enable()
+	self.groundController.MoveSpeedFactor = 0
 
 	-- ShaftHitbox keeps reverting back to the Stick CollisionGroup unless there's a delay?
 	-- Quick fix: Introduces races conditions of setting the CollisionGroup in functions Equip/Unequip
@@ -142,6 +143,7 @@ function Stick:Unequip()
 	self.collect:Disable()
 	self.sprint:Disable()
 	self.momentum:Disable()
+	self.groundController.MoveSpeedFactor = 1
 
 	task.spawn(function()
 		local temp = self.tool.Parent
@@ -170,6 +172,7 @@ function Stick:Initialize()
 	self.collect = Collect.New(self)
 	self.sprint = Sprint.New(self)
 	self.momentum = Momentum.New(self)
+	self.groundController = LocalPlayer.Character:WaitForChild("ControllerManager"):WaitForChild("GroundController")
 
 	table.insert(
 		self.connections,
