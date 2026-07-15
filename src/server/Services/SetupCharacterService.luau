@@ -63,6 +63,10 @@ function SetupCharacter(character: Instance)
 			child.CollisionGroup = "Character"
 		end
 
+		if child.Name == "Right Leg" or child.Name == "Left Leg" then
+			child.CollisionGroup = "Legs"
+		end
+
 		CollectionService:AddTag(child, "Hittable")
 	end
 
@@ -81,6 +85,30 @@ function SetupCharacter(character: Instance)
 			end
 		end)
 	end
+
+	local leftLegCollider = Instance.new("Part")
+	leftLegCollider.Name = "LeftLegCollider"
+	leftLegCollider.Size = Vector3.new(1, 1.8, 1)
+	leftLegCollider.Parent = character
+	leftLegCollider.CollisionGroup = "Legs"
+
+	local llcWeld = Instance.new("Weld")
+	llcWeld.Parent = leftLegCollider
+	llcWeld.Part0 = leftLegCollider
+	llcWeld.Part1 = LeftLeg
+	llcWeld.C1 = CFrame.new(0, 0.1, 0)
+
+	local rightLegCollider = Instance.new("Part")
+	rightLegCollider.Name = "RightLegCollider"
+	rightLegCollider.Size = Vector3.new(1, 1.8, 1)
+	rightLegCollider.Parent = character
+	rightLegCollider.CollisionGroup = "Legs"
+
+	local rlcWeld = Instance.new("Weld")
+	rlcWeld.Parent = rightLegCollider
+	rlcWeld.Part0 = rightLegCollider
+	rlcWeld.Part1 = RightLeg
+	rlcWeld.C1 = CFrame.new(0, 0.1, 0)
 
 	local ControllerManager = character:WaitForChild("ControllerManager")
 
@@ -101,6 +129,11 @@ function SetupCharacter(character: Instance)
 			GroundController.BalanceSpeed = 10
 			--GroundController.BalanceRigidityEnabled = true
 			print("Set GroundController")
+		end
+
+		local AirController: AirController = ControllerManager:WaitForChild("AirController")
+		if AirController then
+			AirController.MaintainLinearMomentum = false
 		end
 	end
 

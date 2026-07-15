@@ -13,7 +13,7 @@ local volume = 0
 local HudController = {}
 
 function HudController.Start()
-	Synchronizer:WaitAndCall(LocalPlayer, function(channel)
+	--[[Synchronizer:WaitAndCall(LocalPlayer, function(channel)
 		channel:OnChanged("Coins", function(newValue: number, _oldValue: number)
 			local CurrencyTextLabel = LeftBottom.Frame:FindFirstChild("Currency")
 			CurrencyTextLabel.Text = ("$%*"):format(tostring(newValue))
@@ -27,7 +27,7 @@ function HudController.Start()
 			end)
 			Sound:Play()
 		end)
-	end)
+	end) --]]
 end
 
 Synchronizer:WaitAndCall(LocalPlayer, function(channel)
@@ -36,6 +36,6 @@ Synchronizer:WaitAndCall(LocalPlayer, function(channel)
 	channel:OnChanged("Settings.Sound Effects", function(newValue)
 		volume = newValue and 1 or 0
 	end)
-end)
+end) --]]
 
 return HudController

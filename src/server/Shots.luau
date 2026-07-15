@@ -50,11 +50,12 @@ function shots.calculate_vel_and_force(power: number, dir: Vector3, flags: {})
 	local final_force = nil
 	local final_time = 0
 
-	if flags["Chip"] and power > 0.3 then
+	if flags["chip"] and power > 0.3 then
+		print("Lol")
 		final_velocity *= 0.6
-		final_velocity += Vector3.new(0, 20 * power ^ 2, 0)
+		final_velocity += Vector3.new(0, 14 * power ^ 2, 0)
 		final_force = Vector3.new(0, 650, 0)
-		final_time = 0.8 + (power ^ 2 * 0.4)
+		final_time = 0.9
 	elseif power > SLAPSHOT_THRESHHOLD then
 		final_velocity += Vector3.new(0, 18 * power ^ 2, 0)
 		final_force = Vector3.new(0, 650, 0)

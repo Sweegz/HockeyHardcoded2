@@ -1,14 +1,17 @@
 --local CollectionService = game:GetService("CollectionService")
+local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
 --local Workspace = game:GetService("Workspace")
 
 local player = Players.LocalPlayer
 local mouse = player:GetMouse()
 
-local function GetValidMouseHit(): Vector3
+--[[local function GetValidMouseHit(): Vector3
 	return mouse.Hit.Position
+end]]
 
-	--[[
+local function GetValidMouseHit(): Vector3
 	local cam = Workspace.CurrentCamera
 	local origin = cam.CFrame.Position
 	local ray = cam:ScreenPointToRay(mouse.X, mouse.Y)
@@ -33,7 +36,7 @@ local function GetValidMouseHit(): Vector3
 
 	local result = Workspace:Raycast(origin, ray.Direction * 5000, params)
 
-	return result and result.Position or (origin + ray.Direction * 5000) --]]
+	return result and result.Position or (origin + ray.Direction * 5000)
 end
 
 return GetValidMouseHit

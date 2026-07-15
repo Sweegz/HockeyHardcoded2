@@ -78,9 +78,9 @@ function PlayerActionService:Start()
 				return
 			end
 
-			local finalVelocity = lookDirection * 20
+			local finalVelocity = lookDirection * 30
 
-			RagdollEvent:FireClient(hitPlayer, finalVelocity, 0.2, true)
+			RagdollEvent:FireClient(hitPlayer, finalVelocity, 0.2, true, 20)
 
 			if PuckService:GetOwner() == hitPlayer then
 				PuckService:DropPuck()
@@ -100,9 +100,9 @@ function PlayerActionService:Start()
 				return
 			end
 
-			local finalVelocity = movementDirection * (power / 2) * 0.75
+			local finalVelocity = movementDirection * (100 / 2) * 0.75
 
-			RagdollEvent:FireClient(hitPlayer, finalVelocity, 1, false)
+			RagdollEvent:FireClient(hitPlayer, finalVelocity, power / 100, false, power)
 
 			if PuckService:GetOwner() == hitPlayer then
 				PuckService:DropPuck()

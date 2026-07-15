@@ -67,10 +67,18 @@ function MouseLockController:Start()
 			return
 		end
 
+		local facingMovingDirection = character
+			:FindFirstChild("AbilityManagerActor")
+			:FindFirstChild("Abilities")
+			:FindFirstChild("FacingMoveDirection")
+			:FindFirstChild("SyncedState")
+
 		if MouseLockController.bodyGyro.MaxTorque.Y > 0 then
-			humanoid.AutoRotate = false
+			facingMovingDirection:SetAttribute("Enabled", false)
+			--humanoid.AutoRotate = false
 		else
-			humanoid.AutoRotate = true
+			facingMovingDirection:SetAttribute("Enabled", true)
+			--humanoid.AutoRotate = true
 		end
 
 		local firstPerson = (workspace.CurrentCamera.CFrame.Position - character.Head.Position).Magnitude <= 1
