@@ -2,6 +2,8 @@ local StarterPlayer = game:GetService("StarterPlayer")
 local CollectController = require(StarterPlayer.StarterPlayerScripts.Controllers.CollectController)
 local Constants = require(script.Parent.Parent.Constants)
 
+local TIME_TRANSITION = 0.3
+local TIME_CHARGE = 1.5
 local PHASE_1 = false
 local PHASE_2 = false
 local SHOT = false
@@ -35,6 +37,17 @@ function SlapShotState:Enter()
 	self.ctx.movementDisabled = true
 	self.ctx.humanoid.WalkSpeed = 16
 
+	local character: Model = self.ctx.humanoid.Parent
+	if not character then
+		return
+	end
+
+	for _, child in character:GetChildren() do
+		if child.Name:match("Collider") then
+			child.CanCollide = false
+		end
+	end
+
 	PHASE_1 = false
 	PHASE_2 = false
 	SHOT = false
@@ -49,24 +62,24 @@ function SlapShotState:Tick(dt: number)
 		return
 	end
 
-	if self.timeElapsed > 0.3 and not PHASE_1 and not SHOT then
+	if self.timeElapsed > TIME_TRANSITION and not PHASE_1 and not SHOT then
 		PHASE_1 = true
-		animator:PlayAnimationByName("SlapWind2", 1.5)
+		animator:PlayAnimationByName("SlapWind2", TIME_CHARGE)
 	end
 
-	if self.timeElapsed > 0.45 and not PHASE_2 and not SHOT then
+	if self.timeElapsed > TIME_TRANSITION + 1.5 and not PHASE_2 and not SHOT then
 		PHASE_2 = true
-		animator:AdjustWeightByName("SlapWind2", 0, 1.5)
+		animator:AdjustWeightByName("SlapWind2", 0, TIME_CHARGE)
 	end
 
-	if self.timeElapsed > 0.3 and not commands.SlapShot and not SHOT then
+	if self.timeElapsed > TIME_TRANSITION and not commands.SlapShot and not SHOT then
 		SHOT = time()
 		animator:StopAnimationByName("SlapWind1", 0.1)
 		animator:StopAnimationByName("SlapWind2", 0.1)
 		animator:PlayAnimationByName("SlapShot", 0.1)
 	end
 
-	if SHOT and time() - SHOT > 0.45 then
+	if SHOT and (time() - SHOT) > 0.45 then
 		self.ctx.stateMachine:ChangeState(self.ctx.stateMachine.states.DefaultState.New(self.ctx))
 		return
 	end
@@ -82,6 +95,19 @@ function SlapShotState:Exit()
 	local input = self.ctx.input
 	input:DisableCommand("SlapShot")
 	input:DisableCommand("DropPuck")
+
+	local character: Model = self.ctx.humanoid.Parent
+	if not character then
+		return
+	end
+
+	task.delay(0.2, function()
+		for _, child in character:GetChildren() do
+			if child.Name:match("Collider") then
+				child.CanCollide = true
+			end
+		end
+	end)
 
 	self.ctx.movementDisabled = false
 

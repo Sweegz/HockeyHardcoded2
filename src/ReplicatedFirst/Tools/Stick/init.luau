@@ -155,6 +155,12 @@ function Stick:Equip()
 		return
 	end
 
+	for _, child in character:GetChildren() do
+		if child.Name:match("Collider") then
+			child.CanCollide = true
+		end
+	end
+
 	local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
 	if not humanoidRootPart then
 		return

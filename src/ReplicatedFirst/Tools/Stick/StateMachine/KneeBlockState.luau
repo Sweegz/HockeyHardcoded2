@@ -23,6 +23,17 @@ function KneeBlockState:Enter()
 
 	self.ctx.movementDisabled = true
 	self.ctx.humanoid.WalkSpeed = 0
+
+	local character: Model = self.ctx.humanoid.Parent
+	if not character then
+		return
+	end
+
+	for _, child in character:GetChildren() do
+		if child.Name:match("Collider") then
+			child.CanCollide = false
+		end
+	end
 end
 
 function KneeBlockState:Tick(dt: number)
@@ -45,6 +56,19 @@ function KneeBlockState:Exit()
 	self.ctx.animator:StopAnimationByName("KneeBlock", Constants.FADE_TIME)
 	local input = self.ctx.input
 	input:DisableCommand("KneeBlock")
+
+	local character: Model = self.ctx.humanoid.Parent
+	if not character then
+		return
+	end
+
+	task.delay(0.2, function()
+		for _, child in character:GetChildren() do
+			if child.Name:match("Collider") then
+				child.CanCollide = true
+			end
+		end
+	end)
 
 	self.ctx.movementDisabled = false
 end
