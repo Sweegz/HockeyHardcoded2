@@ -1,3 +1,10 @@
+local STATES = {}
+for _, child in script:GetChildren() do
+	if child:IsA("ModuleScript") then
+		STATES[child.Name] = require(child)
+	end
+end
+
 local StateMachine = {}
 
 StateMachine.__index = StateMachine
@@ -10,10 +17,8 @@ function StateMachine.New(state)
 		states = {},
 	}
 
-	for _, child in script:GetChildren() do
-		if child:IsA("ModuleScript") then
-			self.states[child.Name] = require(child)
-		end
+	for name, child in STATES do
+		self.states[name] = child
 	end
 
 	setmetatable(self, StateMachine)

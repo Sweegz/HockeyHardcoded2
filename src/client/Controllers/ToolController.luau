@@ -1,7 +1,7 @@
 local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ReplicatedFirst = game:GetService("ReplicatedFirst")
 
-local Tools = ReplicatedStorage.Shared:WaitForChild("Tools")
+local Tools = require(ReplicatedFirst.Tools)
 
 local LocalPlayer = Players.LocalPlayer
 
@@ -12,12 +12,11 @@ local function hookTool(tool: Tool)
 		return
 	end
 
-	local toolScript = Tools[tool.Name]
-	if not toolScript then
+	local toolController = Tools[tool.Name]
+	if not toolController then
 		return
 	end
 
-	local toolController = require(toolScript)
 	tool:SetAttribute("Initialized", true)
 	local controller = toolController.New(tool)
 
@@ -81,5 +80,7 @@ function ToolController:Start()
 		end
 	end)
 end
+
+script:Destroy()
 
 return ToolController

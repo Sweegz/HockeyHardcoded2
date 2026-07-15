@@ -83,6 +83,10 @@ function ShotState:Exit()
 	self.ctx.animator:StopAnimationByName(self.animation_name, Constants.FADE_TIME)
 	local input = self.ctx.input
 	input:DisableCommand("ChargePower")
+	input:DisableCommand("LowTip")
+	input:DisableCommand("LyingBlock")
+	input:DisableCommand("Chip")
+	input:DisableCommand("WristShot")
 end
 
 function ShotState:Destroy()

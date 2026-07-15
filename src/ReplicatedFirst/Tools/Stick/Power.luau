@@ -95,6 +95,10 @@ function Power:Tick(dt)
 	end
 end
 
+function Power:IsCharging()
+	return self.holdStartTime > 0
+end
+
 function Power:Disable()
 	self.enabled = false
 	self.holdStartTime = 0

@@ -6,6 +6,10 @@ Momentum.__index = Momentum
 
 local LocalPlayer = Players.LocalPlayer
 
+local raycastParams = RaycastParams.new()
+raycastParams.FilterType = Enum.RaycastFilterType.Include
+raycastParams.FilterDescendantsInstances = { game.Workspace.Rink.Game.Collisions }
+
 local ANGULAR_FRICTION = 0.005
 local ANGULAR_FRICTION_GLIDE = 0.04
 local ANGULAR_VELOCITY_TRESHOLD = 10
@@ -71,6 +75,7 @@ function Momentum:Tick(dt: number)
 	local extended = self.ctx.extended ~= nil
 
 	if not self.ctx:IsHit() then
+		bodyVelocity.MaxForce = MAX_FORCE
 		local glideSpeedModifier = nil
 		if moveDirection.Magnitude > 0 then
 			local maxGlideVelocity = 60
@@ -137,26 +142,19 @@ function Momentum:Tick(dt: number)
 			end
 		end
 	else
-		print("MOVEMENT DISABELD HIT")
-	end
+		-- Adjust the BodyVelocity upon rink collision
+		local raycastResult =
+			workspace:Raycast(humanoidRootPart.Position, bodyVelocity.Velocity * Vector3.new(1, 0, 1), raycastParams)
 
-	--[[
+		if raycastResult and raycastResult.Distance <= 2 then
+			local velocity = bodyVelocity.Velocity
+			local normal = raycastResult.Normal
 
-	local XD = false
+			local slideVelocity = velocity - normal * velocity:Dot(normal)
 
-	local parts = self.ctx.tool.Blade:GetTouchingParts()
-	for _, part in parts do
-		if CollectionService:HasTag(part, "PhysicalObject") then
-			--self:SetBodyVelocity(Vector3.new(0, 0, 0))
-			self.bodyVelocity.MaxForce = Vector3.new
-			XD = true
-			break
+			bodyVelocity.Velocity = slideVelocity
 		end
 	end
-
-	if not XD then
-		self.bodyVelocity.MaxForce = MAX_FORCE
-	end]]
 end
 
 function Momentum:SetBodyVelocity(velocity: Vector3)
@@ -164,58 +162,6 @@ function Momentum:SetBodyVelocity(velocity: Vector3)
 		self.bodyVelocity.Velocity = velocity
 	end
 end
-
---[[
-RunService.PostSimulation:Connect(function()
-	local character = LocalPlayer.Character
-	local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
-
-	local stick = character:FindFirstChild("Stick")
-
-	if not stick then
-		return
-	end
-
-	if humanoidRootPart then
-		local pos = humanoidRootPart.Position
-		local _, y, z = humanoidRootPart.CFrame:ToEulerAnglesYXZ()
-
-		--humanoidRootPart.AssemblyLinearVelocity = humanoidRootPart.AssemblyLinearVelocity * Vector3.new(1, 0, 1)
-
-		-- KEEPS THE PLAYER UPRIGHT
-		humanoidRootPart.CFrame = CFrame.new(pos.X, pos.Y, pos.Z) * CFrame.Angles(0, y, 0)
-	end
-
-	local weld = stick:FindFirstChild("AAAA").Weld
-
-	local primaryPart = stick.PrimaryPart
-	if primaryPart then
-		local pos = primaryPart.Position
-		local x, y, z = primaryPart.CFrame:ToEulerAnglesYXZ()
-
-		-- STICK CANT HAVE UPWARDS VELOCITY
-		if primaryPart.AssemblyLinearVelocity.Y > 0 then
-			--primaryPart.AssemblyLinearVelocity = primaryPart.AssemblyLinearVelocity * Vector3.new(1, 0, 1)
-		end
-
-		local cf = primaryPart.CFrame
-
-		local look = cf.LookVector
-		local flatLook = Vector3.new(look.X, 0, look.Z)
-
-		if flatLook.Magnitude > 0 then
-			local yawOnlyWorld = CFrame.lookAt(Vector3.zero, flatLook.Unit)
-
-			--  WELD BLADE HITBOX PART ABOVE BLADE NEGATING ORIENTATION
-			weld.C0 = primaryPart.CFrame:ToObjectSpace(
-				CFrame.new(primaryPart.Position + Vector3.new(0, 1.6, 0)) * yawOnlyWorld
-			)
-		end
-
-		--AAAA.CFrame = CFrame.new(pos.X, pos.Y + 2, pos.Z) * CFrame.Angles(0, y, 0)
-		--primaryPart.CFrame = CFrame.new(pos.X, pos.Y, pos.Z) * CFrame.Angles(0, y, 0)
-	end
-end)--]]
 
 function Momentum:SetMoving(isMoving: boolean)
 	self.isMoving = isMoving

@@ -27,6 +27,7 @@ function DefaultState.New(ctx)
 		graceTime = 0,
 		canCharge = true,
 	}
+
 	setmetatable(self, DefaultState)
 
 	return self
@@ -67,6 +68,7 @@ function DefaultState:Tick(dt: number)
 	local extended = self.ctx.extended
 	local hasPuck = self.ctx.hasPuck
 	local input = self.ctx.input
+	local power = self.ctx.power
 
 	local next_state = nil
 
@@ -95,7 +97,7 @@ function DefaultState:Tick(dt: number)
 			next_state = "Default"
 		end
 
-		if not extended and not hasPuck then
+		if not extended and not hasPuck and not power:IsCharging() then
 			if commands.PokeCheck and commands.PokeCheck > time() - 0.5 then
 				next_state = self.ctx.stateMachine.states.PokeCheckState
 			end
