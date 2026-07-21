@@ -6,6 +6,7 @@ local GetValidMouseHit = require(ReplicatedStorage.Shared.Utility.GetValidMouseH
 
 local Net = ReplicatedStorage.Net
 local ShootEvent = Net:FindFirstChild("Shoot") :: RemoteEvent
+local SlapshotEvent = Net:FindFirstChild("Slapshot") :: RemoteEvent
 local ShoveEvent = Net:FindFirstChild("Shove") :: RemoteEvent
 local CheckEvent = Net:FindFirstChild("Check") :: RemoteEvent
 
@@ -22,6 +23,19 @@ function PlayerActionController:Shoot(power: number, flags: {})
 	local puckPosition = puck.Position
 
 	ShootEvent:FireServer(power, mouseHit, puckPosition, flags)
+end
+
+function PlayerActionController:Slapshot(power: number, flags: {})
+	local mouseHit = GetValidMouseHit()
+
+	local puck = PuckController:GetInstance()
+	if not puck then
+		return
+	end
+
+	local puckPosition = puck.Position
+
+	SlapshotEvent:FireServer(power, mouseHit, puckPosition, flags)
 end
 
 function PlayerActionController:Shove(hitPlayer: Player, hitPart: BasePart, lookDirection: Vector3)

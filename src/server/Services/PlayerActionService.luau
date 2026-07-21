@@ -1,3 +1,4 @@
+local PhysicsService = game:GetService("PhysicsService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
@@ -10,6 +11,7 @@ local Shots = require(ServerScriptService.Shots)
 
 local Net = ReplicatedStorage.Net
 local ShootEvent = Net:FindFirstChild("Shoot") :: RemoteEvent
+local SlapshotEvent = Net:FindFirstChild("Slapshot") :: RemoteEvent
 local ShoveEvent = Net:FindFirstChild("Shove") :: RemoteEvent
 local RagdollEvent = Net:FindFirstChild("Ragdoll") :: RemoteEvent
 local CheckEvent = Net:FindFirstChild("Check") :: RemoteEvent
@@ -19,6 +21,31 @@ local SHOT_SOUND = sound_folder:FindFirstChild("Shot")
 local SLAPSHOT_SOUND = sound_folder:FindFirstChild("Slapshot")
 
 local PlayerActionService = {}
+
+local function preventShooterCollisions(player: Player, puck: BasePart)
+	local constraints = {}
+
+	local character = player.Character
+	for _, descendant in character:GetDescendants() do
+		if descendant:IsA("BasePart") and descendant.CanCollide then
+			local constraint = Instance.new("NoCollisionConstraint")
+			constraint.Parent = puck
+
+			constraint.Part0 = puck
+			constraint.Part1 = descendant
+
+			table.insert(constraints, constraint)
+		end
+	end
+
+	task.delay(0.5, function()
+		for _, constraint in constraints do
+			constraint:Destroy()
+		end
+
+		constraints = {}
+	end)
+end
 
 function PlayerActionService:Start()
 	ShootEvent.OnServerEvent:Connect(
@@ -63,6 +90,51 @@ function PlayerActionService:Start()
 				end)
 			end
 
+			preventShooterCollisions(player, puck)
+
+			puck.Position = puckPosition
+
+			PuckService:DropPuck()
+			Shots.apply_velocity(puck, velocity)
+			Shots.apply_force(puck, force, time)
+			PlayerSessionService:SetCollectCooldown(player, 1.5)
+		end
+	)
+
+	SlapshotEvent.OnServerEvent:Connect(
+		function(player: Player, power: number, mouseHit: Vector3, puckPosition: Vector3, flags)
+			local owner = PuckService:GetOwner()
+			if owner then
+				return
+			end
+
+			local puck = PuckService:GetPuckInstance()
+			if not puck then
+				return
+			end
+
+			local dir = (mouseHit - puckPosition).Unit
+			dir = Vector3.new(dir.X, 0, dir.Z)
+
+			power = math.max(power, 50)
+
+			local velocity, force, time = Shots.calculate_vel_and_force(power, dir, flags)
+
+			local Sound = nil
+
+			Sound = SLAPSHOT_SOUND:Clone()
+
+			if Sound then
+				Sound.Parent = puck
+				Sound:Play()
+				Sound.Parent = puck
+				Sound.Ended:Once(function()
+					Sound:Destroy()
+				end)
+			end
+
+			preventShooterCollisions(player, puck)
+
 			puck.Position = puckPosition
 
 			PuckService:DropPuck()
@@ -100,9 +172,11 @@ function PlayerActionService:Start()
 				return
 			end
 
-			local finalVelocity = movementDirection * (100 / 2) * 0.75
+			local finalVelocity = movementDirection * (power / 2)
 
-			RagdollEvent:FireClient(hitPlayer, finalVelocity, power / 100, false, power)
+			local duration = 0.8 + (power / 100) * 0.3
+
+			RagdollEvent:FireClient(hitPlayer, finalVelocity, duration, false, power)
 
 			if PuckService:GetOwner() == hitPlayer then
 				PuckService:DropPuck()
@@ -110,6 +184,7 @@ function PlayerActionService:Start()
 
 			PlayerSessionService:SetCollectCooldown(hitPlayer, 1.5)
 			PlayerSessionService:SetCheckCooldown(player, 0.5)
+			PlayerSessionService:SetCheckCooldown(hitPlayer, 0.5)
 
 			local output = ("%* hit %*'s %* with %* power"):format(player.Name, hitPlayer.Name, hitPart.Name, power)
 			print(output)
