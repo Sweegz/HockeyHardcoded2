@@ -12,6 +12,12 @@ local function setupCharacter(character: Model)
 		end
 	end
 
+	for _, child in character:GetChildren() do
+		if child:IsA("BasePart") then
+			child.CollisionGroup = "ClientCharacter"
+		end
+	end
+
 	local descendantAddedConnection = character.DescendantAdded:Connect(function(descendant: Instance)
 		if descendant:IsA("PVInstance") then
 			CollectionService:AddTag(descendant, "Client")
