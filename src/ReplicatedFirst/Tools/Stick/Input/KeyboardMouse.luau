@@ -20,6 +20,10 @@ function KeyboardMouse.InputBegan(input: InputObject, commands)
 	if input.KeyCode == Enum.KeyCode.X then
 		commands.WristShot = time()
 	end
+
+	if input.KeyCode == Enum.KeyCode.X then
+		commands.CancelSlapshot = time()
+	end
 end
 
 -- For inputs that can occur between frames
@@ -38,6 +42,10 @@ function KeyboardMouse.InputEnded(input: InputObject, commands)
 
 	if input.KeyCode == Enum.KeyCode.X then
 		commands.WristShot = false
+	end
+
+	if input.KeyCode == Enum.KeyCode.X then
+		commands.CancelSlapshot = false
 	end
 end
 
@@ -72,6 +80,7 @@ function KeyboardMouse.InputBeganFixed(input: InputObject, commands)
 	end
 
 	if input.KeyCode == Enum.KeyCode.X then
+		print("LyingBlock Began")
 		commands.LyingBlock = time()
 	end
 
@@ -81,10 +90,6 @@ function KeyboardMouse.InputBeganFixed(input: InputObject, commands)
 
 	if input.KeyCode == Enum.KeyCode.V then
 		commands.StandBlock = time()
-	end
-
-	if input.KeyCode == Enum.KeyCode.X then
-		commands.LyingBlock = time()
 	end
 
 	if input.KeyCode == Enum.KeyCode.Z then
@@ -156,10 +161,6 @@ function KeyboardMouse.InputEndedFixed(input: InputObject, commands)
 		commands.LowTip = false
 	end
 
-	if input.KeyCode == Enum.KeyCode.X then
-		commands.LyingBlock = false
-	end
-
 	if input.KeyCode == Enum.KeyCode.Z then
 		commands.SlapShot = false
 	end
@@ -177,6 +178,7 @@ function KeyboardMouse.InputEndedFixed(input: InputObject, commands)
 	end
 
 	if input.KeyCode == Enum.KeyCode.X then
+		print("LyingBlock Ended")
 		commands.LyingBlock = false
 	end
 

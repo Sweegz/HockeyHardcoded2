@@ -135,6 +135,8 @@ function DefaultState:Tick(dt: number)
 		if hasPuck and commands.DropPuck then
 			input:DisableCommand("DropPuck")
 			input:DisableCommand("SlapShot")
+			input:DisableCommand("ChargePower")
+			self.ctx.power.holdStartTime = 0
 			CollectController:Drop()
 		end
 

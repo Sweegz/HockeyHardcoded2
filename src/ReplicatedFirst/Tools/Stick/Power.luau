@@ -54,19 +54,21 @@ function Power:Tick(dt)
 	end
 
 	local state = self.ctx.stateMachine.state
+	local stateName = state.name
 
 	if not state.canCharge then
 		self.holdStartTime = 0
+
 		return
 	end
 
 	local commands = self.ctx.input.commands
 
-	if commands.ChargePower and self.holdStartTime == 0 then
+	if commands.ChargePower and self.holdStartTime == 0 and stateName ~= "SlapShotState" then
 		self.holdStartTime = time()
 	end
 
-	if self.holdStartTime > 0 then
+	if self.holdStartTime > 0 and stateName ~= "SlapShotState" then
 		local chargeTime = time() - self.holdStartTime
 
 		local powerReleased = not commands.ChargePower
@@ -87,6 +89,44 @@ function Power:Tick(dt)
 			if state:TransitionFinished() then
 				self:Release(self.chargeValue)
 			end
+		end
+	elseif stateName == "SlapShotState" then
+		if not state:TransitionFinished() then
+			self.holdStartTime = time()
+			return
+		end
+
+		if self.holdStartTime == 0 then
+			return
+		end
+
+		local chargeTime = time() - self.holdStartTime
+
+		if chargeTime > 1.5 then
+			chargeTime = 3 - chargeTime
+		end
+
+		if chargeTime < 0 then
+			chargeTime = 0.01
+		end
+
+		self.chargeValue = (chargeTime / 1.5) * 100
+
+		if self.UI then
+			self.UI:Enable()
+			self.UI:Update(chargeTime / 1.5)
+		end
+
+		local powerReleased = not commands.SlapShot
+		local cancelled = commands.CancelSlapshot
+		if cancelled then
+			print("Cancel")
+			state:Cancel()
+			self.holdStartTime = 0
+		elseif powerReleased then
+			print("Slapshot1")
+			state:Shoot(self.chargeValue)
+			self.holdStartTime = 0
 		end
 	else
 		if self.UI then

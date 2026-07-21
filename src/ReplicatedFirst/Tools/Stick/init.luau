@@ -150,6 +150,8 @@ function Stick:Equip()
 	self.momentum:Enable()
 	self.groundController.BalanceRigidityEnabled = true
 
+	self.customLock:FollowMouse(false)
+
 	local character = LocalPlayer.Character
 	if not character then
 		return
@@ -207,6 +209,8 @@ function Stick:Unequip()
 	self.abilityManagerActor.Abilities.Jumping.SyncedState:SetAttribute("Enabled", true)
 	self.groundController.MoveSpeedFactor = 1
 	self.groundController.BalanceRigidityEnabled = false
+
+	self.customLock:FollowMouse(false)
 
 	self.animator:Disable()
 	self.input:Disable()

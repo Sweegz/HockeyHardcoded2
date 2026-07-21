@@ -91,6 +91,7 @@ function SetupCharacter(character: Instance)
 	leftLegCollider.Size = Vector3.new(1, 1.8, 1)
 	leftLegCollider.Parent = character
 	leftLegCollider.CollisionGroup = "Legs"
+	leftLegCollider.Transparency = 1
 
 	local llcWeld = Instance.new("Weld")
 	llcWeld.Parent = leftLegCollider
@@ -103,6 +104,7 @@ function SetupCharacter(character: Instance)
 	rightLegCollider.Size = Vector3.new(1, 1.8, 1)
 	rightLegCollider.Parent = character
 	rightLegCollider.CollisionGroup = "Legs"
+	rightLegCollider.Transparency = 1
 
 	local rlcWeld = Instance.new("Weld")
 	rlcWeld.Parent = rightLegCollider
