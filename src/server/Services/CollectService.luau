@@ -48,6 +48,15 @@ function CollectService:Start()
 			return
 		end
 
+		local puck = PuckService:GetPuckInstance()
+		if not puck then
+			return
+		end
+
+		if puck:FindFirstChildOfClass("VectorForce") then
+			return
+		end
+
 		if not owner and pickup then
 			PuckService:SetOwner(player)
 		elseif owner and owner ~= player then
