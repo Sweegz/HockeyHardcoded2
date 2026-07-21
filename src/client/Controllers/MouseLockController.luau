@@ -4,6 +4,7 @@ local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local Workspace = game:GetService("Workspace")
 local DisconnectAndClear = require(ReplicatedStorage.Shared.Utility.DisconnectAndClear)
+local GetValidMouseHit = require(ReplicatedStorage.Shared.Utility.GetValidMouseHit)
 
 local LocalPlayer = Players.LocalPlayer
 
@@ -15,6 +16,7 @@ local MouseLockController = {
 	enabled = true,
 	MouseLock = false,
 	forcedMouseLock = false,
+	followMouse = false,
 	connections = {},
 	bodyGyro = nil,
 }
@@ -83,14 +85,20 @@ function MouseLockController:Start()
 
 		local firstPerson = (workspace.CurrentCamera.CFrame.Position - character.Head.Position).Magnitude <= 1
 
-		if MouseLockController.MouseLock or MouseLockController.forcedMouseLock or firstPerson then
-			local _, cameraOrientationY = camera.CFrame:ToOrientation()
-			MouseLockController.bodyGyro.CFrame = CFrame.new(camera.CFrame.Position)
-				* CFrame.Angles(0, cameraOrientationY, 0)
-		elseif humanoid.MoveDirection.Magnitude > 0 then
-			MouseLockController.bodyGyro.CFrame = CFrame.new(Vector3.new(0, 0, 0), humanoid.MoveDirection)
+		if not MouseLockController.followMouse then
+			if MouseLockController.MouseLock or MouseLockController.forcedMouseLock or firstPerson then
+				local _, cameraOrientationY = camera.CFrame:ToOrientation()
+				MouseLockController.bodyGyro.CFrame = CFrame.new(camera.CFrame.Position)
+					* CFrame.Angles(0, cameraOrientationY, 0)
+			elseif humanoid.MoveDirection.Magnitude > 0 then
+				MouseLockController.bodyGyro.CFrame = CFrame.new(Vector3.new(0, 0, 0), humanoid.MoveDirection)
+			else
+				MouseLockController.bodyGyro.CFrame = humanoidRootPart.CFrame
+			end
 		else
-			MouseLockController.bodyGyro.CFrame = humanoidRootPart.CFrame
+			local _, yawAngle = CFrame.new(humanoidRootPart.Position, GetValidMouseHit()):ToOrientation()
+			--MouseLockController.bodyGyro.MaxTorque = Vector3.new(0, 75, 0)
+			MouseLockController.bodyGyro.CFrame = CFrame.Angles(0, yawAngle, 0)
 		end
 	end)
 end
@@ -107,6 +115,10 @@ end
 
 function MouseLockController:SetTorquePower(value: number)
 	self.bodyGyro.P = value
+end
+
+function MouseLockController:FollowMouse(followMouse: boolean)
+	self.followMouse = followMouse
 end
 
 function MouseLockController:ResetTorquePower()
