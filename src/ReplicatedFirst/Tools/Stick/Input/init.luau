@@ -147,7 +147,6 @@ function Input:Tick(_dt)
 end
 
 function Input:DisableCommand(command)
-	print(command, "disabled")
 	self.commands[command] = false
 end
 

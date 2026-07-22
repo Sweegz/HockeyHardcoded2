@@ -1,3 +1,5 @@
+local StarterPlayer = game:GetService("StarterPlayer")
+local PlayerActionController = require(StarterPlayer.StarterPlayerScripts.Controllers.PlayerActionController)
 local STATES = {}
 for _, child in script:GetChildren() do
 	if child:IsA("ModuleScript") then
@@ -33,6 +35,7 @@ function StateMachine:ChangeState(state)
 	end
 	self.previous_state = self.state
 	self.state = state
+	PlayerActionController:SendState(state.name)
 	self.state:Enter()
 end
 

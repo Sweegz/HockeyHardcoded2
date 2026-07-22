@@ -2,6 +2,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
+local Chrono = require(ReplicatedStorage.Packages.Chrono)
 local Synchronizer = require(ReplicatedStorage.Packages.Synchronizer)
 
 local PuckModel = ReplicatedStorage:FindFirstChild("Models"):FindFirstChild("Pucks"):FindFirstChild("Puck")
@@ -72,6 +73,7 @@ function PuckService:DropPuck()
 	end
 
 	puck.weld.Part1 = nil
+	puck.Orientation = Vector3.new(0, 0, 0)
 	puck:SetNetworkOwner(nil)
 	Channel:Set("Owner", nil)
 	Channel:Set("Cooldown", time() + COOLDOWN)
@@ -96,6 +98,11 @@ function PuckService:Spawn(position: Vector3)
 	clone.Parent = Workspace:FindFirstChild("Pucks")
 	clone.Position = position
 	clone:SetNetworkOwner(nil)
+
+	if Workspace:GetAttribute("CustomReplication") then
+		local ent = Chrono.Entity.new("Default", clone)
+	end
+
 	Channel:Set("Instance", clone):Set("Owner", nil):Set("Cooldown", 0)
 end
 

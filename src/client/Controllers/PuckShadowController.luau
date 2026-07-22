@@ -3,7 +3,7 @@ local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 
 local ShadowAsset = ReplicatedStorage:FindFirstChild("Models"):FindFirstChild("Shadow")
-local PuckFolder = Workspace:FindFirstChild("Pucks")
+local PuckFolder = Workspace:FindFirstChild("Client")
 
 local Shadow = ShadowAsset:Clone()
 Shadow.Parent = game.Workspace

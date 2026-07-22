@@ -80,7 +80,6 @@ function KeyboardMouse.InputBeganFixed(input: InputObject, commands)
 	end
 
 	if input.KeyCode == Enum.KeyCode.X then
-		print("LyingBlock Began")
 		commands.LyingBlock = time()
 	end
 

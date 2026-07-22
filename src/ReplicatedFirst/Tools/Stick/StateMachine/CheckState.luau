@@ -332,6 +332,11 @@ function CheckState:Tick(dt: number)
 	local momentum = self.ctx.momentum
 	local moveDirection = humanoid.MoveDirection
 
+	if self.ctx:IsHit() then
+		self.ctx.stateMachine:ChangeState(self.ctx.stateMachine.states.DefaultState.New(self.ctx))
+		return
+	end
+
 	if self.timeElapsed > Constants.FADE_TIME and self.timeElapsed < 0.5 then
 		if not self.checking then
 			self.checking = true

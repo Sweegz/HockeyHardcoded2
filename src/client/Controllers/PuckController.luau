@@ -1,4 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
 local Synchronizer = require(ReplicatedStorage.Packages.Synchronizer)
 
 local PuckController = {}
@@ -16,6 +17,9 @@ function PuckController:GetOwner(): Player
 end
 
 function PuckController:GetInstance(): BasePart
+	if Workspace:GetAttribute("CustomReplication") then
+		return game.Workspace.Client:FindFirstChild("Puck")
+	end
 	return Channel:Get("Instance")
 end
 

@@ -15,6 +15,7 @@ local SlapshotEvent = Net:FindFirstChild("Slapshot") :: RemoteEvent
 local ShoveEvent = Net:FindFirstChild("Shove") :: RemoteEvent
 local RagdollEvent = Net:FindFirstChild("Ragdoll") :: RemoteEvent
 local CheckEvent = Net:FindFirstChild("Check") :: RemoteEvent
+local StateEvent = Net:FindFirstChild("State") :: RemoteEvent
 
 local sound_folder = SoundService.SFX:FindFirstChild("Shots")
 local SHOT_SOUND = sound_folder:FindFirstChild("Shot")
@@ -92,9 +93,8 @@ function PlayerActionService:Start()
 
 			preventShooterCollisions(player, puck)
 
-			puck.Position = puckPosition
-
 			PuckService:DropPuck()
+			puck.Position = puckPosition
 			Shots.apply_velocity(puck, velocity)
 			Shots.apply_force(puck, force, time)
 			PlayerSessionService:SetCollectCooldown(player, 1.5)
@@ -135,9 +135,8 @@ function PlayerActionService:Start()
 
 			preventShooterCollisions(player, puck)
 
-			puck.Position = puckPosition
-
 			PuckService:DropPuck()
+			puck.Position = puckPosition
 			Shots.apply_velocity(puck, velocity)
 			Shots.apply_force(puck, force, time)
 			PlayerSessionService:SetCollectCooldown(player, 1.5)
@@ -190,6 +189,12 @@ function PlayerActionService:Start()
 			print(output)
 		end
 	)
+
+	StateEvent.OnServerEvent:Connect(function(player: Player, stateName: string)
+		local previousState = player:GetAttribute("CurrentState")
+		player:SetAttribute("CurrentState", stateName)
+		player:SetAttribute("PreviousState", previousState)
+	end)
 end
 
 return PlayerActionService
