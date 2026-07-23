@@ -108,6 +108,15 @@ function Momentum:Tick(dt: number)
 				self.ctx.groundController.BalanceMaxTorque = 1000000
 				self.ctx.controllerManager.GroundSensor = humanoidRootPart.FloorSensor
 
+				local character = LocalPlayer.Character
+				if character then
+					for _, descendant in character:GetChildren() do
+						if descendant:IsA("BasePart") and descendant.Name:match("Collider") then
+							descendant.CanCollide = false
+						end
+					end
+				end
+
 				self.ctx.customLock:ResetTorquePower()
 			end)()
 		end
@@ -194,6 +203,15 @@ function Momentum:Tick(dt: number)
 			self.ctx.groundController.BalanceMaxTorque = 0
 			self.ctx.groundController.BalanceRigidityEnabled = false
 			self.ctx.planeConstraint.Enabled = false
+
+			local character = LocalPlayer.Character
+			if character then
+				for _, descendant in character:GetChildren() do
+					if descendant:IsA("BasePart") and descendant.Name:match("Collider") then
+						descendant.CanCollide = true
+					end
+				end
+			end
 		end
 
 		self:SetBodyVelocity(self.ctx.hit.velocity)

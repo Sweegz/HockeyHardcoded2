@@ -1,4 +1,7 @@
+local Players = game:GetService("Players")
 local Constants = require(script.Parent.Parent.Constants)
+
+local LocalPlayer = Players.LocalPlayer
 
 local LyingBlockState = {}
 
@@ -19,8 +22,25 @@ function LyingBlockState.New(ctx)
 end
 
 function LyingBlockState:Enter()
-	self.ctx.animator:StopAnimationByName("Idle", Constants.FADE_TIME)
+	--self.ctx.animator:StopAnimationByName("Idle", Constants.FADE_TIME)
 	self.ctx.animator:PlayAnimationByName("LyingBlock", Constants.FADE_TIME)
+
+	self.track = self.ctx.animator:GetAnimationTrack("LyingBlock")
+
+	local character = LocalPlayer.Character
+	if character then
+		local groundSensor = character:FindFirstChild("FloorSensor", true)
+		if groundSensor then
+			groundSensor.SearchDistance = 0
+		end
+	end
+
+	task.spawn(function()
+		self.connection = self.track:GetMarkerReachedSignal("Stop"):Once(function()
+			print("Pause")
+			self.track:AdjustSpeed(0)
+		end)
+	end)
 
 	self.ctx.movementDisabled = true
 	self.ctx.humanoid.WalkSpeed = 0
@@ -34,10 +54,6 @@ function LyingBlockState:Tick(dt: number)
 		return
 	end
 
-	if self.timeElapsed > 0.8 then
-		self.ctx.animator:AdjustSpeedByName("LyingBlock", 0)
-	end
-
 	if self.timeElapsed > 1.6 and not commands.LyingBlock then
 		self.ctx.stateMachine:ChangeState(self.ctx.stateMachine.states.DefaultState.New(self.ctx))
 		return
@@ -49,6 +65,16 @@ end
 function LyingBlockState:Exit()
 	self.ctx.animator:StopAnimationByName("LyingBlock", Constants.FADE_TIME)
 	local input = self.ctx.input
+
+	local character = LocalPlayer.Character
+	if character then
+		local groundSensor = character:FindFirstChild("FloorSensor", true)
+		if groundSensor then
+			groundSensor.SearchDistance = 3.3
+		end
+	end
+
+	print("Exit")
 	input:DisableCommand("LyingBlock")
 
 	self.ctx.movementDisabled = false

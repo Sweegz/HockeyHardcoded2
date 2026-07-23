@@ -125,7 +125,7 @@ function Stick:Equip()
 
 	for _, child in character:GetChildren() do
 		if child.Name:match("Collider") then
-			child.CanCollide = true
+			child.CanCollide = false
 		end
 	end
 
@@ -185,6 +185,14 @@ function Stick:Unequip()
 	self.collect:Disable()
 	self.sprint:Disable()
 	self.momentum:Disable()
+
+	local character = LocalPlayer.Character
+	if character then
+		local groundSensor = character:FindFirstChild("FloorSensor", true)
+		if groundSensor then
+			groundSensor.SearchDistance = 3.3
+		end
+	end
 
 	self.planeConstraint.Enabled = false
 
