@@ -25,6 +25,12 @@ local function getHumanoidRootPart()
 	return character and character:FindFirstChild("HumanoidRootPart")
 end
 
+local function IsOnIce(humanoidRootPart: BasePart)
+	local p = humanoidRootPart.Position
+
+	return p.X >= -84.25 and p.X <= 84.25 and p.Z >= -159.25 and p.Z <= 159.25 and p.Y < 4
+end
+
 function Momentum.New(ctx)
 	local self = setmetatable({
 		ctx = ctx,
@@ -68,13 +74,44 @@ function Momentum:Tick(dt: number)
 		return
 	end
 
-	--print(humanoidRootPart.AssemblyLinearVelocity.Magnitude)
-
 	local bodyVelocity = self.bodyVelocity
 	local moveDirection = humanoid.MoveDirection
 	local extended = self.ctx.extended ~= nil
 
-	if not self.ctx:IsHit() then
+	if not self.ctx:IsHit() or self.ctx.hit.velocity.Magnitude <= 1 then
+		-- Balance when player is not hit and UpRight
+		if humanoidRootPart.CFrame.UpVector.Y == 1 then
+			self.ctx.groundController.BalanceRigidityEnabled = true
+		end
+
+		-- Limit Y position when player is OnIce and NotHit
+		if humanoidRootPart.Position.Y > 3.55 and IsOnIce(humanoidRootPart) then
+			self.ctx.planeConstraint.Enabled = true
+		end
+
+		-- Prevent Upwards velocity while player is not hit
+		if humanoidRootPart.AssemblyLinearVelocity.Y > 1 then
+			humanoidRootPart.AssemblyLinearVelocity *= Vector3.new(1, 0, 1)
+		end
+
+		if self.ctx.ragdolled then
+			self.ctx.ragdolled = false
+			coroutine.wrap(function()
+				task.wait(0.25)
+				self.ctx.abilityManagerActor.Abilities.FallingDown.SyncedState:SetAttribute("Enabled", false)
+				self.ctx.abilityManagerActor.Abilities.FallingDown.SyncedState:SetAttribute("Active", false)
+				self.ctx.abilityManagerActor.Abilities.Running.SyncedState:SetAttribute("Enabled", true)
+				self.ctx.abilityManagerActor.Abilities.GettingUp.SyncedState:SetAttribute("Enabled", true)
+				self.ctx.abilityManagerActor.Abilities.GettingUp.SyncedState:SetAttribute("Active", true)
+
+				self.ctx.groundController.BalanceSpeed = 10
+				self.ctx.groundController.BalanceMaxTorque = 1000000
+				self.ctx.controllerManager.GroundSensor = humanoidRootPart.FloorSensor
+
+				self.ctx.customLock:ResetTorquePower()
+			end)()
+		end
+
 		bodyVelocity.MaxForce = MAX_FORCE
 		local glideSpeedModifier = nil
 		if moveDirection.Magnitude > 0 then
@@ -142,6 +179,25 @@ function Momentum:Tick(dt: number)
 			end
 		end
 	else
+		if not self.ctx.hit.shove then
+			self.ctx.ragdolled = true
+
+			self.ctx.abilityManagerActor.Abilities.GettingUp.SyncedState:SetAttribute("Enabled", false)
+			self.ctx.abilityManagerActor.Abilities.GettingUp.SyncedState:SetAttribute("Active", false)
+			self.ctx.abilityManagerActor.Abilities.Running.SyncedState:SetAttribute("Enabled", false)
+			self.ctx.abilityManagerActor.Abilities.Running.SyncedState:SetAttribute("Active", false)
+			self.ctx.abilityManagerActor.Abilities.FallingDown.SyncedState:SetAttribute("Enabled", true)
+			self.ctx.abilityManagerActor.Abilities.FallingDown.SyncedState:SetAttribute("Active", true)
+			self.ctx.controllerManager.ActiveController = nil
+
+			self.ctx.groundController.BalanceSpeed = 0
+			self.ctx.groundController.BalanceMaxTorque = 0
+			self.ctx.groundController.BalanceRigidityEnabled = false
+			self.ctx.planeConstraint.Enabled = false
+		end
+
+		self:SetBodyVelocity(self.ctx.hit.velocity)
+
 		-- Adjust the BodyVelocity upon rink collision
 		local raycastResult =
 			workspace:Raycast(humanoidRootPart.Position, bodyVelocity.Velocity * Vector3.new(1, 0, 1), raycastParams)

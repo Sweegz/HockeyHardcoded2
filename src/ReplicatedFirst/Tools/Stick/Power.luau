@@ -64,6 +64,15 @@ function Power:Tick(dt)
 		return
 	end
 
+	if self.ctx:IsHit() then
+		self.holdStartTime = 0
+		self.chargeValue = 0
+
+		self.UI:Update(0)
+
+		return
+	end
+
 	local commands = self.ctx.input.commands
 
 	if commands.ChargePower and self.holdStartTime == 0 and stateName ~= "SlapShotState" then

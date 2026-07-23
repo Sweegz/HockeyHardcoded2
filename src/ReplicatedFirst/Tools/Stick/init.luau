@@ -19,12 +19,6 @@ local Momentum = require(script.Momentum)
 
 local DefaultState = require(script.StateMachine.DefaultState)
 
-local function IsOnIce(humanoidRootPart: BasePart)
-	local p = humanoidRootPart.Position
-
-	return p.X >= -84.25 and p.X <= 84.25 and p.Z >= -159.25 and p.Z <= 159.25 and p.Y < 4
-end
-
 local Net = ReplicatedStorage.Net
 local RagdollEvent = Net:FindFirstChild("Ragdoll") :: RemoteEvent
 
@@ -47,6 +41,10 @@ function Stick.New(tool: Tool)
 		movementDisabled = false,
 		ragdolled = false,
 		customLock = MouseLockController,
+		hit = {
+			velocity = Vector3.zero,
+			shove = false,
+		},
 	}
 	setmetatable(self, Stick)
 
@@ -87,41 +85,9 @@ function Stick:Update(dt: number)
 		self.accumulatedTime -= FIXED_RATE
 	end
 
-	if IsOnIce(humanoidRootPart) and not self:IsHit() and not self.ragdolled then
-		if not self.planeConstraint.Enabled then
-			self.planeConstraint.Enabled = true
-		end
-	else
-		if self.planeConstraint.Enabled then
-			self.planeConstraint.Enabled = false
-		end
-	end
-
-	if not self:IsHit() and self.ragdolled then
-		self.ragdolled = false
-		task.spawn(function()
-			task.wait(0.25)
-			self.humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
-			self.abilityManagerActor.Abilities.FallingDown.SyncedState:SetAttribute("Enabled", false)
-			self.abilityManagerActor.Abilities.FallingDown.SyncedState:SetAttribute("Active", false)
-			self.abilityManagerActor.Abilities.Running.SyncedState:SetAttribute("Enabled", true)
-			self.abilityManagerActor.Abilities.GettingUp.SyncedState:SetAttribute("Enabled", true)
-			self.abilityManagerActor.Abilities.GettingUp.SyncedState:SetAttribute("Active", true)
-
-			self.groundController.BalanceSpeed = 10
-			self.groundController.BalanceMaxTorque = 1000000
-			self.controllerManager.UpDirection = Vector3.new(0, 1, 0)
-
-			local hitAngularVelocity = humanoidRootPart:FindFirstChild("HitRotate")
-			if hitAngularVelocity then
-				hitAngularVelocity:Destroy()
-			end
-			self.controllerManager.GroundSensor = humanoidRootPart.FloorSensor
-
-			self.customLock:ResetTorquePower()
-			task.wait(0.25)
-			self.groundController.BalanceRigidityEnabled = true
-		end)
+	if not self:IsHit() then
+		self.hit.velocity = Vector3.zero
+		self.hit.shove = false
 	end
 
 	self.accumulatedTime += dt
@@ -285,62 +251,11 @@ function Stick:Initialize()
 	table.insert(
 		self.connections,
 		RagdollEvent.OnClientEvent:Connect(function(velocity: Vector3, duration: number, shove: boolean, power: number)
-			local character = LocalPlayer.Character
-			if not character then
-				return
-			end
-			local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-			if not humanoidRootPart then
-				return
-			end
+			self.hit.velocity = velocity
+			self.hit.shove = shove
 
-			if not shove then
-				self.abilityManagerActor.Abilities.GettingUp.SyncedState:SetAttribute("Enabled", false)
-				self.abilityManagerActor.Abilities.GettingUp.SyncedState:SetAttribute("Active", false)
-				self.abilityManagerActor.Abilities.Running.SyncedState:SetAttribute("Enabled", false)
-				self.abilityManagerActor.Abilities.Running.SyncedState:SetAttribute("Active", false)
-				self.abilityManagerActor.Abilities.FallingDown.SyncedState:SetAttribute("Enabled", true)
-				self.abilityManagerActor.Abilities.FallingDown.SyncedState:SetAttribute("Active", true)
-				self.controllerManager.ActiveController = nil
-
-				self.groundController.BalanceSpeed = 0
-				self.groundController.BalanceMaxTorque = 0
-				self.groundController.BalanceRigidityEnabled = false
-			end
-			self.momentum.bodyVelocity.Velocity = velocity
-
-			local head = character:FindFirstChild("Head")
-			if not head then
-				return
-			end
-
-			local av = Instance.new("AngularVelocity")
-			av.Name = "HitRotate"
-			av.Attachment0 = humanoidRootPart:FindFirstChild("RootAttachment")
-			av.RelativeTo = Enum.ActuatorRelativeTo.World
-			av.AngularVelocity = FHR2(velocity.Unit * Vector3.new(1, 0, 1).Unit, (power / 100))
-			av.MaxTorque = 5000000
-			av.Parent = humanoidRootPart
-
-			--[[local BF = Instance.new("BodyAngularVelocity")
-			BF.Name = "HitRotate"
-			BF.MaxTorque = Vector3.new(5000000, 5000000, 5000000)
-			BF.P = 2500
-			BF.AngularVelocity = FHR2(velocity.Unit * Vector3.new(1, 0, 1).Unit, 1)
-			BF.Parent = humanoidRootPart--]]
-
-			task.delay(1, function()
-				--av:Destroy()
-				--BF:Destroy()
-			end)
-
-			--humanoidRootPart.AssemblyAngularVelocity = velocity.Unit
-
-			self.customLock:SetTorquePower(0)
-
-			print("Hit")
+			self.momentum:SetMoving(false)
 			self.isHit = time() + duration
-			self.ragdolled = true
 		end)
 	)
 end
