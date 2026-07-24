@@ -1,10 +1,6 @@
 local Types = require(script.Parent.Types)
 local Config = require(script.Parent.Config)
 
-local function Linear(p0: Vector3, p1: Vector3, v0: Vector3?, v1: Vector3?, t: number, dt: number?): Vector3
-	return p0 * (1 - t) + p1 * t
-end
-
 local function Hermite(p0: Vector3, p1: Vector3, v0: Vector3, v1: Vector3, t: number, dt: number): Vector3
 	v0 = v0 or Vector3.zero
 	v1 = v1 or Vector3.zero
@@ -49,7 +45,6 @@ local function VelocityAt(
 end
 
 return {
-	Linear = Linear,
 	Hermite = Hermite,
 	VelocityAt = VelocityAt,
 	CalculateVelocity = CalculateVelocity,

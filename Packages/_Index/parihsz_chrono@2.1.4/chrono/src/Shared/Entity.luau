@@ -220,7 +220,7 @@ local function CheckNetworkOwner(self: Entity, prev: Player?)
 		if self.isContextOwner and not self.entityConfig.STORE_SNAPSHOTS then
 			self.snapshot = nil
 		elseif not self.snapshot then
-			self.snapshot = Snapshot(InterpolationMath.Linear)
+			self.snapshot = Snapshot(InterpolationMath.Hermite)
 		end
 	else
 		local locked = self._lockedCFReplication
