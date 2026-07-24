@@ -5,6 +5,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local SoundService = game:GetService("SoundService")
 local Workspace = game:GetService("Workspace")
 
+local HitRegisterService = require(script.Parent.HitRegisterService)
 local PuckService = require(ServerScriptService.Services.PuckService)
 local PlayerSessionService = require(ServerScriptService.Services.PlayerSessionService)
 local Shots = require(ServerScriptService.Shots)
@@ -51,6 +52,8 @@ end
 function PlayerActionService:Start()
 	ShootEvent.OnServerEvent:Connect(
 		function(player: Player, power: number, mouseHit: Vector3, puckPosition: Vector3, flags)
+			power = math.clamp(power, 0, 100)
+
 			local owner = PuckService:GetOwner()
 			if owner ~= player then
 				return
@@ -103,6 +106,8 @@ function PlayerActionService:Start()
 
 	SlapshotEvent.OnServerEvent:Connect(
 		function(player: Player, power: number, mouseHit: Vector3, puckPosition: Vector3, flags)
+			power = math.clamp(power, 0, 100)
+
 			local owner = PuckService:GetOwner()
 			if owner then
 				return
@@ -150,8 +155,10 @@ function PlayerActionService:Start()
 			end
 
 			local finalVelocity = lookDirection * 30
+			local duration = 0.2
+			local power = 20
 
-			RagdollEvent:FireClient(hitPlayer, finalVelocity, 0.2, true, 20)
+			RagdollEvent:FireClient(hitPlayer, finalVelocity, duration, true, power)
 
 			if PuckService:GetOwner() == hitPlayer then
 				PuckService:DropPuck()
@@ -160,13 +167,14 @@ function PlayerActionService:Start()
 			PlayerSessionService:SetCollectCooldown(hitPlayer, 1.5)
 			PlayerSessionService:SetCheckCooldown(player, 0.5)
 
-			local output = ("%* shoved %*'s %* with %* power"):format(player.Name, hitPlayer.Name, hitPart.Name, 20)
-			print(output)
+			HitRegisterService:Register(player, hitPlayer, hitPart, power, duration, true)
 		end
 	)
 
 	CheckEvent.OnServerEvent:Connect(
 		function(player: Player, hitPlayer: Player, hitPart: BasePart, movementDirection: Vector3, power: number)
+			power = math.clamp(power, 0, 100)
+
 			if time() < PlayerSessionService:GetCheckCooldown(player) then
 				return
 			end
@@ -185,8 +193,7 @@ function PlayerActionService:Start()
 			PlayerSessionService:SetCheckCooldown(player, 0.5)
 			PlayerSessionService:SetCheckCooldown(hitPlayer, 0.5)
 
-			local output = ("%* hit %*'s %* with %* power"):format(player.Name, hitPlayer.Name, hitPart.Name, power)
-			print(output)
+			HitRegisterService:Register(player, hitPlayer, hitPart, power, duration, false)
 		end
 	)
 

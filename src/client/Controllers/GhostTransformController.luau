@@ -47,7 +47,7 @@ function GhostTransformController:Start()
 			clientPuck.Parent = Workspace.Client
 			clientPuck.Anchored = true
 			clientPuck.CanCollide = false
-			clientPuck.BrickColor = BrickColor.Green()
+			--clientPuck.BrickColor = BrickColor.Green()
 			clientPuck.CollisionGroup = "Nothing"
 
 			clientPuck.Transparency = 0
