@@ -1,8 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local UI = ReplicatedStorage.UI
-local PowerUI = UI.Power
+local PowerUI = ReplicatedStorage.Power
 
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer.PlayerGui
