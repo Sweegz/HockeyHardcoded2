@@ -27,11 +27,9 @@ local function HitTracker()
 	return create("ScreenGui")({
 		Name = "HitTracker",
 
-		vide.show(Enabled,  function() 
-			return Container {
-				Enabled = Enabled
-			}
-		end),
+		Enabled = Enabled,
+
+		Container { Enabled = Enabled}
 	})
 end
 
