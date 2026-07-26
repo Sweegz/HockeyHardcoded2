@@ -45,7 +45,7 @@ function GhostTransformController:Start()
 
 		local clientPuck = Workspace.Client:FindFirstChild("Puck")
 		if not clientPuck then
-			clientPuck = ReplicatedStorage.Models.Pucks.Puck:clone()
+			clientPuck = ReplicatedStorage.Assets.Pucks.Puck:clone()
 			clientPuck.Parent = Workspace.Client
 			clientPuck.Anchored = true
 			clientPuck.CanCollide = false

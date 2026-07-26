@@ -2,7 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 
-local ShadowAsset = ReplicatedStorage:FindFirstChild("Models"):FindFirstChild("Shadow")
+local ShadowAsset = ReplicatedStorage:FindFirstChild("Assets"):FindFirstChild("Shadow")
 local PuckFolder = Workspace:FindFirstChild("Client")
 
 if not Workspace:GetAttribute("CustomReplication") then

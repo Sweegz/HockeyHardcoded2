@@ -1,15 +1,6 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterPlayer = game:GetService("StarterPlayer")
-local Players = game:GetService("Players")
 
 local ControllersFolder = StarterPlayer.StarterPlayerScripts:FindFirstChild("Controllers")
-
-local LocalPlayer = Players.LocalPlayer
-local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
-
-for _, gui in ReplicatedStorage:WaitForChild("ReplicatedGui"):GetChildren() do
-	gui.Parent = PlayerGui
-end
 
 local LoadedModules = {}
 local modulesRequiredCount = 0

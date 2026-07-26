@@ -5,7 +5,7 @@ local Workspace = game:GetService("Workspace")
 local Chrono = require(ReplicatedStorage.ModdedPackages.Chrono)
 local Synchronizer = require(ReplicatedStorage.ModdedPackages.Synchronizer)
 
-local PuckModel = ReplicatedStorage:FindFirstChild("Models"):FindFirstChild("Pucks"):FindFirstChild("Puck")
+local PuckModel = ReplicatedStorage:FindFirstChild("Assets"):FindFirstChild("Pucks"):FindFirstChild("Puck")
 
 local COOLDOWN = 0.5
 
