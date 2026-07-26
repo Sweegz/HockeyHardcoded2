@@ -12,6 +12,31 @@ local CollectService = {}
 
 local PLAYER_COOLDOWN = 1.5
 
+local function preventShooterCollisions(player: Player, puck: BasePart)
+	local constraints = {}
+
+	local character = player.Character
+	for _, descendant in character:GetDescendants() do
+		if descendant:IsA("BasePart") and descendant.CanCollide then
+			local constraint = Instance.new("NoCollisionConstraint")
+			constraint.Parent = puck
+
+			constraint.Part0 = puck
+			constraint.Part1 = descendant
+
+			table.insert(constraints, constraint)
+		end
+	end
+
+	task.delay(0.5, function()
+		for _, constraint in constraints do
+			constraint:Destroy()
+		end
+
+		constraints = {}
+	end)
+end
+
 local function AddPuckVelocity(puck: BasePart, player1: Player, player2: Player)
 	if not puck then
 		return
@@ -40,10 +65,17 @@ local function AddPuckVelocity(puck: BasePart, player1: Player, player2: Player)
 		player1humanoidRootPart.AssemblyLinearVelocity - player2humanoidRootPart.AssemblyLinearVelocity / 5
 	) --]]
 
+	--[[local dir = (puck.Position - player1humanoidRootPart.Position).Unit
+	local speed = player1humanoidRootPart.AssemblyLinearVelocity.Magnitude
+
+	local velocity = dir * speed --]]
+
+	preventShooterCollisions(player2, puck)
+	preventShooterCollisions(player1, puck)
 	if puck.AssemblyLinearVelocity.Magnitude < 10 then
-		puck.AssemblyLinearVelocity = puck.AssemblyLinearVelocity / 3
+		puck.AssemblyLinearVelocity = player1humanoidRootPart.AssemblyLinearVelocity.Unit * 25
 	else
-		puck.AssemblyLinearVelocity = player1humanoidRootPart.AssemblyLinearVelocity / 3
+		puck.AssemblyLinearVelocity = puck.AssemblyLinearVelocity / 1.5
 	end
 
 	--puck.AssemblyLinearVelocity = velocity
