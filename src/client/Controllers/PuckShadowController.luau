@@ -5,6 +5,10 @@ local Workspace = game:GetService("Workspace")
 local ShadowAsset = ReplicatedStorage:FindFirstChild("Models"):FindFirstChild("Shadow")
 local PuckFolder = Workspace:FindFirstChild("Client")
 
+if not Workspace:GetAttribute("CustomReplication") then
+	PuckFolder = Workspace:FindFirstChild("Pucks")
+end
+
 local Shadow = ShadowAsset:Clone()
 Shadow.Parent = game.Workspace
 
