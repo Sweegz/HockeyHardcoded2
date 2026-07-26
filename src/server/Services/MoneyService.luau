@@ -4,7 +4,7 @@ local MoneyService = {}
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Synchronizer = require(ReplicatedStorage.Packages.Synchronizer)
+local Synchronizer = require(ReplicatedStorage.ModdedPackages.Synchronizer)
 
 function MoneyService:CanAfford(player: Player, amount: number): (boolean, number)
 	assert(player, "Could not get Player")

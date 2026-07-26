@@ -1,7 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
-local Synchronizer = require(ReplicatedStorage.Packages.Synchronizer)
+local Synchronizer = require(ReplicatedStorage.ModdedPackages.Synchronizer)
 local Net = ReplicatedStorage.Net
 local ToggleSetting = Net:FindFirstChild("ToggleSetting")
 

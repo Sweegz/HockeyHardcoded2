@@ -1,7 +1,8 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
 local PuckService = require(script.Parent.PuckService)
-local Synchronizer = require(ReplicatedStorage.Packages.Synchronizer)
+local Synchronizer = require(ReplicatedStorage.ModdedPackages.Synchronizer)
 
 local HitIndex = 0
 local Capacity = 13

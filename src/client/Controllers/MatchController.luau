@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Synchronizer = require(ReplicatedStorage.Packages.Synchronizer)
+
+local Synchronizer = require(ReplicatedStorage.ModdedPackages.Synchronizer)
 
 local MatchController = {}
 

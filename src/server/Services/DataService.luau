@@ -6,10 +6,10 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
 local DataStore = DataStoreService:GetDataStore("PlayerData1")
+
 local DefaultStats = require(ServerScriptService.Components.DefaultStats)
 local TableUtil = require(ReplicatedStorage.Packages.TableUtil)
-
-local Synchronizer = require(ReplicatedStorage.Packages.Synchronizer)
+local Synchronizer = require(ReplicatedStorage.ModdedPackages.Synchronizer)
 local DeepCopy = require(ReplicatedStorage.Shared.Utility.DeepCopy)
 
 function DataService:SavePlayer(player: Player)

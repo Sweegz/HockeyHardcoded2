@@ -2,7 +2,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
-local Synchronizer = require(ReplicatedStorage.Packages.Synchronizer)
+local Synchronizer = require(ReplicatedStorage.ModdedPackages.Synchronizer)
 
 local PuckService = require(ServerScriptService.Services.PuckService)
 

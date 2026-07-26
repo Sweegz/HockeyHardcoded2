@@ -2,8 +2,9 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Synchronizer = require(ReplicatedStorage.ModdedPackages.Synchronizer)
 local vide = require(ReplicatedStorage.Packages.vide)
-local Synchronizer = require(ReplicatedStorage.Packages.Synchronizer)
+
 
 local Entry = require(script.Parent.Entry)
 
@@ -34,7 +35,7 @@ local function EntryContainer()
 		Size = UDim2.fromScale(1, 1.047),
 		Position = UDim2.fromScale(0, 0.1),
 		BackgroundColor3 = Color3.fromRGB(43, 43, 43),
-		BackgroundTransparency = 0.5,
+		BackgroundTransparency = 1,
 		BorderColor3 = Color3.fromRGB(27, 42, 53),
 		BorderMode = Enum.BorderMode.Outline,
 		BorderSizePixel = 0,

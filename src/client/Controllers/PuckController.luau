@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
-local Synchronizer = require(ReplicatedStorage.Packages.Synchronizer)
+
+local Synchronizer = require(ReplicatedStorage.ModdedPackages.Synchronizer)
 
 local PuckController = {}
 

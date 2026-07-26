@@ -1,4 +1,3 @@
-local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
@@ -7,13 +6,13 @@ local Workspace = game:GetService("Workspace")
 
 local MouseLockController = require(StarterPlayer.StarterPlayerScripts.Controllers.MouseLockController)
 local PuckController = require(StarterPlayer.StarterPlayerScripts.Controllers.PuckController)
+
 local Animator = require(script.Animator)
 local Input = require(script.Input)
 local StateMachine = require(script.StateMachine)
 local Power = require(script.Power)
 local Collect = require(script.Collect)
 local Constants = require(script.Constants)
---local CustomLock = require(script.CustomLock)
 local Sprint = require(script.Sprint)
 local Momentum = require(script.Momentum)
 

@@ -6,7 +6,9 @@ local vide = require(ReplicatedStorage.Packages.vide)
 local create = vide.create
 
 
-local function Title()
+local function Title(props: {
+	Enabled: (boolean) -> (),
+})
 	return create "TextLabel" {
 		Name = "Title",
 
@@ -21,6 +23,12 @@ local function Title()
 		TextStrokeColor3 = Color3.fromRGB(0, 0, 0),
 		Text = "Hit Tracker",
 		FontFace = Font.new(Font.fromEnum(Enum.Font.SourceSans).Family, Enum.FontWeight.Light),
+
+		--[[
+		vide.spring(function()
+			return if props.Enabled() then 0.5 else 1
+		end),
+		]]
 	}
 end
 

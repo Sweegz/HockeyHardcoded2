@@ -1,6 +1,5 @@
-local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
+
 local Momentum = {}
 Momentum.__index = Momentum
 
@@ -18,7 +17,6 @@ local GLIDE_SPEED_MODIFIER_RESISTING = 0.06064
 local VELOCITY_DAMP_FACTOR = 0.825
 local DIRECTION_LERP_FACTOR = 0.6
 local MAX_FORCE = Vector3.new(25000, 0, 25000)
-local FRAME_RATE = 1 / 60
 
 local function getHumanoidRootPart()
 	local character = LocalPlayer and LocalPlayer.Character

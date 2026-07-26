@@ -16,9 +16,12 @@ local function Container(props: {
 		Name = "Container",
 
 		Size = UDim2.fromScale(0.6, 0.7),
-		Position = UDim2.fromScale(0.2, 0.1),
+
+		--Position = UDim2.fromScale(0.2, 0.1),
+		Position = UDim2.fromScale(0.5, 0.46),
+		AnchorPoint = Vector2.new(0.5, 0.5),
 		BackgroundColor3 = Color3.fromRGB(43, 43, 43),
-		BackgroundTransparency = 1,
+		BackgroundTransparency = 0.5,
 		BorderColor3 = Color3.fromRGB(27, 42, 53),
 		BorderMode = Enum.BorderMode.Outline,
 		BorderSizePixel = 1,
@@ -27,7 +30,9 @@ local function Container(props: {
 
 		Header(),
 		EntryContainer(),
-		Title(),
+		Title {
+			Enabled = props.Enabled
+		},
 		CloseButton { 
             Enabled = props.Enabled
         },

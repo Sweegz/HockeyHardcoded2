@@ -28,10 +28,10 @@ local function Entry(props: { data: () -> HitData })
 		BackgroundColor3 = Color3.fromRGB(43, 43, 43),
 		BackgroundTransparency = 1,
 		ZIndex = 1,
-		TextColor3 = function()
-			return data.penalty and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(255, 255, 255)
-		end,
+		LayoutOrder = 10000000 - order,
+
 		TextScaled = true,
+		TextWrapped = true,
 		TextStrokeTransparency = 0,
 		TextStrokeColor3 = Color3.fromRGB(0, 0, 0),
 		FontFace = Font.new(Font.fromEnum(Enum.Font.SourceSansItalic).Family, Enum.FontWeight.Regular),
@@ -45,10 +45,11 @@ local function Entry(props: { data: () -> HitData })
 				data.distanceFromPuck
 			)
 		end,
-		LayoutOrder = 10000000 - order,
+		TextColor3 = function()
+			return data.penalty and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(255, 255, 255)
+		end,
 		TextXAlignment = Enum.TextXAlignment.Center,
 		TextYAlignment = Enum.TextYAlignment.Center,
-		TextWrapped = true,
 	})
 end
 

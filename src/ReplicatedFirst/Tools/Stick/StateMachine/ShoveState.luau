@@ -1,8 +1,7 @@
-local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local StarterPlayer = game:GetService("StarterPlayer")
-local Workspace = game:GetService("Workspace")
+
 local PlayerActionController = require(StarterPlayer.StarterPlayerScripts.Controllers.PlayerActionController)
 local Constants = require(script.Parent.Parent.Constants)
 

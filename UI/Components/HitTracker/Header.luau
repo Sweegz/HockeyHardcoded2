@@ -12,7 +12,7 @@ local function Header()
 		Size = UDim2.fromScale(1, 0.1),
 		Position = UDim2.fromScale(0, 0),
 		BackgroundColor3 = Color3.fromRGB(43, 43, 43),
-		BackgroundTransparency = 0.5,
+		BackgroundTransparency = 1,
 		BorderColor3 = Color3.fromRGB(27, 42, 53),
 		BorderMode = Enum.BorderMode.Outline,
 		BorderSizePixel = 0,

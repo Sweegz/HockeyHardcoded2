@@ -1,7 +1,9 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
-local Chrono = require(ReplicatedStorage.Packages.Chrono)
+
+local Chrono = require(ReplicatedStorage.ModdedPackages.Chrono)
+
 local GhostTransformController = {}
 
 local function GetInterpolated(entity): CFrame?

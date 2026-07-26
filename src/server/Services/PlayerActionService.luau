@@ -1,9 +1,6 @@
-local PhysicsService = game:GetService("PhysicsService")
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local SoundService = game:GetService("SoundService")
-local Workspace = game:GetService("Workspace")
 
 local HitRegisterService = require(script.Parent.HitRegisterService)
 local PuckService = require(ServerScriptService.Services.PuckService)

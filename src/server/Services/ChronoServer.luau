@@ -1,7 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
-local Chrono = require(ReplicatedStorage.Packages.Chrono)
+local Chrono = require(ReplicatedStorage.ModdedPackages.Chrono)
 
 local ChronoServer = {}
 

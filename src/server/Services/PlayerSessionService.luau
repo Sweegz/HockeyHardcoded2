@@ -3,7 +3,7 @@ local PlayerSessionService: any = {}
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
-local Synchronizer = require(ReplicatedStorage.Packages.Synchronizer)
+local Synchronizer = require(ReplicatedStorage.ModdedPackages.Synchronizer)
 local DeepCopy = require(ReplicatedStorage.Shared.Utility.DeepCopy)
 
 local playerSessionChannel
