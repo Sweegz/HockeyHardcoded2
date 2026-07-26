@@ -336,7 +336,7 @@ function CheckState:Tick(dt: number)
 		return
 	end
 
-	if self.timeElapsed > Constants.FADE_TIME and self.timeElapsed < 0.5 then
+	if true then
 		if not self.checking then
 			self.checking = true
 			task.spawn(function()

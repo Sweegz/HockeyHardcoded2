@@ -13,6 +13,10 @@ local CollectService = {}
 local PLAYER_COOLDOWN = 1.5
 
 local function AddPuckVelocity(puck: BasePart, player1: Player, player2: Player)
+	if not puck then
+		return
+	end
+
 	local player1Character = player1.Character
 	local player2Character = player2.Character
 
@@ -23,17 +27,26 @@ local function AddPuckVelocity(puck: BasePart, player1: Player, player2: Player)
 	local player1humanoidRootPart = player1Character:FindFirstChild("HumanoidRootPart")
 	local player2humanoidRootPart = player2Character:FindFirstChild("HumanoidRootPart")
 
-	if not player1humanoidRootPart or not player2humanoidRootPart then
+	if
+		not player1humanoidRootPart
+		or not player2humanoidRootPart
+		or not player1humanoidRootPart:IsA("BasePart")
+		or not player2humanoidRootPart:IsA("BasePart")
+	then
 		return
 	end
 
-	local velocity = (
-		player1humanoidRootPart.AssemblyLinearVelocity - player2humanoidRootPart.AssemblyLinearVelocity / 2
-	)
+	--[[local velocity = (
+		player1humanoidRootPart.AssemblyLinearVelocity - player2humanoidRootPart.AssemblyLinearVelocity / 5
+	) --]]
 
-	if puck then
-		puck.AssemblyLinearVelocity = velocity
+	if puck.AssemblyLinearVelocity.Magnitude < 10 then
+		puck.AssemblyLinearVelocity = puck.AssemblyLinearVelocity / 3
+	else
+		puck.AssemblyLinearVelocity = player1humanoidRootPart.AssemblyLinearVelocity / 3
 	end
+
+	--puck.AssemblyLinearVelocity = velocity
 end
 
 function CollectService:Start()
