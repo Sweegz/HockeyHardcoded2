@@ -87,7 +87,7 @@ function HitRegisterService:Register(
 
 		local distanceHit: number = math.round((startPosition - endPosition).Magnitude)
 
-		local penalty = distanceHit >= 40 or distanceFromPuck >= 25
+		local penalty = not shove and (distanceHit >= 40 or distanceFromPuck >= 25)
 
 		local data: HitData = {
 			player = player,
