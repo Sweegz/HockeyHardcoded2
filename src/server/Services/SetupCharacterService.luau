@@ -3,19 +3,24 @@ local Players = game:GetService("Players")
 
 local characterAddedConnections = {}
 
-function SetupCharacter(character: Instance)
+function SetupCharacter(character: Model)
 	local Torso = character:WaitForChild("Torso")
 	local HumanoidRootPart = character:WaitForChild("HumanoidRootPart")
 
-	local RightLeg = character:FindFirstChild("Right Leg")
+	character.PrimaryPart = HumanoidRootPart
+
+	local RightLeg = character:WaitForChild("Right Leg")
 	if RightLeg then
 		CollectionService:AddTag(RightLeg, "Collect")
 	end
 
-	local LeftLeg = character:FindFirstChild("Left Leg")
+	local LeftLeg = character:WaitForChild("Left Leg")
 	if LeftLeg then
 		CollectionService:AddTag(LeftLeg, "Collect")
 	end
+
+	--LeftLeg.CanCollide = true
+	--RightLeg.CanCollide = true
 
 	local ToolGrip = Instance.new("Motor6D")
 	ToolGrip.Name = "ToolGrip"
@@ -32,7 +37,6 @@ function SetupCharacter(character: Instance)
 	--HumanoidRootPart.CustomPhysicalProperties = PhysicalProperties.new(3, 0.3, 0.5)
 
 	character.ChildAdded:Connect(function(child)
-		task.wait(0.5)
 		character["Right Arm"].CanCollide = true
 		character["Left Arm"].CanCollide = true
 		character["Head"].CanCollide = true
@@ -85,32 +89,6 @@ function SetupCharacter(character: Instance)
 			end
 		end)
 	end
-
-	local leftLegCollider = Instance.new("Part")
-	leftLegCollider.Name = "LeftLegCollider"
-	leftLegCollider.Size = Vector3.new(1, 1.8, 1)
-	leftLegCollider.Parent = character
-	leftLegCollider.CollisionGroup = "Legs"
-	leftLegCollider.Transparency = 1
-
-	local llcWeld = Instance.new("Weld")
-	llcWeld.Parent = leftLegCollider
-	llcWeld.Part0 = leftLegCollider
-	llcWeld.Part1 = LeftLeg
-	llcWeld.C1 = CFrame.new(0, 0.1, 0)
-
-	local rightLegCollider = Instance.new("Part")
-	rightLegCollider.Name = "RightLegCollider"
-	rightLegCollider.Size = Vector3.new(1, 1.8, 1)
-	rightLegCollider.Parent = character
-	rightLegCollider.CollisionGroup = "Legs"
-	rightLegCollider.Transparency = 1
-
-	local rlcWeld = Instance.new("Weld")
-	rlcWeld.Parent = rightLegCollider
-	rlcWeld.Part0 = rightLegCollider
-	rlcWeld.Part1 = RightLeg
-	rlcWeld.C1 = CFrame.new(0, 0.1, 0)
 
 	local ControllerManager = character:WaitForChild("ControllerManager")
 
