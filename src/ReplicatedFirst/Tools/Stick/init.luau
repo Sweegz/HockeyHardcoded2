@@ -261,6 +261,8 @@ function Stick:Initialize()
 			self.hit.velocity = velocity
 			self.hit.shove = shove
 
+			LocalPlayer.Character.PrimaryPart.AssemblyAngularVelocity = FHR2(velocity.Unit, power / 100)
+
 			self.momentum:SetMoving(false)
 			self.isHit = time() + duration
 		end)
