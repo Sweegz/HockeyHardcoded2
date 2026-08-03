@@ -11,13 +11,14 @@ local COOLDOWN = 0.5
 
 local Channel = nil
 
-local PuckService = {}
+local PuckService = {
+	lastShotPosition = Vector3.zero,
+}
 
 function PuckService:Load()
 	Channel = Synchronizer:Create("Puck", {
 		Owner = nil,
 		Cooldown = 0,
-		Enabled = false,
 		Instance = nil,
 	})
 
@@ -35,14 +36,6 @@ function PuckService:Load()
 end
 
 function PuckService:Start() end
-
-function PuckService:Enable()
-	Channel:Set("Enabled", true)
-end
-
-function PuckService:Disable()
-	Channel:Set("Enabled", false)
-end
 
 function PuckService:SetOwner(player: Player)
 	local character = player.Character
@@ -91,25 +84,47 @@ function PuckService:GetPuckInstance()
 	return Channel:Get("Instance")
 end
 
+local conn
+
 function PuckService:Spawn(position: Vector3)
 	PuckService:Destroy()
+	PuckService.lastShotPosition = Vector3.zero
 
 	local clone = PuckModel:Clone()
 	clone.Parent = Workspace:FindFirstChild("Pucks")
 	clone.Position = position
 	clone:SetNetworkOwner(nil)
 
+	conn = clone.AncestryChanged:Once(function()
+		if clone.Parent == nil then
+			PuckService:Destroy()
+		end
+	end)
+
 	if Workspace:GetAttribute("CustomReplication") then
 		local ent = Chrono.Entity.new("Default", clone)
 	end
 
 	Channel:Set("Instance", clone):Set("Owner", nil):Set("Cooldown", 0)
+
+	return clone
 end
 
 function PuckService:Destroy()
+	print("Destroyed!")
 	local current_puck = PuckService:GetPuckInstance()
+
+	if conn then
+		conn:Disconnect()
+	end
+
 	if current_puck then
 		current_puck:Destroy()
+
+		local ent = Chrono.Holder.GetEntityFromModel(current_puck)
+		if ent then
+			Chrono.Entity.Destroy(ent)
+		end
 	end
 
 	Channel:Set("Instance", nil):Set("Owner", nil):Set("Cooldown", 0)

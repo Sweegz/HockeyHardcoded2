@@ -43,6 +43,11 @@ function GhostTransformController:Start()
 			return
 		end
 
+		if Workspace:GetAttribute("CustomReplication") then
+			puck.Transparency = 1
+			puck.CollisionGroup = "Nothing"
+		end
+
 		local clientPuck = Workspace.Client:FindFirstChild("Puck")
 		if not clientPuck then
 			clientPuck = ReplicatedStorage.Assets.Pucks.Puck:clone()

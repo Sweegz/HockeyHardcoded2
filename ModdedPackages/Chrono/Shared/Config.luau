@@ -96,22 +96,22 @@ local BASE_CONFIG = {
 local ENTITY_TYPES: { [string]: Types.EntityConfig } = {
 	DEFAULT = {
 		NAME = "DEFAULT",
-		TICK_RATE = 1 / 60,
-		BUFFER = 0.05,
+		TICK_RATE = 1 / 50,
+		BUFFER = 0.1,
 		CUSTOM_INTERPOLATION = true,
 		FULL_ROTATION = true,
 	},
 	WITH_ROT = {
 		NAME = "WITH_ROT",
-		TICK_RATE = 1 / 20,
+		TICK_RATE = 1 / 60,
 		BUFFER = 0.1,
 		FULL_ROTATION = true,
 	},
 	PLAYER = {
 		NAME = "PLAYER",
 		MODEL_REPLICATION_MODE = "NATIVE",
-		BUFFER = 0.05, -- handled dynamically for players
-		TICK_RATE = 1 / 60,
+		BUFFER = 0.1,
+		TICK_RATE = 1 / 50,
 		ASSEMBLY_ROOT_PART_CHECK = true,
 		FULL_ROTATION = true,
 	},

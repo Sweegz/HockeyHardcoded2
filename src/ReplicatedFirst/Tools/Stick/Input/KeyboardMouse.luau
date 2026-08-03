@@ -127,6 +127,10 @@ function KeyboardMouse.InputBeganFixed(input: InputObject, commands)
 	if input.KeyCode == Enum.KeyCode.D then
 		commands.MoveRight = time()
 	end
+
+	if input.KeyCode == Enum.KeyCode.B then
+		commands.Toedrag = time()
+	end
 	-------------------
 end
 
@@ -200,6 +204,10 @@ function KeyboardMouse.InputEndedFixed(input: InputObject, commands)
 
 	if input.KeyCode == Enum.KeyCode.D then
 		commands.MoveRight = false
+	end
+
+	if input.KeyCode == Enum.KeyCode.B then
+		commands.Toedrag = false
 	end
 	-------------------
 end

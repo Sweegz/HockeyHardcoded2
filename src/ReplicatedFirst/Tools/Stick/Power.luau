@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
 local StarterPlayer = game:GetService("StarterPlayer")
+local MatchController = require(StarterPlayer.StarterPlayerScripts.Controllers.MatchController)
 local PowerBar = require(script.Parent.PowerBar)
 local PuckController = require(StarterPlayer.StarterPlayerScripts.Controllers.PuckController)
 local Power = {}
@@ -58,7 +59,7 @@ function Power:Tick(dt)
 	local state = self.ctx.stateMachine.state
 	local stateName = state.name
 
-	if not state.canCharge then
+	if not state.canCharge or not MatchController:GetInPlay() then
 		self.holdStartTime = 0
 
 		return

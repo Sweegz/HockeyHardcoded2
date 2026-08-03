@@ -1,5 +1,6 @@
 local StarterPlayer = game:GetService("StarterPlayer")
 local CollectController = require(StarterPlayer.StarterPlayerScripts.Controllers.CollectController)
+local MatchController = require(StarterPlayer.StarterPlayerScripts.Controllers.MatchController)
 local Constants = require(script.Parent.Parent.Constants)
 
 function higherThan(source: number?, target: number?): boolean
@@ -97,7 +98,7 @@ function DefaultState:Tick(dt: number)
 			next_state = "Default"
 		end
 
-		if not extended and not hasPuck and not power:IsCharging() then
+		if not extended and not hasPuck and not power:IsCharging() and MatchController:GetInPlay() then
 			if commands.PokeCheck and commands.PokeCheck > time() - 0.5 then
 				next_state = self.ctx.stateMachine.states.PokeCheckState
 			end
@@ -128,6 +129,13 @@ function DefaultState:Tick(dt: number)
 
 			if commands.SlapShot then
 				next_state = self.ctx.stateMachine.states.SlapShotState
+			end
+		end
+
+		if self.ctx:HasPuck() then
+			if commands.Toedrag then
+				print("Hej")
+				next_state = self.ctx.stateMachine.states.ToedragState
 			end
 		end
 

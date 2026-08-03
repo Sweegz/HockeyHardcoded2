@@ -227,6 +227,8 @@ function Momentum:Tick(dt: number)
 			bodyVelocity.Velocity = slideVelocity
 		end
 	end
+
+	--print(self.bodyVelocity.Velocity)
 end
 
 function Momentum:SetBodyVelocity(velocity: Vector3)

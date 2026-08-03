@@ -1,5 +1,7 @@
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local Signal = require(ReplicatedStorage.Packages.Signal)
 
 local DRAIN_RATE = 20
 local REGEN_RATE = 10
@@ -8,12 +10,8 @@ local MAX_STAMINA = 100
 local StaminaController = {
 	Stamina = 100,
 	Burn = false,
+	StaminaChanged = Signal.new(),
 }
-
-local LocalPlayer = Players.LocalPlayer
-
-local PlayerGui = LocalPlayer.PlayerGui
-local bar = PlayerGui.Stamina.Container.Stamina.Bar
 
 function StaminaController:Start()
 	RunService.Heartbeat:Connect(function(dt)
@@ -27,7 +25,7 @@ end
 
 function StaminaController:SetStamina(value: number)
 	self.Stamina = math.clamp(value, 0, MAX_STAMINA)
-	bar.Size = UDim2.fromScale(self.Stamina / MAX_STAMINA, 1)
+	self.StaminaChanged:Fire(value)
 end
 
 function StaminaController:GetStamina()

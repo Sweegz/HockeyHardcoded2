@@ -103,6 +103,8 @@ function CollectService:Start()
 		end
 
 		if not owner and pickup then
+			puck.AssemblyLinearVelocity = Vector3.zero
+			puck.AssemblyAngularVelocity = Vector3.zero
 			PuckService:SetOwner(player)
 		elseif owner and owner ~= player then
 			PuckService:DropPuck()
@@ -111,13 +113,25 @@ function CollectService:Start()
 		end
 	end
 
-	DropEvent.OnServerEvent:Connect(function(player: Player)
+	DropEvent.OnServerEvent:Connect(function(player: Player, position: CFrame)
 		local owner = PuckService:GetOwner()
 
 		if owner == player then
 			PuckService:DropPuck()
 			PlayerSessionService:SetCollectCooldown(owner, PLAYER_COOLDOWN)
-			AddPuckVelocity(PuckService:GetPuckInstance(), player, owner)
+
+			local puck = PuckService:GetPuckInstance()
+
+			-- ANTI CHEAT to make sure the drop disrespancy isn't too far
+			local distBetweenClientandServer = (puck.Position - position.Position).Magnitude
+			if distBetweenClientandServer < 20 then
+				puck.CFrame = position
+			end
+
+			puck.AssemblyLinearVelocity = Vector3.zero
+			puck.AssemblyAngularVelocity = Vector3.zero
+
+			preventShooterCollisions(player, puck)
 		end
 	end)
 end

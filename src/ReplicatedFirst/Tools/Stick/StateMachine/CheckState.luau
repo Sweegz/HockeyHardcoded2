@@ -242,12 +242,20 @@ end
 
 local FADE_TIME = 0.2
 
+local lastVelocityUpdateTime = time()
+local velocityUpdated = false
+
 function CheckState:Enter()
 	self.ctx.animator:PlayAnimationByName("Check", FADE_TIME)
 
 	self.ctx.animator:StopAnimationByName("Idle", FADE_TIME)
 	self.ctx.animator:StopAnimationByName("Left", FADE_TIME)
 	self.ctx.animator:StopAnimationByName("Right", FADE_TIME)
+
+	velocityUpdated = false
+	lastVelocityUpdateTime = time()
+
+	self.ctx.movementDisabled = true
 
 	local input = self.ctx.input
 	input:DisableCommand("ChargePower")
@@ -274,14 +282,13 @@ function CheckState:Enter()
 		hrp_speed = humanoid.WalkSpeed
 	end
 
-	momentum:SetMoving(true)
-
 	local humanoidRootPartSpeed = humanoidRootPart.AssemblyLinearVelocity.Magnitude
 	if humanoid.WalkSpeed < humanoidRootPartSpeed then
 		humanoidRootPartSpeed = humanoid.WalkSpeed
 	end
 
 	if humanoid.WalkSpeed >= 32 and self.power >= 18.4 then
+		momentum:SetMoving(true)
 		if self.power <= 25 then
 			if humanoidRootPartSpeed < self.power * 1.335 then
 				local Velocity = (self.targetPosition - humanoidRootPart.Position).Unit
@@ -345,12 +352,10 @@ function CheckState:Tick(dt: number)
 		end
 	end
 
-	if self.timeElapsed < 0.5 then
-		if humanoid.MoveDirection.Magnitude > 0.1 then
-			local velocity = momentum:GetBodyVelocity()
-			velocity = velocity:Lerp(moveDirection * self.movementSpeedMultiplier, 0.8 * dt)
-			momentum:SetBodyVelocity(velocity)
-		end
+	if self.timeElapsed >= 0.1 and self.timeElapsed <= 0.5 and humanoid.MoveDirection.Magnitude > 0.1 then
+		--[[local velocity = momentum:GetBodyVelocity()
+		velocity = velocity:Lerp(moveDirection * self.movementSpeedMultiplier, 0.8 * dt)
+		momentum:SetBodyVelocity(velocity) --]]
 	end
 
 	if self.timeElapsed > 0.5 then
@@ -366,6 +371,7 @@ function CheckState:Tick(dt: number)
 end
 
 function CheckState:Exit()
+	self.ctx.movementDisabled = false
 	self.ctx.animator:StopAnimationByName("Check", Constants.FADE_TIME)
 	self.checking = false
 end

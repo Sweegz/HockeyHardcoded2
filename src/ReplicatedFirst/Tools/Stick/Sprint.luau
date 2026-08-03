@@ -29,20 +29,15 @@ function Sprint:Tick(_dt: number)
 	local state = self.ctx.stateMachine.state
 
 	local movingForward = input.commands.MoveForward -- Add (or input.commands.MoveRight or input.commands.MoveLeft) for more flexible gameplay
-	local movingBackward = input.commands.MoveBackward
+	--local movingBackward = input.commands.MoveBackward
 
 	local movementDisabled = self.ctx.movementDisabled
 
-	if
-		StaminaController:CanSprint()
-		and input.commands.Sprint
-		and state.canSprint
-		and (movingForward and not movingBackward)
-	then
+	if StaminaController:CanSprint() and input.commands.Sprint and state.canSprint and movingForward then
 		StaminaController:SetBurning(true)
 		self.ctx.humanoid.WalkSpeed = Constants.SPRINTSPEED
 	else
-		if not StaminaController:CanSprint() or movingBackward then -- Set to (movingForward and not movingBackward) for more flexible gameplay
+		if not StaminaController:CanSprint() then -- Set to (movingForward and not movingBackward) for more flexible gameplay
 			input:DisableCommand("Sprint")
 		end
 

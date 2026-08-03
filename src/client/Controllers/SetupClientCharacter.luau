@@ -44,11 +44,13 @@ local function setupClient(character: Model)
 	local RightArm = character:WaitForChild("Right Arm")
 	if RightArm then
 		RightArm.CanCollide = false
+		RightArm.CustomPhysicalProperties = PhysicalProperties.new(1.4, 0.3, 0.5)
 	end
 
 	local LeftArm = character:WaitForChild("Left Arm")
 	if LeftArm then
 		LeftArm.CanCollide = false
+		LeftArm.CustomPhysicalProperties = PhysicalProperties.new(1.4, 0.3, 0.5)
 	end
 
 	local RightLeg = character:WaitForChild("Right Leg")

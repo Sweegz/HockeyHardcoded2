@@ -21,7 +21,10 @@ function CollectController:Collect(pickup: boolean)
 end
 
 function CollectController:Drop()
-	DropEvent:FireServer()
+	local puck = PuckController:GetInstance()
+	if puck then
+		DropEvent:FireServer(puck.CFrame)
+	end
 end
 
 return CollectController

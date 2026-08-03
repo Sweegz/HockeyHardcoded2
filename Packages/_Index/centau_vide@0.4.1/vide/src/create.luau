@@ -72,6 +72,7 @@ type Instances = {
     UIListLayout: UIListLayout,
     Camera: Camera,
     WorldModel: WorldModel,
+    UIStroke: UIStroke,
 }
 
 type function Properties(instance: type?)

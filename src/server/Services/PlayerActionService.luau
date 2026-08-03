@@ -94,6 +94,7 @@ function PlayerActionService:Start()
 			preventShooterCollisions(player, puck)
 
 			PuckService:DropPuck()
+			PuckService.lastShotPosition = puckPosition
 			puck.Position = puckPosition
 			Shots.apply_velocity(puck, velocity)
 			Shots.apply_force(puck, force, time)
@@ -138,6 +139,7 @@ function PlayerActionService:Start()
 			preventShooterCollisions(player, puck)
 
 			PuckService:DropPuck()
+			PuckService.lastShotPosition = puckPosition
 			puck.Position = puckPosition
 			Shots.apply_velocity(puck, velocity)
 			Shots.apply_force(puck, force, time)
