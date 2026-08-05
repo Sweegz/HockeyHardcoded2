@@ -87,7 +87,7 @@ function FaceoffService:Create(position: Vector3)
 end
 
 function FaceoffService:End()
-	FaceoffService.FaceoffEndedEvent:Fire()
+	FaceoffService.OnFaceoffComplete:Fire()
 	HomePad.Transparency = 1
 	AwayPad.Transparency = 1
 	TextLabel.TextTransparency = 1

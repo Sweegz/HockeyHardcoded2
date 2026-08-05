@@ -9,7 +9,7 @@ local MusicService = require(script.Parent.MusicService)
 local OutOfBoundsService = require(script.Parent.OutOfBoundsService)
 local Synchronizer = require(ReplicatedStorage.ModdedPackages.Synchronizer)
 
-local PuckService = require(ServerScriptService.Services.PuckService)
+local PuckService = require(ServerScriptService.Services.PuckService2)
 
 local MatchService = {}
 local Channel = nil
@@ -34,8 +34,8 @@ function MatchService:Load()
 		Channel:RemoveListener(player)
 	end)
 
-	OutOfBoundsService.OnOutOfBounds:Connect(function(position: Vector3)
-		MatchService:OutOfPlay(position)
+	OutOfBoundsService.OnOutOfBounds:Connect(function(hit: BasePart)
+		MatchService:OutOfPlay(hit)
 	end)
 
 	FaceoffService.OnFaceoffComplete:Connect(function()
@@ -45,7 +45,7 @@ end
 
 function MatchService:StartPlay()
 	MatchService:SetPlay(true)
-	local puck = PuckService:GetPuckInstance()
+	local puck = PuckService:GetMainPuck()
 	MusicService:Stop()
 	if puck then
 		task.wait(0.5)
@@ -54,27 +54,33 @@ function MatchService:StartPlay()
 	end
 end
 
-function MatchService:OutOfPlay(position: Vector3)
+function MatchService:OutOfPlay(puck: BasePart)
 	if MatchService:IsInPlay() then
+		print("Out of Play!")
 		MatchService:SetPlay(false)
 		MusicService:Play()
 
-		print("Out of Play!")
+		local position: Vector3 = puck:GetAttribute("LastShotPosition") or Vector3.zero
+		PuckService:SetPlayable(puck, false)
 
 		local spot = FaceoffService:FindClosestSpot(Workspace.Rink.Game, position)
 		spot *= Vector3.new(1, 0, 1)
 
 		task.wait(5)
 
+		local newPuck = PuckService:Create(spot + Vector3.new(0, 10, 0), true)
+		PuckService:SetMainPuck(newPuck)
+		newPuck.Anchored = true
 		FaceoffService:Create(spot + Vector3.new(0, 1, 0))
-		local puck = PuckService:Spawn(spot + Vector3.new(0, 10, 0))
-		puck.Anchored = true
+
+		puck:Destroy()
 	end
 end
 
 function MatchService:Start()
 	MatchService:StartMatch()
-	PuckService:Spawn(Vector3.new(0, 10, 0))
+	local puck = PuckService:Create(Vector3.new(0, 10, 0), true)
+	PuckService:SetMainPuck(puck)
 end
 
 function MatchService:StartMatch()

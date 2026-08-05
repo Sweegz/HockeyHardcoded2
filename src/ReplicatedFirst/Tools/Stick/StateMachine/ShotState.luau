@@ -54,7 +54,9 @@ function ShotState:Enter()
 
 	task.spawn(function()
 		self.connection = self.track:GetMarkerReachedSignal("Shoot"):Once(function()
-			PlayerActionController:Shoot(self.power, {
+			local puck = self.ctx:HasPuck()
+
+			PlayerActionController:Shoot(puck, self.power, {
 				wrist = false,
 				chip = typeof(commands.Chip) == "number",
 				fake = typeof(commands.Fake) == "number",

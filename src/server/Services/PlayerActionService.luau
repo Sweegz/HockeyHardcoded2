@@ -1,9 +1,10 @@
+local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local SoundService = game:GetService("SoundService")
 
 local HitRegisterService = require(script.Parent.HitRegisterService)
-local PuckService = require(ServerScriptService.Services.PuckService)
+local PuckService = require(ServerScriptService.Services.PuckService2)
 local PlayerSessionService = require(ServerScriptService.Services.PlayerSessionService)
 local Shots = require(ServerScriptService.Shots)
 
@@ -48,19 +49,18 @@ end
 
 function PlayerActionService:Start()
 	ShootEvent.OnServerEvent:Connect(
-		function(player: Player, power: number, mouseHit: Vector3, puckPosition: Vector3, flags)
-			power = math.clamp(power, 0, 100)
-
-			local owner = PuckService:GetOwner()
-			if owner ~= player then
-				return
-			end
-
-			local puck = PuckService:GetPuckInstance()
+		function(player: Player, uuid: string, power: number, mouseHit: Vector3, puckPosition: Vector3, flags)
+			local puck = PuckService:GetPuckViaUUID(uuid)
 			if not puck then
 				return
 			end
 
+			local owner = PuckService:GetOwner(puck)
+			if owner ~= player.UserId then
+				return
+			end
+
+			power = math.clamp(power, 0, 100)
 			local dir = (mouseHit - puckPosition).Unit
 			dir = Vector3.new(dir.X, 0, dir.Z)
 
@@ -93,8 +93,8 @@ function PlayerActionService:Start()
 
 			preventShooterCollisions(player, puck)
 
-			PuckService:DropPuck()
-			PuckService.lastShotPosition = puckPosition
+			PuckService:RemoveOwner(puck)
+			PuckService:SetLastShotPosition(puck, puckPosition)
 			puck.Position = puckPosition
 			Shots.apply_velocity(puck, velocity)
 			Shots.apply_force(puck, force, time)
@@ -103,18 +103,17 @@ function PlayerActionService:Start()
 	)
 
 	SlapshotEvent.OnServerEvent:Connect(
-		function(player: Player, power: number, mouseHit: Vector3, puckPosition: Vector3, flags)
-			power = math.clamp(power, 0, 100)
-
-			local owner = PuckService:GetOwner()
-			if owner then
-				return
-			end
-
-			local puck = PuckService:GetPuckInstance()
+		function(player: Player, uuid: string, power: number, mouseHit: Vector3, puckPosition: Vector3, flags)
+			local puck = PuckService:GetPuckViaUUID(uuid)
 			if not puck then
 				return
 			end
+			local owner = PuckService:GetOwner(puck)
+			if owner and owner ~= player.UserId then
+				return
+			end
+
+			power = math.clamp(power, 0, 100)
 
 			local dir = (mouseHit - puckPosition).Unit
 			dir = Vector3.new(dir.X, 0, dir.Z)
@@ -138,8 +137,8 @@ function PlayerActionService:Start()
 
 			preventShooterCollisions(player, puck)
 
-			PuckService:DropPuck()
-			PuckService.lastShotPosition = puckPosition
+			PuckService:RemoveOwner(puck)
+			PuckService:SetLastShotPosition(puck, puckPosition)
 			puck.Position = puckPosition
 			Shots.apply_velocity(puck, velocity)
 			Shots.apply_force(puck, force, time)
@@ -159,8 +158,10 @@ function PlayerActionService:Start()
 
 			RagdollEvent:FireClient(hitPlayer, finalVelocity, duration, true, power)
 
-			if PuckService:GetOwner() == hitPlayer then
-				PuckService:DropPuck()
+			local possessedPuck = PuckService:HasPuck(hitPlayer)
+
+			if possessedPuck then
+				PuckService:RemoveOwner(possessedPuck)
 			end
 
 			PlayerSessionService:SetCollectCooldown(hitPlayer, 1.5)
@@ -184,8 +185,10 @@ function PlayerActionService:Start()
 
 			RagdollEvent:FireClient(hitPlayer, finalVelocity, duration, false, power)
 
-			if PuckService:GetOwner() == hitPlayer then
-				PuckService:DropPuck()
+			local possessedPuck = PuckService:HasPuck(hitPlayer)
+
+			if possessedPuck then
+				PuckService:RemoveOwner(possessedPuck)
 			end
 
 			PlayerSessionService:SetCollectCooldown(hitPlayer, 1.5)

@@ -10,7 +10,6 @@ local DataController = {}
 
 function DataController:Load()
 	Synchronizer:Wait(LocalPlayer)
-	Synchronizer:Wait("Puck")
 	Synchronizer:Wait("Match")
 
 	ReplicatedFirst:SetAttribute("DataLoaded", true)

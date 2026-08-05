@@ -1,7 +1,9 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local StarterPlayer = game:GetService("StarterPlayer")
 
-local PuckController = require(script.Parent.PuckController)
+local EntityMap2 = require(StarterPlayer.StarterPlayerScripts.EntityMap2)
+local PuckController = require(script.Parent.PuckController2)
 
 local GetValidMouseHit = require(ReplicatedStorage.Shared.Utility.GetValidMouseHit)
 
@@ -16,13 +18,11 @@ local Player = Players.LocalPlayer
 
 local PlayerActionController = {}
 
-function PlayerActionController:Shoot(power: number, flags: {})
-	local mouseHit = GetValidMouseHit() * Vector3.new(1, 0, 1)
-
-	local puck = PuckController:GetInstance()
+function PlayerActionController:Shoot(puck: BasePart, power: number, flags: {})
 	if not puck then
 		return
 	end
+	local mouseHit = GetValidMouseHit() * Vector3.new(1, 0, 1)
 
 	local character = Player.Character
 	if not character then
@@ -36,20 +36,26 @@ function PlayerActionController:Shoot(power: number, flags: {})
 
 	local puckPosition = front.Position
 
-	ShootEvent:FireServer(power, mouseHit, puckPosition, flags)
+	if not flags.fake then
+		puck:SetAttribute("Shot", puckPosition)
+	end
+
+	local uuid = puck:GetAttribute("UUID")
+
+	ShootEvent:FireServer(uuid, power, mouseHit, puckPosition, flags)
 end
 
-function PlayerActionController:Slapshot(power: number, flags: {})
-	local mouseHit = GetValidMouseHit()
-
-	local puck = PuckController:GetInstance()
+function PlayerActionController:Slapshot(puck: BasePart, power: number, flags: {})
 	if not puck then
 		return
 	end
+	local mouseHit = GetValidMouseHit()
 
 	local puckPosition = puck.Position
 
-	SlapshotEvent:FireServer(power, mouseHit, puckPosition, flags)
+	local uuid = puck:GetAttribute("UUID")
+
+	SlapshotEvent:FireServer(uuid, power, mouseHit, puckPosition, flags)
 end
 
 function PlayerActionController:Shove(hitPlayer: Player, hitPart: BasePart, lookDirection: Vector3)

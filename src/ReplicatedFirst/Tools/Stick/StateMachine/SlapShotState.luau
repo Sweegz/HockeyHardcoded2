@@ -87,7 +87,7 @@ function SlapShotState:Tick(dt: number)
 		if puckPart then
 			local distance = (puckPart.Position - self.frontPart.Position).Magnitude
 			if distance <= 3 then
-				PlayerActionController:Slapshot(self.power, {})
+				PlayerActionController:Slapshot(puckPart, self.power, {})
 				self.sentEvent = true
 			end
 		end

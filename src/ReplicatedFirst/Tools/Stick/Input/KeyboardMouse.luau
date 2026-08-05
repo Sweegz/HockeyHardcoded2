@@ -181,7 +181,6 @@ function KeyboardMouse.InputEndedFixed(input: InputObject, commands)
 	end
 
 	if input.KeyCode == Enum.KeyCode.X then
-		print("LyingBlock Ended")
 		commands.LyingBlock = false
 	end
 

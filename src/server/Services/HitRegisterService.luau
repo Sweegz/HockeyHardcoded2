@@ -1,7 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local PuckService = require(script.Parent.PuckService)
+local PuckService = require(script.Parent.PuckService2)
 local Synchronizer = require(ReplicatedStorage.ModdedPackages.Synchronizer)
 
 local HitIndex = 0
@@ -68,7 +68,7 @@ function HitRegisterService:Register(
 		return
 	end
 
-	local puck = PuckService:GetPuckInstance()
+	local puck = PuckService:GetMainPuck()
 	if not puck then
 		return
 	end

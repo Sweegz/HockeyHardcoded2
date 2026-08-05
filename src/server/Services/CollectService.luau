@@ -1,7 +1,9 @@
+local CollectionService = game:GetService("CollectionService")
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
-local PuckService = require(ServerScriptService.Services.PuckService)
+local PuckService = require(ServerScriptService.Services.PuckService2)
 local PlayerSessionService = require(script.Parent.PlayerSessionService)
 
 local Net = ReplicatedStorage.Net
@@ -82,19 +84,30 @@ local function AddPuckVelocity(puck: BasePart, player1: Player, player2: Player)
 end
 
 function CollectService:Start()
-	CollectEvent.OnServerInvoke = function(player: Player, pickup: boolean)
-		local owner = PuckService:GetOwner()
+	CollectEvent.OnServerInvoke = function(player: Player, uuid: string, pickup: boolean)
+		local puck = PuckService:GetPuckViaUUID(uuid)
 
-		if time() < PuckService:GetCooldown() then
+		if not puck then
+			return
+		end
+
+		if not PuckService:IsPlayable(puck) then
+			return
+		end
+
+		local ownerId = PuckService:GetOwner(puck)
+		local owner = nil
+		if ownerId then
+			owner = Players:GetPlayerByUserId(ownerId)
+		end
+
+		local cooldown = PuckService:GetCooldown(puck)
+
+		if cooldown and time() < cooldown then
 			return
 		end
 
 		if time() < PlayerSessionService:GetCollectCooldown(player) then
-			return
-		end
-
-		local puck = PuckService:GetPuckInstance()
-		if not puck then
 			return
 		end
 
@@ -105,22 +118,30 @@ function CollectService:Start()
 		if not owner and pickup then
 			puck.AssemblyLinearVelocity = Vector3.zero
 			puck.AssemblyAngularVelocity = Vector3.zero
-			PuckService:SetOwner(player)
+			PuckService:SetOwner(puck, player)
 		elseif owner and owner ~= player then
-			PuckService:DropPuck()
+			PuckService:RemoveOwner(puck)
 			PlayerSessionService:SetCollectCooldown(owner, PLAYER_COOLDOWN)
-			AddPuckVelocity(PuckService:GetPuckInstance(), player, owner)
+			AddPuckVelocity(puck, player, owner)
 		end
 	end
 
-	DropEvent.OnServerEvent:Connect(function(player: Player, position: CFrame)
-		local owner = PuckService:GetOwner()
+	DropEvent.OnServerEvent:Connect(function(player: Player, uuid: string, position: CFrame)
+		local puck = PuckService:GetPuckViaUUID(uuid)
+		if not puck then
+			return
+		end
 
-		if owner == player then
-			PuckService:DropPuck()
-			PlayerSessionService:SetCollectCooldown(owner, PLAYER_COOLDOWN)
+		if not PuckService:IsPlayable(puck) then
+			return
+		end
 
-			local puck = PuckService:GetPuckInstance()
+		local owner = PuckService:GetOwner(puck)
+
+		if owner == player.UserId then
+			PuckService:RemoveOwner(puck)
+
+			PlayerSessionService:SetCollectCooldown(player, PLAYER_COOLDOWN)
 
 			-- ANTI CHEAT to make sure the drop disrespancy isn't too far
 			local distBetweenClientandServer = (puck.Position - position.Position).Magnitude

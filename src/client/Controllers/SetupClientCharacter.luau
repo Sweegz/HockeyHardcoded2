@@ -1,5 +1,6 @@
 local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
 
 local LocalPlayer = Players.LocalPlayer
 
@@ -102,7 +103,9 @@ local function setupCharacter(character: Model)
 	end
 
 	local humanoidRootPart = character:WaitForChild("HumanoidRootPart") :: BasePart
-	humanoidRootPart.Anchored = true
+	if Workspace:GetAttribute("CustomReplication") then
+		humanoidRootPart.Anchored = true
+	end
 
 	for _, child in character:GetDescendants() do
 		if child:IsA("BasePart") then

@@ -11,7 +11,7 @@ local LocalPlayer = Players.LocalPlayer
 
 local BODYGYRO_D = 500
 local BODYGYRO_MAXTORQUE = Vector3.new(0, 1000000000, 0)
-local BODYGYRO_P = 8000
+local BODYGYRO_P = 8150
 
 local MouseLockController = {
 	enabled = true,

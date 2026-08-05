@@ -2,7 +2,7 @@ local Players = game:GetService("Players")
 local StarterPlayer = game:GetService("StarterPlayer")
 local MatchController = require(StarterPlayer.StarterPlayerScripts.Controllers.MatchController)
 local PowerBar = require(script.Parent.PowerBar)
-local PuckController = require(StarterPlayer.StarterPlayerScripts.Controllers.PuckController)
+local PuckController = require(StarterPlayer.StarterPlayerScripts.Controllers.PuckController2)
 local Power = {}
 
 local LocalPlayer = Players.LocalPlayer
@@ -28,10 +28,8 @@ function Power:Initialize()
 end
 
 function Power:Release(chargeValue: number)
-	local owner = PuckController:GetOwner()
-
 	if not self.ctx:IsHit() then
-		if owner == LocalPlayer then
+		if self.ctx:HasPuck() then
 			self.ctx.stateMachine:ChangeState(self.ctx.stateMachine.states.ShotState.New(self.ctx))
 		elseif chargeValue > 30 then
 			self.ctx.stateMachine:ChangeState(self.ctx.stateMachine.states.CheckState.New(self.ctx))
@@ -56,8 +54,20 @@ function Power:Tick(dt)
 		return
 	end
 
+	local commands = self.ctx.input.commands
 	local state = self.ctx.stateMachine.state
 	local stateName = state.name
+
+	if not MatchController:GetInPlay() then
+		self.holdStartTime = 0
+
+		self.chargeValue = 0
+		self.UI:Update(0)
+
+		self.ctx.input:DisableCommand("ChargePower")
+
+		return
+	end
 
 	if not state.canCharge or not MatchController:GetInPlay() then
 		self.holdStartTime = 0
@@ -73,8 +83,6 @@ function Power:Tick(dt)
 
 		return
 	end
-
-	local commands = self.ctx.input.commands
 
 	if commands.ChargePower and self.holdStartTime == 0 and stateName ~= "SlapShotState" then
 		self.holdStartTime = time()

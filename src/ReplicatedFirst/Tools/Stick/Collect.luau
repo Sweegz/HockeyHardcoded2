@@ -1,9 +1,10 @@
+local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local StarterPlayer = game:GetService("StarterPlayer")
 
 local CollectController = require(StarterPlayer.StarterPlayerScripts.Controllers.CollectController)
 local MatchController = require(StarterPlayer.StarterPlayerScripts.Controllers.MatchController)
-local PuckController = require(StarterPlayer.StarterPlayerScripts.Controllers.PuckController)
+local PuckController = require(StarterPlayer.StarterPlayerScripts.Controllers.PuckController2)
 
 local LocalPlayer = Players.LocalPlayer
 
@@ -34,43 +35,39 @@ function Collect:Tick(_dt: number)
 		return
 	end
 
-	if PuckController:GetOwner() == LocalPlayer then
-		return
-	end
-
-	local puck_instance = PuckController:GetInstance()
-
-	if not puck_instance or not puck_instance:IsA("BasePart") then
-		return
-	end
-
 	local character = LocalPlayer.Character
 	if not character then
 		return
 	end
 
-	local collect = false
+	if self.ctx:HasPuck() then
+		return
+	end
 
-	for _, part in character:GetDescendants() do
-		if not part:HasTag("Collect") then
-			continue
-		end
+	local collectedPuck = nil
 
-		local dist = (puck_instance.Position - part.Position).Magnitude
+	for _, puck: BasePart in CollectionService:GetTagged("Collectable") do
+		for _, part in character:GetDescendants() do
+			if not part:HasTag("Collect") then
+				continue
+			end
 
-		if dist < 2 then
-			collect = true
-			break
+			local dist = (puck.Position - part.Position).Magnitude
+
+			if dist < 2 then
+				collectedPuck = puck
+				break
+			end
 		end
 	end
 
 	local state = self.ctx.stateMachine.state
 
-	if collect then
+	if collectedPuck then
 		if state.canCollect then
-			CollectController:Collect(true)
+			CollectController:Collect(collectedPuck.Parent, true)
 		elseif state.canDropOthersPuck then
-			CollectController:Collect(false)
+			CollectController:Collect(collectedPuck.Parent, false)
 		end
 	end
 end

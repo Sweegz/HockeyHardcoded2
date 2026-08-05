@@ -145,7 +145,7 @@ function DefaultState:Tick(dt: number)
 			input:DisableCommand("SlapShot")
 			input:DisableCommand("ChargePower")
 			self.ctx.power.holdStartTime = 0
-			CollectController:Drop()
+			CollectController:Drop(self.ctx:HasPuck())
 		end
 
 		if not extended and commands.RaiseHand then

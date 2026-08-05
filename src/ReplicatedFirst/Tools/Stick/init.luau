@@ -5,7 +5,7 @@ local StarterPlayer = game:GetService("StarterPlayer")
 local Workspace = game:GetService("Workspace")
 
 local MouseLockController = require(StarterPlayer.StarterPlayerScripts.Controllers.MouseLockController)
-local PuckController = require(StarterPlayer.StarterPlayerScripts.Controllers.PuckController)
+local PuckController = require(StarterPlayer.StarterPlayerScripts.Controllers.PuckController2)
 
 local Animator = require(script.Animator)
 local Input = require(script.Input)
@@ -47,8 +47,6 @@ function Stick.New(tool: Tool)
 	}
 	setmetatable(self, Stick)
 
-	print("Created Stick")
-
 	self:Initialize()
 
 	return self
@@ -67,7 +65,7 @@ function Stick:Update(dt: number)
 		return
 	end
 
-	self.hasPuck = PuckController:GetOwner() == LocalPlayer
+	self.hasPuck = PuckController:HasPuck(LocalPlayer)
 
 	self.power:Tick(dt)
 

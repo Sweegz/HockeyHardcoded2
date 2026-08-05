@@ -1,15 +1,14 @@
 local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Signal = require(ReplicatedStorage.Packages.Signal)
-local PuckService = require(script.Parent.PuckService)
 
 local OutOfBoundsService = {
 	OnOutOfBounds = Signal.new(),
 }
 
 local function onTouch(hit: BasePart)
-	if hit == PuckService:GetPuckInstance() then
-		OutOfBoundsService.OnOutOfBounds:Fire(PuckService.lastShotPosition)
+	if CollectionService:HasTag(hit, "MainPuck") then
+		OutOfBoundsService.OnOutOfBounds:Fire(hit)
 	end
 end
 

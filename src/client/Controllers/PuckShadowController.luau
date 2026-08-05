@@ -1,6 +1,9 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local StarterPlayer = game:GetService("StarterPlayer")
 local Workspace = game:GetService("Workspace")
+local EntityMap2 = require(StarterPlayer.StarterPlayerScripts.EntityMap2)
+local PuckController2 = require(script.Parent.PuckController2)
 
 local ShadowAsset = ReplicatedStorage:FindFirstChild("Assets"):FindFirstChild("Shadow")
 local PuckFolder = Workspace:FindFirstChild("Client")
@@ -16,7 +19,10 @@ local PuckShadowController = {}
 
 function PuckShadowController:Start()
 	RunService.PreRender:Connect(function()
-		local puck = PuckFolder:FindFirstChild("Puck")
+		local puck = PuckController2:GetMainPuck()
+
+		local visualPuck = EntityMap2[puck]
+		puck = visualPuck
 
 		if puck and puck.Position.Y > 2 then
 			if not (Shadow.Transparency == 0.7) then
