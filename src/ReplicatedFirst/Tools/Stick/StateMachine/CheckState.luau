@@ -29,9 +29,9 @@ local function makeCheck(hitPart: BasePart, movementDirection: Vector3, power: n
 		return
 	end
 
-	--[[if hitPlayer.Team == LocalPlayer.Team then
+	if hitPlayer.Team == LocalPlayer.Team then
 		return
-	end--]]
+	end
 
 	local raycastParams = RaycastParams.new()
 	raycastParams.FilterType = Enum.RaycastFilterType.Include

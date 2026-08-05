@@ -148,6 +148,10 @@ function PlayerActionService:Start()
 
 	ShoveEvent.OnServerEvent:Connect(
 		function(player: Player, hitPlayer: Player, hitPart: BasePart, lookDirection: Vector3)
+			if player.Team == hitPlayer.Team then
+				return
+			end
+
 			if time() < PlayerSessionService:GetCheckCooldown(player) then
 				return
 			end
@@ -174,6 +178,10 @@ function PlayerActionService:Start()
 	CheckEvent.OnServerEvent:Connect(
 		function(player: Player, hitPlayer: Player, hitPart: BasePart, movementDirection: Vector3, power: number)
 			power = math.clamp(power, 0, 100)
+
+			if player.Team == hitPlayer.Team then
+				return
+			end
 
 			if time() < PlayerSessionService:GetCheckCooldown(player) then
 				return

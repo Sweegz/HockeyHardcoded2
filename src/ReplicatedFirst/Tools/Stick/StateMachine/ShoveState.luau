@@ -28,6 +28,10 @@ local function shove(hitPart: BasePart)
 		return
 	end
 
+	if hitPlayer.Team == LocalPlayer.Team then
+		return
+	end
+
 	PlayerActionController:Shove(hitPlayer, hitPart, humanoidRootPart.CFrame.lookVector)
 end
 
