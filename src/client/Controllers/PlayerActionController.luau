@@ -1,9 +1,5 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local StarterPlayer = game:GetService("StarterPlayer")
-
-local EntityMap2 = require(StarterPlayer.StarterPlayerScripts.EntityMap2)
-local PuckController = require(script.Parent.PuckController2)
 
 local GetValidMouseHit = require(ReplicatedStorage.Shared.Utility.GetValidMouseHit)
 

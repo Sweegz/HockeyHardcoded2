@@ -26,6 +26,8 @@ function PuckService:Create(position: Vector3, replicate: boolean)
 	if Workspace:GetAttribute("CustomReplication") and replicate then
 		Chrono.Entity.new("Default", clone)
 		CollectionService:AddTag(clone, "Replicated")
+	else
+		CollectionService:AddTag(clone, "Collectable")
 	end
 
 	return clone

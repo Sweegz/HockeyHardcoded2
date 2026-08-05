@@ -1,3 +1,4 @@
+local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local PuckController = require(script.Parent.PuckController2)
@@ -11,12 +12,23 @@ local LocalPlayer = Players.LocalPlayer
 local CollectController = {}
 
 function CollectController:Collect(puck: BasePart, pickup: boolean)
-	if PuckController:GetOwner(puck) == LocalPlayer then
+	local uuid = puck:GetAttribute("UUID") :: string?
+	if not uuid then
+		return
+	end
+
+	local serverPuck = PuckController:GetPuckViaUUID(uuid)
+	if not serverPuck then
+		return
+	end
+
+	local ownerId = PuckController:GetOwner(serverPuck)
+
+	if ownerId and (ownerId == LocalPlayer.UserId) then
 		return
 	end
 
 	task.spawn(function()
-		local uuid = puck:GetAttribute("UUID")
 		CollectEvent:InvokeServer(uuid, pickup)
 	end)
 end

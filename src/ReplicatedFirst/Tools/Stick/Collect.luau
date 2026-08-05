@@ -47,7 +47,7 @@ function Collect:Tick(_dt: number)
 	local collectedPuck = nil
 
 	for _, puck: BasePart in CollectionService:GetTagged("Collectable") do
-		for _, part in character:GetDescendants() do
+		for _, part: BasePart in character:GetDescendants() do
 			if not part:HasTag("Collect") then
 				continue
 			end
@@ -65,9 +65,9 @@ function Collect:Tick(_dt: number)
 
 	if collectedPuck then
 		if state.canCollect then
-			CollectController:Collect(collectedPuck.Parent, true)
+			CollectController:Collect(collectedPuck, true)
 		elseif state.canDropOthersPuck then
-			CollectController:Collect(collectedPuck.Parent, false)
+			CollectController:Collect(collectedPuck, false)
 		end
 	end
 end

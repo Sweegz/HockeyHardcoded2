@@ -2,10 +2,8 @@ local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 
 local RunService = game:GetService("RunService")
-local StarterPlayer = game:GetService("StarterPlayer")
 local Workspace = game:GetService("Workspace")
-local EntityMap = require(StarterPlayer.StarterPlayerScripts.EntityMap)
-local EntityMap2 = require(StarterPlayer.StarterPlayerScripts.EntityMap2)
+
 local PuckController = require(script.Parent.PuckController2)
 
 local LocalPlayer = Players.LocalPlayer
@@ -19,13 +17,13 @@ function GhostWeldController:Start()
 
 	RunService.PreRender:Connect(function(dt)
 		for _, puck: BasePart in CollectionService:GetTagged("Replicated") and CollectionService:GetTagged("Puck") do
-			local clientPuck = EntityMap[puck]
-			if not clientPuck then
+			local transformPuck = puck:FindFirstChild("Transform")
+			if not transformPuck then
 				continue
 			end
 
-			local visualPuck = EntityMap2[puck]
-			if not visualPuck then
+			local viewPuck = puck:FindFirstChild("View")
+			if not viewPuck then
 				return
 			end
 
@@ -56,22 +54,22 @@ function GhostWeldController:Start()
 			local shot = puck:GetAttribute("Shot")
 
 			if shot then
-				clientPuck.CFrame = CFrame.new(shot)
-				visualPuck.CFrame = CFrame.new(shot)
+				transformPuck.CFrame = CFrame.new(shot)
+				viewPuck.CFrame = CFrame.new(shot)
 				return
 			end
 
 			if currentState:match("Default") then
 				local gluedfront = character:FindFirstChild("GluedFront", true)
 				if gluedfront then
-					clientPuck.CFrame = gluedfront.CFrame * CFrame.Angles(0, 0, math.rad(90))
-					visualPuck.CFrame = clientPuck.CFrame
+					transformPuck.CFrame = gluedfront.CFrame * CFrame.Angles(0, 0, math.rad(90))
+					viewPuck.CFrame = transformPuck.CFrame
 				end
 			else
 				local front = character:FindFirstChild("Front", true)
 				if front then
-					clientPuck.CFrame = front.CFrame
-					visualPuck.CFrame = clientPuck.CFrame
+					transformPuck.CFrame = front.CFrame
+					viewPuck.CFrame = transformPuck.CFrame
 				end
 			end
 		end
