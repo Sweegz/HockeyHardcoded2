@@ -1,40 +1,14 @@
-local PlayerSessionService: any = {}
-
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
-
-local Synchronizer = require(ReplicatedStorage.ModdedPackages.Synchronizer)
-local DeepCopy = require(ReplicatedStorage.Shared.Utility.DeepCopy)
-
-local playerSessionChannel
-
-local SESSION_DATA_TEMPLATE = {
-	Stamina = 100,
-	Benched = false,
-	CollectCooldown = 0,
-	CheckCooldown = 0,
-	Stats = {},
-}
+local PlayerSessionService = {}
 
 local function setupPlayer(player: Player)
-	if PlayerSessionService:GetPlayerSession(player) then
-		return
-	end
-
-	local sessionData = DeepCopy(SESSION_DATA_TEMPLATE)
-
-	playerSessionChannel:InsertOnDictionary("Players", tostring(player.UserId), sessionData)
-
-	playerSessionChannel:AddListener(player)
-
-	return
+	player:SetAttribute("Stamina", 100)
+	player:SetAttribute("Benched", false)
+	player:SetAttribute("CollectCooldown", 0)
+	player:SetAttribute("CheckCooldown", 0)
 end
 
 function PlayerSessionService:Load()
-	playerSessionChannel = Synchronizer:Create("PlayerSession", {
-		Players = {},
-	})
-
 	Players.PlayerAdded:Connect(setupPlayer)
 
 	--Players.PlayerRemoving:Connect(function(_player: Player) end)
@@ -44,36 +18,78 @@ function PlayerSessionService:Load()
 	end
 end
 
-function PlayerSessionService:GetPlayerSession(player: Player)
-	local path = ("Players.%*"):format(player.UserId)
-	return playerSessionChannel:Get(path)
+function PlayerSessionService:SetStamina(player: Player, value: number)
+	if not player then
+		return
+	end
+
+	player:SetAttribute("Stamina", value)
+end
+
+function PlayerSessionService:GetStamina(player: Player): number?
+	if not player then
+		return nil
+	end
+
+	return player:GetAttribute("Stamina") :: number
+end
+
+function PlayerSessionService:SetBenched(player: Player, benched: boolean)
+	if not player then
+		return
+	end
+
+	player:SetAttribute("Benched", benched)
+end
+
+function PlayerSessionService:GetBenched(player: Player): boolean?
+	if not player then
+		return nil
+	end
+
+	return player:GetAttribute("Benched") :: boolean
 end
 
 function PlayerSessionService:SetCollectCooldown(player: Player, duration: number)
-	local path = ("Players.%*.CollectCooldown"):format(player.UserId)
-	return playerSessionChannel:Set(path, time() + duration)
-end
+	if not player then
+		return
+	end
 
-function PlayerSessionService:GetCollectCooldown(player: Player)
-	local path = ("Players.%*.CollectCooldown"):format(player.UserId)
-	return playerSessionChannel:Get(path)
+	player:SetAttribute("CollectCooldown", time() + duration)
 end
 
 function PlayerSessionService:SetCheckCooldown(player: Player, duration: number)
-	local path = ("Players.%*.CheckCooldown"):format(player.UserId)
-	return playerSessionChannel:Set(path, time() + duration)
-end
-
-function PlayerSessionService:GetCheckCooldown(player: Player)
-	local path = ("Players.%*.CheckCooldown"):format(player.UserId)
-	return playerSessionChannel:Get(path)
-end
-
-function PlayerSessionService:Reset()
-	playerSessionChannel:Set("Players", {})
-	for _, player in Players:GetPlayers() do
-		setupPlayer(player)
+	if not player then
+		return
 	end
+
+	player:SetAttribute("CheckCooldown", time() + duration)
+end
+
+function PlayerSessionService:GetCollectCooldown(player: Player): number?
+	if not player then
+		return nil
+	end
+
+	return player:GetAttribute("CollectCooldown") :: number or 0
+end
+
+function PlayerSessionService:GetCheckCooldown(player: Player): number?
+	if not player then
+		return nil
+	end
+
+	return player:GetAttribute("CheckCooldown") :: number or 0
+end
+
+function PlayerSessionService:Reset(player: Player)
+	if not player then
+		return
+	end
+
+	player:SetAttribute("CollectCooldown", nil)
+	player:SetAttribute("CheckCooldown", nil)
+	player:SetAttribute("Stamina", 100)
 end
 
 return PlayerSessionService

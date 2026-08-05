@@ -1,25 +1,35 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
-local Synchronizer = require(ReplicatedStorage.ModdedPackages.Synchronizer)
-
 local PlayerSessionController = {}
 
-local playerSessionChannel
+function PlayerSessionController:GetStamina(player: Player): number?
+	if not player then
+		return nil
+	end
 
-function PlayerSessionController:Load()
-	Synchronizer:WaitAndCall("PlayerSession", function(channel)
-		playerSessionChannel = channel
-	end)
+	return player:GetAttribute("Stamina") :: number
 end
 
-function PlayerSessionController:GetPlayerSession(player: Player)
-	local index = ("Players.%*"):format(player.UserId)
-	return playerSessionChannel:Get(index)
+function PlayerSessionController:GetBenched(player: Player): boolean?
+	if not player then
+		return nil
+	end
+
+	return player:GetAttribute("Benched") :: boolean
 end
 
-function PlayerSessionController:GetCollectCooldown(player: Player)
-	local index = ("Players.%*.CollectCooldown"):format(player.UserId)
-	return playerSessionChannel:Get(index)
+function PlayerSessionController:GetCollectCooldown(player: Player): number?
+	if not player then
+		return nil
+	end
+
+	return player:GetAttribute("CollectCooldown") :: number or 0
+end
+
+function PlayerSessionController:GetCheckCooldown(player: Player): number?
+	if not player then
+		return nil
+	end
+
+	return player:GetAttribute("CheckCooldown") :: number or 0
 end
 
 return PlayerSessionController
