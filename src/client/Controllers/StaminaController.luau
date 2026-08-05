@@ -3,6 +3,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Signal = require(ReplicatedStorage.Packages.Signal)
 
+local Net = ReplicatedStorage:WaitForChild("Net") :: Folder
+local StaminaRemote = Net:WaitForChild("Stamina") :: RemoteEvent
+
 local DRAIN_RATE = 20
 local REGEN_RATE = 10
 local MAX_STAMINA = 100
@@ -33,6 +36,9 @@ function StaminaController:GetStamina()
 end
 
 function StaminaController:SetBurning(isBurning: boolean)
+	if self.Burn ~= isBurning then
+		StaminaRemote:FireServer(isBurning)
+	end
 	self.Burn = isBurning
 end
 

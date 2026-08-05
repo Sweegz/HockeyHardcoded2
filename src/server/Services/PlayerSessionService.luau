@@ -23,7 +23,31 @@ function PlayerSessionService:SetStamina(player: Player, value: number)
 		return
 	end
 
+	if value < 0 then
+		value = 0
+	end
+
+	if value > 100 then
+		value = 100
+	end
+
 	player:SetAttribute("Stamina", value)
+end
+
+function PlayerSessionService:SetStamming(player: Player, stamming: boolean)
+	if not player then
+		return
+	end
+
+	player:SetAttribute("Stamming", stamming)
+end
+
+function PlayerSessionService:GetStamming(player: Player): boolean?
+	if not player then
+		return nil
+	end
+
+	return player:GetAttribute("Stamming") :: boolean
 end
 
 function PlayerSessionService:GetStamina(player: Player): number?

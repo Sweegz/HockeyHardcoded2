@@ -73,6 +73,7 @@ type Instances = {
     Camera: Camera,
     WorldModel: WorldModel,
     UIStroke: UIStroke,
+    UIShadow: UIShadow,
 }
 
 type function Properties(instance: type?)

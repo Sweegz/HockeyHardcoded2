@@ -8,7 +8,7 @@ local PuckService = require(ServerScriptService.Services.PuckService2)
 local PlayerSessionService = require(ServerScriptService.Services.PlayerSessionService)
 local Shots = require(ServerScriptService.Shots)
 
-local Net = ReplicatedStorage.Net
+local Net = ReplicatedStorage:WaitForChild("Net") :: Folder
 local ShootEvent = Net:FindFirstChild("Shoot") :: RemoteEvent
 local SlapshotEvent = Net:FindFirstChild("Slapshot") :: RemoteEvent
 local ShoveEvent = Net:FindFirstChild("Shove") :: RemoteEvent
