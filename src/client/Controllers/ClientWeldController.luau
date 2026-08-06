@@ -27,6 +27,12 @@ function GhostWeldController:Start()
 				return
 			end
 
+			if puck.Anchored then
+				viewPuck.Transparency = 1
+			else
+				viewPuck.Transparency = 0
+			end
+
 			local ownerId = PuckController:GetOwner(puck)
 			if not ownerId then
 				puck:SetAttribute("Shot", nil)

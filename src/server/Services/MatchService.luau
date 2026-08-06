@@ -51,6 +51,13 @@ function MatchService:StartPlay()
 		task.wait(0.5)
 		puck.Anchored = false
 		puck:SetNetworkOwner(nil)
+
+		for _, player in Players:GetPlayers() do
+			local character = player.Character
+			if character then
+				character.PrimaryPart.Anchored = false
+			end
+		end
 	end
 end
 
@@ -68,7 +75,7 @@ function MatchService:OutOfPlay(puck: BasePart)
 
 		task.wait(5)
 
-		local newPuck = PuckService:Create(spot + Vector3.new(0, 10, 0), true)
+		local newPuck = PuckService:Create(spot + Vector3.new(0, 8, 0), true)
 		PuckService:SetMainPuck(newPuck)
 		newPuck.Anchored = true
 		FaceoffService:Create(spot + Vector3.new(0, 1, 0))

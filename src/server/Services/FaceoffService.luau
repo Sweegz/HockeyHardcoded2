@@ -1,6 +1,8 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
+local TeamsService = require(script.Parent.TeamsService)
 local Signal = require(ReplicatedStorage.Packages.Signal)
 
 local FACEOFF_TIME = 15
@@ -18,6 +20,28 @@ local HomePad = FaceoffModel:WaitForChild("Home") :: BasePart
 local AwayPad = FaceoffModel:WaitForChild("Away") :: BasePart
 local BillboardGui = FaceoffModel.PrimaryPart:WaitForChild("BillboardGui") :: BillboardGui
 local TextLabel = BillboardGui:WaitForChild("TextLabel") :: TextLabel
+
+local function GetFaceoffPositions(team: Team): { BasePart }?
+	if team == TeamsService.homeTeam then
+		return {
+			FaceoffModel:FindFirstChild("H1") :: BasePart,
+			FaceoffModel:FindFirstChild("H2") :: BasePart,
+			FaceoffModel:FindFirstChild("H3") :: BasePart,
+			FaceoffModel:FindFirstChild("H4") :: BasePart,
+			FaceoffModel:FindFirstChild("H5") :: BasePart,
+		}
+	elseif team == TeamsService.awayTeam then
+		return {
+			FaceoffModel:FindFirstChild("A1") :: BasePart,
+			FaceoffModel:FindFirstChild("A2") :: BasePart,
+			FaceoffModel:FindFirstChild("A3") :: BasePart,
+			FaceoffModel:FindFirstChild("A4") :: BasePart,
+			FaceoffModel:FindFirstChild("A5") :: BasePart,
+		}
+	end
+
+	return nil
+end
 
 function FaceoffService:FindClosestSpot(gameModel: Model, position: Vector3)
 	position *= Vector3.new(1, 0, 1)
@@ -98,6 +122,43 @@ function FaceoffService:Load()
 	HomePad.Touched:Connect(function(hit: BasePart)
 		if FaceoffService.TimeLeft <= 0 or FaceoffService.HomeReady then
 			return
+		end
+
+		local parent = hit.Parent
+		if not parent then
+			return
+		end
+
+		if not parent:FindFirstChild("Humanoid") then
+			return
+		end
+
+		local character = parent :: Model
+		local player = Players:GetPlayerFromCharacter(character)
+		if not player then
+			return
+		end
+
+		if player.Team ~= TeamsService.homeTeam then
+			return
+		end
+
+		local positions = GetFaceoffPositions(player.Team)
+		if not positions then
+			return
+		end
+
+		character:PivotTo(positions[1].CFrame)
+		character.PrimaryPart.Anchored = true
+		character.PrimaryPart.AssemblyLinearVelocity = Vector3.zero
+		character.PrimaryPart.AssemblyAngularVelocity = Vector3.zero
+
+		for i, pos in positions do
+			if i == 1 then
+				continue
+			end
+
+			print(pos)
 		end
 
 		FaceoffService.HomeReady = true

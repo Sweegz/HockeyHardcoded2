@@ -18,7 +18,7 @@ function PuckShadowController:Start()
 
 		local viewPuck = puck:FindFirstChild("View") :: BasePart
 
-		if viewPuck and viewPuck.Position.Y > 2 then
+		if viewPuck and viewPuck.Position.Y > 2 and not puck.Anchored then
 			if not (Shadow.Transparency == 0.7) then
 				Shadow.Transparency = 0.7
 			end
