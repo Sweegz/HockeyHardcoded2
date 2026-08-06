@@ -13,6 +13,7 @@ local Commands = TextChatService:WaitForChild("Commands")
 
 local homeTeamCommand = Commands:WaitForChild("HomeTeamCommand") :: TextChatCommand
 local awayTeamCommand = Commands:WaitForChild("AwayTeamCommand") :: TextChatCommand
+local fansTeamCommand = Commands:WaitForChild("FansTeamCommand") :: TextChatCommand
 
 local function CreateTeamTextMessage(player: Player, targetPlayer: Player, team: Team)
 	-- Chat Message
@@ -38,6 +39,22 @@ local function CreateTeamTextMessage(player: Player, targetPlayer: Player, team:
 	end
 
 	TextMessageEvent:FireAllClients(payload)
+end
+
+local function GetPlayerFromString(player1: Player, input: string): Player?
+	input = string.lower(input)
+	if input == "me" then
+		return player1
+	end
+
+	for _, player in pairs(Players:GetPlayers()) do
+		local player_name = string.lower(player.Name)
+		print(player_name, input)
+		if string.match(player_name, "^" .. input) then
+			return player
+		end
+	end
+	return nil
 end
 
 local CommandsService = {}
@@ -72,11 +89,7 @@ function CommandsService:Load()
 		local words = string.split(message, " ")
 		local target = words[2]
 
-		if target == "me" then
-			target = source.Name
-		end
-
-		local targetPlayer = Players:FindFirstChild(target) :: Player
+		local targetPlayer = GetPlayerFromString(player, target)
 		if not targetPlayer then
 			return
 		end
@@ -84,6 +97,7 @@ function CommandsService:Load()
 		local team = TeamsService.homeTeam
 		CreateTeamTextMessage(player, targetPlayer, team)
 		targetPlayer.Team = team
+		targetPlayer:LoadCharacterAsync()
 	end)
 
 	awayTeamCommand.Triggered:Connect(function(source: TextSource, message: string)
@@ -96,11 +110,7 @@ function CommandsService:Load()
 		local words = string.split(message, " ")
 		local target = words[2]
 
-		if target == "me" then
-			target = source.Name
-		end
-
-		local targetPlayer = Players:FindFirstChild(target) :: Player
+		local targetPlayer = GetPlayerFromString(player, target)
 		if not targetPlayer then
 			return
 		end
@@ -108,6 +118,28 @@ function CommandsService:Load()
 		local team = TeamsService.awayTeam
 		CreateTeamTextMessage(player, targetPlayer, team)
 		targetPlayer.Team = team
+		targetPlayer:LoadCharacterAsync()
+	end)
+
+	fansTeamCommand.Triggered:Connect(function(source: TextSource, message: string)
+		local player = Players:GetPlayerByUserId(source.UserId)
+		if not player then
+			return
+		end
+
+		message = message:lower()
+		local words = string.split(message, " ")
+		local target = words[2]
+
+		local targetPlayer = GetPlayerFromString(player, target)
+		if not targetPlayer then
+			return
+		end
+
+		local team = TeamsService.fansTeam
+		CreateTeamTextMessage(player, targetPlayer, team)
+		targetPlayer.Team = team
+		targetPlayer:LoadCharacterAsync()
 	end)
 end
 

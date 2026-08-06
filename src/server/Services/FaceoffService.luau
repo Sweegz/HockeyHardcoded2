@@ -5,7 +5,7 @@ local Workspace = game:GetService("Workspace")
 local TeamsService = require(script.Parent.TeamsService)
 local Signal = require(ReplicatedStorage.Packages.Signal)
 
-local FACEOFF_TIME = 15
+local FACEOFF_TIME = 30
 
 local FaceoffService = {
 	OnFaceoffComplete = Signal.new(),
@@ -96,6 +96,72 @@ function FaceoffService:FindClosestSpot(gameModel: Model, position: Vector3)
 	return Vector3.new(0, 1, 0)
 end
 
+local function FillFaceoffPositions(player: Player)
+	local team = player.Team
+
+	local positions = GetFaceoffPositions(team)
+	if not positions then
+		return
+	end
+
+	local character = player.Character
+	if character then
+		character:PivotTo(positions[1].CFrame)
+		character.PrimaryPart.Anchored = true
+		character.PrimaryPart.AssemblyLinearVelocity = Vector3.zero
+		character.PrimaryPart.AssemblyAngularVelocity = Vector3.zero
+	end
+
+	local excludedPlayers = {}
+	excludedPlayers[player] = true
+
+	for i, pos in positions do
+		if i == 1 then
+			continue
+		end
+
+		local closestDist = 99999999
+		local closestPlayer = nil
+
+		for _, p in Players:GetPlayers() do
+			if excludedPlayers[p] or p.Team ~= player.Team then
+				continue
+			end
+
+			local c = p.Character
+			if not c then
+				continue
+			end
+
+			local primaryPart = c.PrimaryPart
+			if not primaryPart then
+				continue
+			end
+
+			local dist = (pos.Position - primaryPart.Position).Magnitude
+			if dist < closestDist then
+				closestDist = dist
+				closestPlayer = p
+			end
+		end
+
+		if closestPlayer then
+			excludedPlayers[closestPlayer] = true
+			local c = closestPlayer.Character
+			if c then
+				c:PivotTo(pos.CFrame)
+				c.PrimaryPart.Anchored = true
+				c.PrimaryPart.AssemblyLinearVelocity = Vector3.zero
+				c.PrimaryPart.AssemblyAngularVelocity = Vector3.zero
+			end
+		end
+	end
+
+	-- yes
+end
+
+local function onFaceoffPadTouched() end
+
 function FaceoffService:Create(position: Vector3)
 	print("Faceoff created.")
 
@@ -148,20 +214,13 @@ function FaceoffService:Load()
 			return
 		end
 
-		character:PivotTo(positions[1].CFrame)
-		character.PrimaryPart.Anchored = true
-		character.PrimaryPart.AssemblyLinearVelocity = Vector3.zero
-		character.PrimaryPart.AssemblyAngularVelocity = Vector3.zero
-
-		for i, pos in positions do
-			if i == 1 then
-				continue
-			end
-
-			print(pos)
-		end
+		FillFaceoffPositions(player)
 
 		FaceoffService.HomeReady = true
+
+		if #TeamsService.awayTeam:GetPlayers() == 0 then
+			FaceoffService.AwayReady = true
+		end
 		print("Home Ready!")
 	end)
 
@@ -170,7 +229,36 @@ function FaceoffService:Load()
 			return
 		end
 
+		local parent = hit.Parent
+		if not parent then
+			return
+		end
+
+		if not parent:FindFirstChild("Humanoid") then
+			return
+		end
+
+		local character = parent :: Model
+		local player = Players:GetPlayerFromCharacter(character)
+		if not player then
+			return
+		end
+
+		if player.Team ~= TeamsService.awayTeam then
+			return
+		end
+
+		local positions = GetFaceoffPositions(player.Team)
+		if not positions then
+			return
+		end
+
+		FillFaceoffPositions(player)
+
 		FaceoffService.AwayReady = true
+		if #TeamsService.homeTeam:GetPlayers() == 0 then
+			FaceoffService.HomeReady = true
+		end
 		print("Away Ready!")
 	end)
 end

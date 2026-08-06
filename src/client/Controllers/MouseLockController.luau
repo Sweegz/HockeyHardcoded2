@@ -76,12 +76,12 @@ function MouseLockController:Start()
 			:FindFirstChild("FacingMoveDirection")
 			:FindFirstChild("SyncedState")
 
-		if MouseLockController.bodyGyro.MaxTorque.Y > 0 then
+		if MouseLockController.bodyGyro.MaxTorque.Y > 0 or humanoidRootPart.Anchored then
 			facingMovingDirection:SetAttribute("Enabled", false)
-			--humanoid.AutoRotate = false
+			humanoid.AutoRotate = false
 		else
 			facingMovingDirection:SetAttribute("Enabled", true)
-			--humanoid.AutoRotate = true
+			humanoid.AutoRotate = true
 		end
 
 		local firstPerson = (workspace.CurrentCamera.CFrame.Position - character.Head.Position).Magnitude <= 1

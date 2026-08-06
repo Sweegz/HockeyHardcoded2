@@ -1,5 +1,9 @@
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Teams = game:GetService("Teams")
 local Workspace = game:GetService("Workspace")
+
+local Stick = ReplicatedStorage:WaitForChild("Stick")
 
 local TeamsService = {
 	homeTeam = Instance.new("Team"),
@@ -7,15 +11,25 @@ local TeamsService = {
 	fansTeam = Instance.new("Team"),
 }
 
+local function PlayerAdded(player: Player)
+	local characterAdded = player.CharacterAdded:Connect(function(character: Model)
+		if player.Team == TeamsService.homeTeam or player.Team == TeamsService.awayTeam then
+			local stick = Stick:Clone()
+
+			stick.Parent = player.Backpack
+		end
+	end)
+end
+
 function TeamsService:Load()
 	local homeTeam = TeamsService.homeTeam
 	homeTeam.Parent = Teams
-	homeTeam.Name = "Home"
+	homeTeam.Name = "Tampa Bay Lightning"
 	homeTeam.TeamColor = BrickColor.Blue()
 
 	local awayTeam = TeamsService.awayTeam
 	awayTeam.Parent = Teams
-	awayTeam.Name = "Away"
+	awayTeam.Name = "Florida Panthers"
 	awayTeam.TeamColor = BrickColor.Red()
 
 	local fansTeam = TeamsService.fansTeam
@@ -23,6 +37,12 @@ function TeamsService:Load()
 	fansTeam.Name = "Fans"
 	fansTeam.TeamColor = BrickColor.Gray()
 	fansTeam.AutoAssignable = false
+
+	for _, player in Players:GetPlayers() do
+		PlayerAdded(player)
+	end
+
+	Players.PlayerAdded:Connect(PlayerAdded)
 end
 
 function TeamsService:GetSpawn(team: Team): SpawnLocation?
