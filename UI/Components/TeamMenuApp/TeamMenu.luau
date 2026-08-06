@@ -118,7 +118,7 @@ function Entry(props: {
             Text = props.player.Name,
             TextColor3 = Color3.fromRGB(255,255,255),
             TextScaled = true,
-            FontFace = Font.new(Font.fromEnum(Enum.Font.Arimo).Family, Enum.FontWeight.Regular),
+            FontFace = Font.new(Font.fromEnum(Enum.Font.Arimo).Family, Enum.FontWeight.ExtraBold),
 
             create ("UIStroke" :: "UIStroke"){
                 Thickness = 0.03,
@@ -194,7 +194,14 @@ function Entry(props: {
 
                     return UDim2.fromScale(size, 1)
                 end, 
-                BackgroundColor3 = Color3.fromRGB(0,170,255),
+                BackgroundColor3 = Color3.fromRGB(255,255,255),
+
+                vide.create("UIGradient"){
+                    Color = ColorSequence.new{
+                        ColorSequenceKeypoint.new(0, Color3.fromRGB(0,170/1.5,255/1.5)),
+                        ColorSequenceKeypoint.new(1, Color3.fromRGB(0,170,255)),
+                    },
+                },
             },
         }
     }
@@ -230,9 +237,10 @@ function Team(props: {
         Position = UDim2.fromScale(0.009, 0.3),
         BackgroundTransparency = 1,
 
+        --[[
         create ("UIAspectRatioConstraint" :: "UIAspectRatioConstraint"){
             AspectRatio = 0.595,
-        },
+        },--]]
 
         create ("UIGridLayout" :: "UIGridLayout"){
             CellPadding = UDim2.fromScale(0, 0.0072),

@@ -1,4 +1,6 @@
 local Players = game:GetService("Players")
+local StarterPlayer = game:GetService("StarterPlayer")
+local PlayerSessionController = require(StarterPlayer.StarterPlayerScripts.Controllers.PlayerSessionController)
 
 local Momentum = {}
 Momentum.__index = Momentum
@@ -83,7 +85,11 @@ function Momentum:Tick(dt: number)
 		end
 
 		-- Limit Y position when player is OnIce and NotHit
-		if humanoidRootPart.Position.Y > 3.55 and IsOnIce(humanoidRootPart) then
+		if
+			humanoidRootPart.Position.Y > 3.55
+			and IsOnIce(humanoidRootPart)
+			and not PlayerSessionController:GetBenched(LocalPlayer)
+		then
 			self.ctx.planeConstraint.Enabled = true
 		end
 

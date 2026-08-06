@@ -74,6 +74,7 @@ local function AddPuckVelocity(puck: BasePart, player1: Player, player2: Player)
 
 	preventShooterCollisions(player2, puck)
 	preventShooterCollisions(player1, puck)
+
 	if puck.AssemblyLinearVelocity.Magnitude < 10 then
 		puck.AssemblyLinearVelocity = player1humanoidRootPart.AssemblyLinearVelocity.Unit * 25
 	else
@@ -99,6 +100,10 @@ function CollectService:Start()
 		local owner = nil
 		if ownerId then
 			owner = Players:GetPlayerByUserId(ownerId)
+		end
+
+		if owner and owner.Team == player.Team then
+			return
 		end
 
 		local cooldown = PuckService:GetCooldown(puck)

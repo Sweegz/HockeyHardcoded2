@@ -1,4 +1,5 @@
 local Teams = game:GetService("Teams")
+local Workspace = game:GetService("Workspace")
 
 local TeamsService = {
 	homeTeam = Instance.new("Team"),
@@ -22,6 +23,16 @@ function TeamsService:Load()
 	fansTeam.Name = "Fans"
 	fansTeam.TeamColor = BrickColor.Gray()
 	fansTeam.AutoAssignable = false
+end
+
+function TeamsService:GetSpawn(team: Team): SpawnLocation?
+	if team == TeamsService.homeTeam then
+		return Workspace:FindFirstChild("HomeSpawn", true) :: SpawnLocation
+	elseif team == TeamsService.awayTeam then
+		return Workspace:FindFirstChild("AwaySpawn", true) :: SpawnLocation
+	else
+		return Workspace:FindFirstChild("FansSpawn", true) :: SpawnLocation
+	end
 end
 
 return TeamsService

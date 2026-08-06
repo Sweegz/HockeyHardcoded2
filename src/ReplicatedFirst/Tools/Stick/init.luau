@@ -4,6 +4,7 @@ local RunService = game:GetService("RunService")
 local StarterPlayer = game:GetService("StarterPlayer")
 local Workspace = game:GetService("Workspace")
 
+local CollectController = require(StarterPlayer.StarterPlayerScripts.Controllers.CollectController)
 local MouseLockController = require(StarterPlayer.StarterPlayerScripts.Controllers.MouseLockController)
 local PuckController = require(StarterPlayer.StarterPlayerScripts.Controllers.PuckController2)
 
@@ -182,6 +183,10 @@ function Stick:Unequip()
 	self.collect:Disable()
 	self.sprint:Disable()
 	self.momentum:Disable()
+
+	if self:HasPuck() then
+		CollectController:Drop(self:HasPuck())
+	end
 
 	local character = LocalPlayer.Character
 	if character then
