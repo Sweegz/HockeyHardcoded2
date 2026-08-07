@@ -255,7 +255,9 @@ function Momentum:Disable()
 	self.enabled = false
 	self.isMoving = false
 	self.isChangingDirection = false
-	self.bodyVelocity.Parent = nil
+	if self.bodyVelocity then
+		self.bodyVelocity.Parent = nil
+	end
 	self.movementDisabled = false
 end
 
@@ -266,8 +268,8 @@ function Momentum:Destroy()
 	self.isMoving = false
 	if self.bodyVelocity then
 		self.bodyVelocity:Destroy()
+		self.bodyVelocity = nil
 	end
-	self.bodyVelocity = nil
 end
 
 return Momentum

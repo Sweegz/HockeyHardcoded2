@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
+local Teams = game:GetService("Teams")
 
 local LocalPlayer = Players.LocalPlayer
 
@@ -51,6 +52,24 @@ function TeamController:Load()
 			end
 		end
 	end)
+end
+
+function TeamController:GetHomeTeam(): Team?
+	for _, team in Teams:GetTeams() do
+		if team.TeamColor == BrickColor.Blue() then
+			return team
+		end
+	end
+	return nil
+end
+
+function TeamController:GetAwayTeam(): Team?
+	for _, team in Teams:GetTeams() do
+		if team.TeamColor == BrickColor.Red() then
+			return team
+		end
+	end
+	return nil
 end
 
 return TeamController

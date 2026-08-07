@@ -65,14 +65,18 @@ function PowerBar:Update(value: number)
 end
 
 function PowerBar:Disable()
-	self.gui.Enabled = false
+	if self.gui then
+		self.gui.Enabled = false
+	end
 	self.enabled = false
 end
 
 function PowerBar:Destroy()
 	self:Disable()
-	self.gui:Destroy()
-	self.gui = nil
+	if self.gui then
+		self.gui:Destroy()
+		self.gui = nil
+	end
 	self.maxPower = nil
 	self.enabled = nil
 end

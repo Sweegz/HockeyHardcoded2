@@ -97,6 +97,7 @@ function CommandsService:Load()
 		local team = TeamsService.homeTeam
 		CreateTeamTextMessage(player, targetPlayer, team)
 		targetPlayer.Team = team
+		targetPlayer.Character:Destroy()
 		targetPlayer:LoadCharacterAsync()
 	end)
 
@@ -138,6 +139,12 @@ function CommandsService:Load()
 
 		local team = TeamsService.fansTeam
 		CreateTeamTextMessage(player, targetPlayer, team)
+
+		local stick = targetPlayer.Character:FindFirstChild("Stick")
+		if stick then
+			stick:Destroy()
+		end
+
 		targetPlayer.Team = team
 		targetPlayer:LoadCharacterAsync()
 	end)

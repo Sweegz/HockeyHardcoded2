@@ -50,6 +50,8 @@ function Stick.New(tool: Tool)
 
 	self:Initialize()
 
+	print("Created stick")
+
 	return self
 end
 
@@ -171,7 +173,7 @@ function Stick:Unequip()
 	self.humanoid.JumpHeight = 7.2
 	self.humanoid.WalkSpeed = 16
 	self.abilityManagerActor.Abilities.Jumping.SyncedState:SetAttribute("Enabled", true)
-	self.ctx.abilityManagerActor.Abilities.FallingDown.SyncedState:SetAttribute("Enabled", true)
+	self.abilityManagerActor.Abilities.FallingDown.SyncedState:SetAttribute("Enabled", true)
 	self.groundController.MoveSpeedFactor = 1
 	self.groundController.BalanceRigidityEnabled = false
 

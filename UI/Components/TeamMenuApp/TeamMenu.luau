@@ -67,6 +67,8 @@ function Entry(props: {
     player: Player
 })
 
+    print(props.player.Team)
+
     local Stamina = vide.source()
 
     local connections = {}
