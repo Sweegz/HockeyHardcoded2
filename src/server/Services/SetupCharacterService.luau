@@ -90,7 +90,7 @@ function SetupCharacter(character: Model)
 		end)
 	end
 
-	local ControllerManager = character:WaitForChild("ControllerManager")
+	--[[local ControllerManager = character:WaitForChild("ControllerManager")
 
 	if ControllerManager then
 		local GroundController: GroundController = ControllerManager:WaitForChild("GroundController")
@@ -115,7 +115,7 @@ function SetupCharacter(character: Model)
 		if AirController then
 			AirController.MaintainLinearMomentum = false
 		end
-	end
+	end --]]
 
 	--humanoid.EvaluateStateMachine = true
 end

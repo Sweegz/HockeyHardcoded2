@@ -102,8 +102,8 @@ function Stick:Equip()
 
 	self.humanoid = self.tool.Parent:FindFirstChildOfClass("Humanoid")
 	self.humanoid.WalkSpeed = Constants.WALKSPEED
-	self.groundController.MoveSpeedFactor = 0
-	self.abilityManagerActor.Abilities.Jumping.SyncedState:SetAttribute("Enabled", false)
+	--self.groundController.MoveSpeedFactor = 0
+	--self.abilityManagerActor.Abilities.Jumping.SyncedState:SetAttribute("Enabled", false)
 	self.humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, false)
 	self.humanoid.JumpHeight = 0
 
@@ -114,7 +114,7 @@ function Stick:Equip()
 	self.collect:Enable()
 	self.sprint:Enable()
 	self.momentum:Enable()
-	self.groundController.BalanceRigidityEnabled = true
+	--self.groundController.BalanceRigidityEnabled = true
 
 	self.customLock:FollowMouse(false)
 
@@ -172,10 +172,10 @@ function Stick:Unequip()
 
 	self.humanoid.JumpHeight = 7.2
 	self.humanoid.WalkSpeed = 16
-	self.abilityManagerActor.Abilities.Jumping.SyncedState:SetAttribute("Enabled", true)
-	self.abilityManagerActor.Abilities.FallingDown.SyncedState:SetAttribute("Enabled", true)
-	self.groundController.MoveSpeedFactor = 1
-	self.groundController.BalanceRigidityEnabled = false
+	--self.abilityManagerActor.Abilities.Jumping.SyncedState:SetAttribute("Enabled", true)
+	--self.abilityManagerActor.Abilities.FallingDown.SyncedState:SetAttribute("Enabled", true)
+	--self.groundController.MoveSpeedFactor = 1
+	--self.groundController.BalanceRigidityEnabled = false
 
 	self.customLock:FollowMouse(false)
 
@@ -192,12 +192,12 @@ function Stick:Unequip()
 	end
 
 	local character = LocalPlayer.Character
-	if character then
-		local groundSensor = character:FindFirstChild("FloorSensor", true)
-		if groundSensor then
-			groundSensor.SearchDistance = 3.3
-		end
-	end
+	--if character then
+	--	local groundSensor = character:FindFirstChild("FloorSensor", true)
+	--	if groundSensor then
+	--		groundSensor.SearchDistance = 3.3
+	--	end
+	--end
 
 	self.planeConstraint.Enabled = false
 
@@ -244,9 +244,9 @@ function Stick:Initialize()
 	self.collect = Collect.New(self)
 	self.sprint = Sprint.New(self)
 	self.momentum = Momentum.New(self)
-	self.controllerManager = LocalPlayer.Character:WaitForChild("ControllerManager")
-	self.groundController = LocalPlayer.Character:WaitForChild("ControllerManager"):WaitForChild("GroundController")
-	self.abilityManagerActor = LocalPlayer.Character:WaitForChild("AbilityManagerActor")
+	--self.controllerManager = LocalPlayer.Character:WaitForChild("ControllerManager")
+	--self.groundController = LocalPlayer.Character:WaitForChild("ControllerManager"):WaitForChild("GroundController")
+	--self.abilityManagerActor = LocalPlayer.Character:WaitForChild("AbilityManagerActor")
 
 	table.insert(
 		self.connections,

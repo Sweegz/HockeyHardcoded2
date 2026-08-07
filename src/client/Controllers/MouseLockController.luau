@@ -23,11 +23,20 @@ local MouseLockController = {
 }
 
 local function CreateBodyGyro(humanoidRootPart: BasePart)
+	local follower = humanoidRootPart:FindFirstChild("Follower", true)
+
 	local bodyGyro = Instance.new("BodyGyro")
 	bodyGyro.D = BODYGYRO_D
 	bodyGyro.MaxTorque = BODYGYRO_MAXTORQUE
 	bodyGyro.P = BODYGYRO_P
-	bodyGyro.Parent = humanoidRootPart
+	bodyGyro.Parent = follower
+
+	local alignOrientation = Instance.new("AlignOrientation")
+	alignOrientation.Attachment0 = humanoidRootPart.RootAttachment
+	alignOrientation.Attachment1 = follower.Attachment
+	alignOrientation.Parent = humanoidRootPart
+	alignOrientation.Responsiveness = math.huge
+	alignOrientation.MaxTorque = math.huge
 
 	return bodyGyro
 end
@@ -61,7 +70,7 @@ function MouseLockController:Start()
 			return
 		end
 
-		if not humanoidRootPart:FindFirstChild("BodyGyro") or not MouseLockController.bodyGyro then
+		if not humanoidRootPart:FindFirstChild("BodyGyro", true) or not MouseLockController.bodyGyro then
 			MouseLockController.bodyGyro = CreateBodyGyro(humanoidRootPart)
 		end
 
@@ -70,7 +79,7 @@ function MouseLockController:Start()
 			return
 		end
 
-		local facingMoveDirection = character:FindFirstChild("FacingMoveDirection", true)
+		--[[local facingMoveDirection = character:FindFirstChild("FacingMoveDirection", true)
 		if not facingMoveDirection then
 			return
 		end
@@ -78,13 +87,13 @@ function MouseLockController:Start()
 		local facingMoveDirectionState = facingMoveDirection:FindFirstChild("SyncedState")
 		if not facingMoveDirectionState then
 			return
-		end
+		end --]]
 
 		if MouseLockController.bodyGyro.MaxTorque.Y > 0 or humanoidRootPart.Anchored then
-			facingMoveDirectionState:SetAttribute("Enabled", false)
+			--facingMoveDirectionState:SetAttribute("Enabled", false)
 			humanoid.AutoRotate = false
 		else
-			facingMoveDirectionState:SetAttribute("Enabled", true)
+			--facingMoveDirectionState:SetAttribute("Enabled", true)
 			humanoid.AutoRotate = true
 		end
 

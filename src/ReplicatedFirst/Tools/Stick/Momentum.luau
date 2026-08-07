@@ -81,7 +81,7 @@ function Momentum:Tick(dt: number)
 	if not self.ctx:IsHit() or self.ctx.hit.velocity.Magnitude <= 1 then
 		-- Balance when player is not hit and UpRight
 		if humanoidRootPart.CFrame.UpVector.Y == 1 then
-			self.ctx.groundController.BalanceRigidityEnabled = true
+			--self.ctx.groundController.BalanceRigidityEnabled = true
 		end
 
 		-- Limit Y position when player is OnIce and NotHit
@@ -102,15 +102,15 @@ function Momentum:Tick(dt: number)
 			self.ctx.ragdolled = false
 			coroutine.wrap(function()
 				task.wait(0.25)
-				self.ctx.abilityManagerActor.Abilities.FallingDown.SyncedState:SetAttribute("Enabled", false)
-				self.ctx.abilityManagerActor.Abilities.FallingDown.SyncedState:SetAttribute("Active", false)
-				self.ctx.abilityManagerActor.Abilities.Running.SyncedState:SetAttribute("Enabled", true)
-				self.ctx.abilityManagerActor.Abilities.GettingUp.SyncedState:SetAttribute("Enabled", true)
-				self.ctx.abilityManagerActor.Abilities.GettingUp.SyncedState:SetAttribute("Active", true)
+				--self.ctx.abilityManagerActor.Abilities.FallingDown.SyncedState:SetAttribute("Enabled", false)
+				--self.ctx.abilityManagerActor.Abilities.FallingDown.SyncedState:SetAttribute("Active", false)
+				--self.ctx.abilityManagerActor.Abilities.Running.SyncedState:SetAttribute("Enabled", true)
+				--self.ctx.abilityManagerActor.Abilities.GettingUp.SyncedState:SetAttribute("Enabled", true)
+				--self.ctx.abilityManagerActor.Abilities.GettingUp.SyncedState:SetAttribute("Active", true)
 
-				self.ctx.groundController.BalanceSpeed = 10
-				self.ctx.groundController.BalanceMaxTorque = 1000000
-				self.ctx.controllerManager.GroundSensor = humanoidRootPart.FloorSensor
+				--self.ctx.groundController.BalanceSpeed = 10
+				--self.ctx.groundController.BalanceMaxTorque = 1000000
+				--self.ctx.controllerManager.GroundSensor = humanoidRootPart.FloorSensor
 
 				local character = LocalPlayer.Character
 				if character then
@@ -195,17 +195,17 @@ function Momentum:Tick(dt: number)
 		if not self.ctx.hit.shove then
 			self.ctx.ragdolled = true
 
-			self.ctx.abilityManagerActor.Abilities.GettingUp.SyncedState:SetAttribute("Enabled", false)
-			self.ctx.abilityManagerActor.Abilities.GettingUp.SyncedState:SetAttribute("Active", false)
-			self.ctx.abilityManagerActor.Abilities.Running.SyncedState:SetAttribute("Enabled", false)
-			self.ctx.abilityManagerActor.Abilities.Running.SyncedState:SetAttribute("Active", false)
-			self.ctx.abilityManagerActor.Abilities.FallingDown.SyncedState:SetAttribute("Enabled", true)
-			self.ctx.abilityManagerActor.Abilities.FallingDown.SyncedState:SetAttribute("Active", true)
-			self.ctx.controllerManager.ActiveController = nil
+			--self.ctx.abilityManagerActor.Abilities.GettingUp.SyncedState:SetAttribute("Enabled", false)
+			--self.ctx.abilityManagerActor.Abilities.GettingUp.SyncedState:SetAttribute("Active", false)
+			--self.ctx.abilityManagerActor.Abilities.Running.SyncedState:SetAttribute("Enabled", false)
+			--self.ctx.abilityManagerActor.Abilities.Running.SyncedState:SetAttribute("Active", false)
+			--self.ctx.abilityManagerActor.Abilities.FallingDown.SyncedState:SetAttribute("Enabled", true)
+			--self.ctx.abilityManagerActor.Abilities.FallingDown.SyncedState:SetAttribute("Active", true)
+			--self.ctx.controllerManager.ActiveController = nil
 
-			self.ctx.groundController.BalanceSpeed = 0
-			self.ctx.groundController.BalanceMaxTorque = 0
-			self.ctx.groundController.BalanceRigidityEnabled = false
+			--self.ctx.groundController.BalanceSpeed = 0
+			--self.ctx.groundController.BalanceMaxTorque = 0
+			--self.ctx.groundController.BalanceRigidityEnabled = false
 			self.ctx.planeConstraint.Enabled = false
 
 			local character = LocalPlayer.Character
