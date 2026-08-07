@@ -38,7 +38,6 @@ local function CreateBodyGyro(humanoidRootPart: BasePart)
 	alignOrientation.Responsiveness = math.huge
 	alignOrientation.MaxTorque = math.huge
 
-	-- test
 	return bodyGyro
 end
 
