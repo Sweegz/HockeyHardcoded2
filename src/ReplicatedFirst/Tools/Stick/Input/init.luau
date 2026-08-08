@@ -120,6 +120,7 @@ function Input:Tick(_dt)
 		end
 
 		if not self.enabled then
+			self.commands = {}
 			return
 		end
 

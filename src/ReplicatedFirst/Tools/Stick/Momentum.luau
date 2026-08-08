@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
 local StarterPlayer = game:GetService("StarterPlayer")
+local MouseLockController = require(StarterPlayer.StarterPlayerScripts.Controllers.MouseLockController)
 local PlayerSessionController = require(StarterPlayer.StarterPlayerScripts.Controllers.PlayerSessionController)
 
 local Momentum = {}
@@ -19,6 +20,22 @@ local GLIDE_SPEED_MODIFIER_RESISTING = 0.06064
 local VELOCITY_DAMP_FACTOR = 0.825
 local DIRECTION_LERP_FACTOR = 0.6
 local MAX_FORCE = Vector3.new(25000, 0, 25000)
+
+function FHR2(dir, powr)
+	local cffer = CFrame.new(Vector3.new(0, 0, 0), dir)
+	local sx, sy, sz, m00, m01, m02, m10, m11, m12, m20, m21, m22 = cffer:components()
+	local x, y, z = 0, 0, 0
+	local h = math.asin(m02)
+	if 0 > dir.z then
+		z = h / math.rad(90)
+		x = -((math.rad(90) - math.abs(h)) / math.rad(90))
+	else
+		z = h / math.rad(90)
+		x = (math.rad(90) - math.abs(h)) / math.rad(90)
+	end
+	local mag = (powr - 0.4) * 2
+	return Vector3.new(x, 0, z).Unit * (1 + mag * 4)
+end
 
 local function getHumanoidRootPart()
 	local character = LocalPlayer and LocalPlayer.Character
@@ -78,10 +95,14 @@ function Momentum:Tick(dt: number)
 	local moveDirection = humanoid.MoveDirection
 	local extended = self.ctx.extended ~= nil
 
-	if not self.ctx:IsHit() or self.ctx.hit.velocity.Magnitude <= 1 then
+	if not self.ctx:IsHit() or self.ctx.hit.velocity.Magnitude <= 1 and self.ctx.humanoid.PlatformStand == false then
 		-- Balance when player is not hit and UpRight
 		if humanoidRootPart.CFrame.UpVector.Y == 1 then
-			--self.ctx.groundController.BalanceRigidityEnabled = true
+			local alignOrientation = MouseLockController.alignOrientation
+			local bodyGyro = MouseLockController.bodyGyro
+			if alignOrientation and bodyGyro then
+				alignOrientation.Enabled = true
+			end
 		end
 
 		-- Limit Y position when player is OnIce and NotHit
@@ -102,15 +123,14 @@ function Momentum:Tick(dt: number)
 			self.ctx.ragdolled = false
 			coroutine.wrap(function()
 				task.wait(0.25)
-				--self.ctx.abilityManagerActor.Abilities.FallingDown.SyncedState:SetAttribute("Enabled", false)
-				--self.ctx.abilityManagerActor.Abilities.FallingDown.SyncedState:SetAttribute("Active", false)
-				--self.ctx.abilityManagerActor.Abilities.Running.SyncedState:SetAttribute("Enabled", true)
-				--self.ctx.abilityManagerActor.Abilities.GettingUp.SyncedState:SetAttribute("Enabled", true)
-				--self.ctx.abilityManagerActor.Abilities.GettingUp.SyncedState:SetAttribute("Active", true)
 
-				--self.ctx.groundController.BalanceSpeed = 10
-				--self.ctx.groundController.BalanceMaxTorque = 1000000
-				--self.ctx.controllerManager.GroundSensor = humanoidRootPart.FloorSensor
+				self.ctx.humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
+				self.ctx.humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
+				self.ctx.humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp, true)
+				self.ctx.humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+				self.ctx.humanoid.PlatformStand = false
+
+				MouseLockController.bodyGyro.Parent.Rotation = humanoidRootPart.Rotation * Vector3.new(0, 1, 0)
 
 				local character = LocalPlayer.Character
 				if character then
@@ -121,7 +141,7 @@ function Momentum:Tick(dt: number)
 					end
 				end
 
-				self.ctx.customLock:ResetTorquePower()
+				--self.ctx.customLock:ResetTorquePower()
 			end)()
 		end
 
@@ -195,18 +215,23 @@ function Momentum:Tick(dt: number)
 		if not self.ctx.hit.shove then
 			self.ctx.ragdolled = true
 
-			--self.ctx.abilityManagerActor.Abilities.GettingUp.SyncedState:SetAttribute("Enabled", false)
-			--self.ctx.abilityManagerActor.Abilities.GettingUp.SyncedState:SetAttribute("Active", false)
-			--self.ctx.abilityManagerActor.Abilities.Running.SyncedState:SetAttribute("Enabled", false)
-			--self.ctx.abilityManagerActor.Abilities.Running.SyncedState:SetAttribute("Active", false)
-			--self.ctx.abilityManagerActor.Abilities.FallingDown.SyncedState:SetAttribute("Enabled", true)
-			--self.ctx.abilityManagerActor.Abilities.FallingDown.SyncedState:SetAttribute("Active", true)
-			--self.ctx.controllerManager.ActiveController = nil
+			self.ctx.humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, true)
+			self.ctx.humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown, true)
+			self.ctx.humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp, false)
+			self.ctx.humanoid:ChangeState(Enum.HumanoidStateType.Ragdoll)
+			self.ctx.humanoid.PlatformStand = true
 
-			--self.ctx.groundController.BalanceSpeed = 0
-			--self.ctx.groundController.BalanceMaxTorque = 0
-			--self.ctx.groundController.BalanceRigidityEnabled = false
 			self.ctx.planeConstraint.Enabled = false
+			local alignOrientation = MouseLockController.alignOrientation
+			local bodyGyro = MouseLockController.bodyGyro
+			if alignOrientation and bodyGyro then
+				alignOrientation.Enabled = false
+			end
+
+			local angularVelocity = FHR2(self.ctx.hit.velocity.Unit, self.ctx.hit.power / 10)
+
+			--humanoidRootPart.AssemblyAngularVelocity = angularVelocity
+			humanoidRootPart:ApplyImpulseAtPosition(angularVelocity, LocalPlayer.Character.Head.Position)
 
 			local character = LocalPlayer.Character
 			if character then

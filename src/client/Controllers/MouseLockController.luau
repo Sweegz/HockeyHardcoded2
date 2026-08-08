@@ -109,6 +109,7 @@ function MouseLockController:Start()
 			humanoid.AutoRotate = false
 		else
 			humanoid.AutoRotate = true
+			--MouseLockController.bodyGyro.Parent.Rotation = humanoidRootPart.Rotation * Vector3.new(0, 1, 0)
 		end
 
 		local firstPerson = (workspace.CurrentCamera.CFrame.Position - character.Head.Position).Magnitude <= 1
@@ -157,9 +158,15 @@ function MouseLockController:Disable()
 	self.enabled = false
 	self.MouseLock = false
 	self.forcedMouseLock = false
-	self.bodyGyro:Destroy()
-	self.alignOrientation:Destroy()
-	self.bodyGyro = nil
+	if self.bodyGyro then
+		self.bodyGyro:Destroy()
+		self.bodyGyro = nil
+	end
+
+	if self.alignOrientation then
+		self.alignOrientation:Destroy()
+		self.alignOrientation = nil
+	end
 end
 
 function MouseLockController:Destroy()
