@@ -90,9 +90,6 @@ local function setupClient(character: Model)
 	rlcWeld.Part0 = rightLegCollider
 	rlcWeld.Part1 = RightLeg
 	rlcWeld.C1 = CFrame.new(0, 0.1, 0)
-
-	local Rotator = ReplicatedStorage:FindFirstChild("Rotator"):Clone()
-	Rotator.Parent = character.PrimaryPart
 end
 
 local function setupCharacter(character: Model)
