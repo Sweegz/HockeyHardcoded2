@@ -229,7 +229,11 @@ function Team(props: {
     end)
 
     props.Team().PlayerRemoved:Connect(function(player: Player)
-        table.insert(playersTable, player)
+        for index, v in playersTable do
+            if v == player then
+                table.remove(playersTable, index)
+            end
+        end
         PlayerList(playersTable)
     end)
 

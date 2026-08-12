@@ -1,3 +1,5 @@
+local CollectionService = game:GetService("CollectionService")
+local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
@@ -5,8 +7,10 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local Workspace = game:GetService("Workspace")
 
 local FaceoffService = require(script.Parent.FaceoffService)
+local GoalService = require(script.Parent.GoalService)
 local MusicService = require(script.Parent.MusicService)
 local OutOfBoundsService = require(script.Parent.OutOfBoundsService)
+local TeamsService = require(script.Parent.TeamsService)
 local Synchronizer = require(ReplicatedStorage.ModdedPackages.Synchronizer)
 
 local PuckService = require(ServerScriptService.Services.PuckService2)
@@ -41,6 +45,10 @@ function MatchService:Load()
 	FaceoffService.OnFaceoffComplete:Connect(function()
 		MatchService:StartPlay()
 	end)
+
+	GoalService.OnGoal:Connect(function(puck: BasePart, netSide: string)
+		MatchService:Goal(puck, netSide)
+	end)
 end
 
 function MatchService:StartPlay()
@@ -58,6 +66,65 @@ function MatchService:StartPlay()
 				character.PrimaryPart.Anchored = false
 			end
 		end
+	end
+end
+
+function MatchService:Goal(puck: BasePart, detector: BasePart)
+	if MatchService:IsInPlay() then
+		MatchService:SetPlay(false)
+		local goalScorer = nil
+		local previousOwner = puck:GetAttribute("PreviousOwner") :: number?
+		if previousOwner then
+			goalScorer = Players:GetPlayerByUserId(previousOwner)
+		end
+
+		if goalScorer then
+			print(goalScorer.DisplayName)
+		end
+
+		local team = nil
+		local netSide = detector:GetAttribute("Side")
+
+		local sound = Instance.new("Sound")
+		sound.Parent = Workspace
+		sound.SoundId = "rbxassetid://5818699832"
+		sound.Volume = 2
+		sound:Play()
+
+		if netSide == "Home" then
+			team = TeamsService.awayTeam
+		elseif netSide == "Away" then
+			team = TeamsService.homeTeam
+		end
+
+		local alarm = detector.Parent.Alarm
+		if alarm then
+			CollectionService:AddTag(alarm, "ActiveSiren")
+		end
+
+		if not team then
+			return
+		end
+
+		task.wait(5)
+
+		local msg = Instance.new("Message")
+		msg.Parent = Workspace
+		msg.Text = goalScorer.DisplayName .. " scored"
+
+		task.wait(5)
+		msg:Destroy()
+		task.wait(5)
+
+		sound:Destroy()
+		local newPuck = PuckService:Create(Vector3.new(0, 1, 0) + Vector3.new(0, 8, 0), true)
+		PuckService:SetMainPuck(newPuck)
+		newPuck.Anchored = true
+		FaceoffService:Create(Vector3.new(0, 1, 0))
+
+		CollectionService:RemoveTag(alarm, "ActiveSiren")
+
+		puck:Destroy()
 	end
 end
 

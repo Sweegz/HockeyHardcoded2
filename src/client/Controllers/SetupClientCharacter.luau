@@ -71,12 +71,14 @@ local function setupClient(character: Model)
 	leftLegCollider.Parent = character
 	leftLegCollider.CollisionGroup = "Legs"
 	leftLegCollider.Transparency = 1
+	leftLegCollider.CanCollide = true
+	leftLegCollider.EnableFluidForces = false
 
 	local llcWeld = Instance.new("Weld")
 	llcWeld.Parent = leftLegCollider
 	llcWeld.Part0 = leftLegCollider
 	llcWeld.Part1 = LeftLeg
-	llcWeld.C1 = CFrame.new(0, 0.1, 0)
+	llcWeld.C1 = CFrame.new(0, 0.1, 0) * CFrame.Angles(math.rad(0), 0, 0)
 
 	local rightLegCollider = Instance.new("Part")
 	rightLegCollider.Name = "RightLegCollider"
@@ -84,12 +86,20 @@ local function setupClient(character: Model)
 	rightLegCollider.Parent = character
 	rightLegCollider.CollisionGroup = "Legs"
 	rightLegCollider.Transparency = 1
+	rightLegCollider.CanCollide = true
+	rightLegCollider.EnableFluidForces = false
 
 	local rlcWeld = Instance.new("Weld")
 	rlcWeld.Parent = rightLegCollider
 	rlcWeld.Part0 = rightLegCollider
 	rlcWeld.Part1 = RightLeg
-	rlcWeld.C1 = CFrame.new(0, 0.1, 0)
+	rlcWeld.C1 = CFrame.new(0, 0.1, 0) * CFrame.Angles(math.rad(0), 0, 0)
+
+	for _, child in character:GetDescendants() do
+		if child:IsA("BasePart") then
+			child.EnableFluidForces = false
+		end
+	end
 end
 
 local function setupCharacter(character: Model)

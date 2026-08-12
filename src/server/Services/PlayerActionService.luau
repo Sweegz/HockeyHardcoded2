@@ -189,7 +189,7 @@ function PlayerActionService:Start()
 
 			local finalVelocity = movementDirection * (power / 2)
 
-			local duration = (0.8 + (power / 100) * 0.3) - 0.18
+			local duration = 0.5 + (power / 200)
 
 			RagdollEvent:FireClient(hitPlayer, finalVelocity, duration, false, power)
 

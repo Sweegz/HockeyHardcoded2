@@ -69,6 +69,8 @@ function Stick:Update(dt: number)
 		return
 	end
 
+	self.tool.ShaftHitbox.CollisionGroup = "ClientStick"
+
 	self.hasPuck = PuckController:HasPuck(LocalPlayer)
 
 	self.power:Tick(dt)
@@ -76,11 +78,11 @@ function Stick:Update(dt: number)
 	while self.accumulatedTime >= FIXED_RATE do
 		local deltaTime = FIXED_RATE
 		self.input:Tick(deltaTime)
+		self.momentum:Tick(deltaTime)
 
 		self.stateMachine:Tick(deltaTime)
 		self.collect:Tick(deltaTime)
 		self.sprint:Tick(deltaTime)
-		self.momentum:Tick(deltaTime)
 
 		-- Reset time
 		self.accumulatedTime -= FIXED_RATE
@@ -107,7 +109,6 @@ function Stick:Equip()
 	--self.groundController.MoveSpeedFactor = 0
 	--self.abilityManagerActor.Abilities.Jumping.SyncedState:SetAttribute("Enabled", false)
 	self.humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, false)
-	self.humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
 	self.humanoid.JumpHeight = 0
 
 	self.animator:Enable()
@@ -126,11 +127,11 @@ function Stick:Equip()
 		return
 	end
 
-	for _, child in character:GetChildren() do
+	--[[for _, child in character:GetChildren() do
 		if child.Name:match("Collider") then
 			child.CanCollide = false
 		end
-	end
+	end--]]
 
 	local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
 	if not humanoidRootPart then
@@ -145,8 +146,28 @@ function Stick:Equip()
 		planeConstraint.Attachment1 = humanoidRootPart:FindFirstChild("RootAttachment")
 		planeConstraint.Enabled = false
 	end
-
 	self.planeConstraint = planeConstraint
+
+	local yawAttachment = humanoidRootPart:FindFirstChild("YawAttachment") :: Attachment?
+	if not yawAttachment then
+		yawAttachment = Instance.new("Attachment")
+		yawAttachment.Name = "YawAttachment"
+		yawAttachment.Axis = Vector3.new(0, 1, 0)
+		yawAttachment.Parent = humanoidRootPart
+	end
+
+	local yawLock = humanoidRootPart:FindFirstChild("YawLock") :: AlignOrientation?
+	if not yawLock then
+		yawLock = Instance.new("AlignOrientation")
+		yawLock.Name = "YawLock"
+		yawLock.Parent = humanoidRootPart
+		yawLock.AlignType = Enum.AlignType.PrimaryAxisParallel
+		yawLock.PrimaryAxis = Vector3.new(0, 1, 0)
+		yawLock.Mode = Enum.OrientationAlignmentMode.OneAttachment
+		yawLock.Attachment0 = yawAttachment
+		yawLock.RigidityEnabled = true
+	end
+	self.yawLock = yawLock
 
 	-- ShaftHitbox keeps reverting back to the Stick CollisionGroup unless there's a delay?
 	-- Quick fix: Introduces races conditions of setting the CollisionGroup in functions Equip/Unequip
@@ -180,8 +201,20 @@ function Stick:Unequip()
 	--self.groundController.MoveSpeedFactor = 1
 	--self.groundController.BalanceRigidityEnabled = false
 	self.humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, true)
-	self.humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown, true)
 	self.humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp, true)
+
+	local character = LocalPlayer.Character
+	if character then
+		local RotatedLeftLeg = character:FindFirstChild("RotatedLeftLeg")
+		if RotatedLeftLeg then
+			RotatedLeftLeg:Destroy()
+		end
+
+		local RotatedRightLeg = character:FindFirstChild("RotatedRightLeg")
+		if RotatedRightLeg then
+			RotatedRightLeg:Destroy()
+		end
+	end
 
 	self.customLock:FollowMouse(false)
 
@@ -192,6 +225,10 @@ function Stick:Unequip()
 	self.collect:Disable()
 	self.sprint:Disable()
 	self.momentum:Disable()
+
+	if self.yawLock then
+		self.yawLock.Enabled = false
+	end
 
 	if self:HasPuck() then
 		CollectController:Drop(self:HasPuck())

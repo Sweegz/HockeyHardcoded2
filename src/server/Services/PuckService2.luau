@@ -99,6 +99,8 @@ function PuckService:RemoveOwner(puck: BasePart)
 		weld.Part1 = nil
 	end
 
+	puck:SetAttribute("PreviousOwner", puck:GetAttribute("Owner"))
+
 	puck.Orientation = Vector3.new(0, 0, 0)
 	puck:SetNetworkOwner(nil)
 	puck:SetAttribute("Owner", nil)
