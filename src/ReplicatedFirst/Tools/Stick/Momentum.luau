@@ -81,6 +81,11 @@ function Momentum:Tick(dt: number)
 		return
 	end
 
+	local character = LocalPlayer.Character
+	if not character then
+		return
+	end
+
 	local humanoid = self.ctx.humanoid
 	if not humanoid then
 		return
@@ -95,14 +100,13 @@ function Momentum:Tick(dt: number)
 	local moveDirection = humanoid.MoveDirection
 	local extended = self.ctx.extended ~= nil
 
-	if not self.ctx:IsHit() or self.ctx.hit.velocity.Magnitude <= 1 and self.ctx.humanoid.PlatformStand == false then
+	if
+		not self.ctx:IsHit()
+		or self.ctx.hit.velocity.Magnitude <= 1 and self.ctx.humanoid:GetState() ~= Enum.HumanoidStateType.Ragdoll
+	then
 		-- Balance when player is not hit and UpRight
-		if humanoidRootPart.CFrame.UpVector.Y == 1 then
-			local alignOrientation = MouseLockController.alignOrientation
-			local bodyGyro = MouseLockController.bodyGyro
-			if alignOrientation and bodyGyro then
-				alignOrientation.Enabled = true
-			end
+		if humanoidRootPart.CFrame.UpVector.Y > 0.98 then
+			self.ctx.yawLock.Enabled = true
 		end
 
 		-- Limit Y position when player is OnIce and NotHit
@@ -123,25 +127,21 @@ function Momentum:Tick(dt: number)
 			self.ctx.ragdolled = false
 			coroutine.wrap(function()
 				task.wait(0.25)
-
+				humanoidRootPart.AssemblyAngularVelocity = Vector3.zero
+				humanoidRootPart.AssemblyLinearVelocity = Vector3.zero
 				self.ctx.humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
-				self.ctx.humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
 				self.ctx.humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp, true)
 				self.ctx.humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
-				self.ctx.humanoid.PlatformStand = false
 
-				MouseLockController.bodyGyro.Parent.Rotation = humanoidRootPart.Rotation * Vector3.new(0, 1, 0)
-
-				local character = LocalPlayer.Character
-				if character then
-					for _, descendant in character:GetChildren() do
-						if descendant:IsA("BasePart") and descendant.Name:match("Collider") then
-							descendant.CanCollide = false
-						end
-					end
+				local RotatedLeftLeg = character:FindFirstChild("RotatedLeftLeg")
+				if RotatedLeftLeg then
+					RotatedLeftLeg:Destroy()
 				end
 
-				--self.ctx.customLock:ResetTorquePower()
+				local RotatedRightLeg = character:FindFirstChild("RotatedRightLeg")
+				if RotatedRightLeg then
+					RotatedRightLeg:Destroy()
+				end
 			end)()
 		end
 
@@ -182,7 +182,7 @@ function Momentum:Tick(dt: number)
 						self:SetBodyVelocity(humanoidRootPart.AssemblyLinearVelocity)
 					end
 					local walkSpeed = humanoid.WalkSpeed
-					--local alpha = 1 - (1 - glideSpeedModifier) ^ (dt / FRAME_RATE)
+					--local alpha = 1 - (1 - glideSpeedModifier) ^ (dt * 60)
 					self:SetBodyVelocity(bodyVelocity.Velocity:Lerp(moveDirection * walkSpeed, glideSpeedModifier))
 				else
 					local desiredDirectionVelocity = nil
@@ -197,7 +197,7 @@ function Momentum:Tick(dt: number)
 
 					if desiredDirectionVelocity then
 						local walkSpeed = humanoid.WalkSpeed
-						--local alpha = 1 - (1 - glideSpeedModifier) ^ (dt / FRAME_RATE)
+						--local alpha = 1 - (1 - glideSpeedModifier) ^ (dt * 60)
 						self:SetBodyVelocity(
 							bodyVelocity.Velocity:Lerp(desiredDirectionVelocity * walkSpeed, glideSpeedModifier)
 						)
@@ -212,33 +212,58 @@ function Momentum:Tick(dt: number)
 			end
 		end
 	else
-		if not self.ctx.hit.shove then
+		if not self.ctx.hit.shove and not self.ctx.ragdolled then
 			self.ctx.ragdolled = true
 
+			self.ctx.planeConstraint.Enabled = false
+			self.ctx.yawLock.Enabled = false
+
+			--self.ctx.humanoid.PlatformStand = true
 			self.ctx.humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, true)
-			self.ctx.humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown, true)
 			self.ctx.humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp, false)
 			self.ctx.humanoid:ChangeState(Enum.HumanoidStateType.Ragdoll)
-			self.ctx.humanoid.PlatformStand = true
 
-			self.ctx.planeConstraint.Enabled = false
-			local alignOrientation = MouseLockController.alignOrientation
-			local bodyGyro = MouseLockController.bodyGyro
-			if alignOrientation and bodyGyro then
-				alignOrientation.Enabled = false
+			local dir = self.ctx.hit.velocity.Unit
+
+			humanoidRootPart.AssemblyAngularVelocity = Vector3.new(dir.Z, 0, -dir.X)
+
+			--[[if not character:FindFirstChild("RotatedLeftLeg") then
+				local leftcol = Instance.new("Part")
+				leftcol.Name = "RotatedLeftLeg"
+				leftcol.Size = Vector3.new(1, 1.8, 1)
+				leftcol.Parent = character
+				leftcol.CollisionGroup = "Legs"
+				leftcol.Transparency = 1
+				leftcol.CanCollide = true
+				leftcol.Massless = true
+
+				local llcweld = Instance.new("Weld")
+				llcweld.Parent = leftcol
+				llcweld.Part0 = leftcol
+				llcweld.Part1 = character:FindFirstChild("Left Leg")
+				llcweld.C1 = CFrame.new(0, 0.05, -0.5) * CFrame.Angles(math.rad(30), 0, 0)
 			end
 
-			local angularVelocity = FHR2(self.ctx.hit.velocity.Unit, self.ctx.hit.power / 10)
+			if not character:FindFirstChild("RotatedRightLeg") then
+				local rightcol = Instance.new("Part")
+				rightcol.Name = "RotatedRightLeg"
+				rightcol.Size = Vector3.new(1, 1.8, 1)
+				rightcol.Parent = character
+				rightcol.CollisionGroup = "Legs"
+				rightcol.Transparency = 1
+				rightcol.CanCollide = true
+				rightcol.Massless = true
 
-			--humanoidRootPart.AssemblyAngularVelocity = angularVelocity
-			humanoidRootPart:ApplyImpulseAtPosition(angularVelocity, LocalPlayer.Character.Head.Position)
+				local rlcweld = Instance.new("Weld")
+				rlcweld.Parent = rightcol
+				rlcweld.Part0 = rightcol
+				rlcweld.Part1 = character:FindFirstChild("Right Leg")
+				rlcweld.C1 = CFrame.new(0, 0.05, -0.5) * CFrame.Angles(math.rad(30), 0, 0)
+			end--]]
 
-			local character = LocalPlayer.Character
-			if character then
-				for _, descendant in character:GetChildren() do
-					if descendant:IsA("BasePart") and descendant.Name:match("Collider") then
-						descendant.CanCollide = true
-					end
+			for _, descendant in character:GetChildren() do
+				if descendant:IsA("BasePart") and descendant.Name:match(" Leg") then
+					descendant.CollisionGroup = "Nothing"
 				end
 			end
 		end
@@ -258,8 +283,6 @@ function Momentum:Tick(dt: number)
 			bodyVelocity.Velocity = slideVelocity
 		end
 	end
-
-	--print(self.bodyVelocity.Velocity)
 end
 
 function Momentum:SetBodyVelocity(velocity: Vector3)
