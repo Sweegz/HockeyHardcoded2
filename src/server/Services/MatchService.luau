@@ -81,6 +81,7 @@ function MatchService:Goal(puck: BasePart, detector: BasePart)
 		if goalScorer then
 			print(goalScorer.DisplayName)
 		end
+		PuckService:SetPlayable(puck, false)
 
 		local team = nil
 		local netSide = detector:GetAttribute("Side")

@@ -101,6 +101,12 @@ local ENTITY_TYPES: { [string]: Types.EntityConfig } = {
 		CUSTOM_INTERPOLATION = true,
 		FULL_ROTATION = true,
 	},
+	GOALIE = {
+		NAME = "GOALIE",
+		TICK_RATE = 1 / 60,
+		BUFFER = 0.05,
+		FULL_ROTATION = true,
+	},
 	WITH_ROT = {
 		NAME = "WITH_ROT",
 		TICK_RATE = 1 / 60,

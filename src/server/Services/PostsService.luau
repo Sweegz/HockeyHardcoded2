@@ -23,16 +23,20 @@ end
 local function setupPost(part: BasePart)
 	part.Touched:Connect(function(hit: BasePart)
 		if CollectionService:HasTag(hit, "Puck") then
-			local postSound = get_random_sound(PostSounds)
-
-			if postSound then
-				local clone = postSound:Clone()
-				clone.Parent = part
-				clone:Play()
-				Debris:AddItem(clone, 2)
-			end
+			PostsService:PlaySound(part)
 		end
 	end)
+end
+
+function PostsService:PlaySound(part: BasePart)
+	local postSound = get_random_sound(PostSounds)
+
+	if postSound then
+		local clone = postSound:Clone()
+		clone.Parent = part
+		clone:Play()
+		Debris:AddItem(clone, 2)
+	end
 end
 
 for _, part: BasePart in CollectionService:GetTagged("Post") do

@@ -12,7 +12,7 @@ local DropEvent = Net:FindFirstChild("Drop") :: RemoteEvent
 
 local CollectService = {}
 
-local PLAYER_COOLDOWN = 1.5
+local PLAYER_COOLDOWN = 1
 
 local function preventShooterCollisions(player: Player, puck: BasePart)
 	local constraints = {}

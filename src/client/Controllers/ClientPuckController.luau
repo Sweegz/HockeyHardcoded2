@@ -122,6 +122,27 @@ function ClientPuckController:Start()
 			if ownerId then
 				Chrono.Entity.Clear(entity)
 			else
+				--transformPuck.CFrame = cf
+			end
+
+			puck:SetAttribute("cf", cf)
+		end
+	end)
+
+	RunService.PreSimulation:Connect(function(dt)
+		for _, puck: BasePart in CollectionService:GetTagged("Replicated") and CollectionService:GetTagged("Puck") do
+			local transformPuck = puck:FindFirstChild("Transform")
+			if not transformPuck or not transformPuck:IsA("BasePart") then
+				continue
+			end
+
+			local cf = puck:GetAttribute("cf") :: CFrame
+			if not cf then
+				return
+			end
+
+			local ownerId = PuckController2:GetOwner(puck)
+			if not ownerId then
 				transformPuck.CFrame = cf
 			end
 		end

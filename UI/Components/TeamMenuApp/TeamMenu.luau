@@ -243,10 +243,6 @@ function Team(props: {
         Position = UDim2.fromScale(0.009, 0.3),
         BackgroundTransparency = 1,
 
-        --[[
-        create ("UIAspectRatioConstraint" :: "UIAspectRatioConstraint"){
-            AspectRatio = 0.595,
-        },--]]
 
         create ("UIGridLayout" :: "UIGridLayout"){
             CellPadding = UDim2.fromScale(0, 0.0072),

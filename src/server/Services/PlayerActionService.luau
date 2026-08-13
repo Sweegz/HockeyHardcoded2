@@ -2,7 +2,9 @@ local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local SoundService = game:GetService("SoundService")
+local Workspace = game:GetService("Workspace")
 
+local Signal = require(ReplicatedStorage.Packages.Signal)
 local HitRegisterService = require(script.Parent.HitRegisterService)
 local PuckService = require(ServerScriptService.Services.PuckService2)
 local PlayerSessionService = require(ServerScriptService.Services.PlayerSessionService)
@@ -20,7 +22,30 @@ local sound_folder = SoundService.SFX:FindFirstChild("Shots")
 local SHOT_SOUND = sound_folder:FindFirstChild("Shot")
 local SLAPSHOT_SOUND = sound_folder:FindFirstChild("Slapshot")
 
-local PlayerActionService = {}
+local planes = CollectionService:GetTagged("NetZone")
+local params = RaycastParams.new()
+params.FilterType = Enum.RaycastFilterType.Include
+params.FilterDescendantsInstances = planes
+params.IgnoreWater = true
+
+CollectionService:GetInstanceAddedSignal("NetZone"):Connect(function(instance: Instance)
+	table.insert(planes, instance)
+	params.FilterDescendantsInstances = planes
+end)
+
+CollectionService:GetInstanceRemovedSignal("NetZone"):Connect(function(instance: Instance)
+	for i = #planes, 1, -1 do
+		if planes[i] == instance then
+			table.remove(planes, i)
+			break
+		end
+	end
+	params.FilterDescendantsInstances = planes
+end)
+
+local PlayerActionService = {
+	OnShotTowardsNet = Signal.new(),
+}
 
 local function preventShooterCollisions(player: Player, puck: BasePart)
 	local constraints = {}
@@ -45,6 +70,18 @@ local function preventShooterCollisions(player: Player, puck: BasePart)
 
 		constraints = {}
 	end)
+end
+
+local function blockcast_collision(
+	part: BasePart,
+	size: Vector3,
+	params: RaycastParams,
+	dir: Vector3,
+	visualize: boolean
+): RaycastResult?
+	local result = Workspace:Blockcast(part.CFrame, size, dir, params)
+
+	return result
 end
 
 function PlayerActionService:Start()
@@ -99,6 +136,37 @@ function PlayerActionService:Start()
 			Shots.apply_velocity(puck, velocity)
 			Shots.apply_force(puck, force, time)
 			PlayerSessionService:SetCollectCooldown(player, 1.5)
+
+			local result = blockcast_collision(puck, Vector3.new(1, 0.3, 1), params, velocity, false)
+			if result then
+				local instance = result.Instance
+				if not instance then
+					return
+				end
+
+				local parent = instance.Parent
+				if not parent then
+					return
+				end
+
+				local net = parent.Parent
+				if not net then
+					return
+				end
+
+				local goalie = net:FindFirstChild("Goalie")
+				if not goalie then
+					return
+				end
+
+				PlayerActionService.OnShotTowardsNet:Fire({
+					origin = puck.Position,
+					direction = dir,
+					rayResult = result,
+					goalie = goalie,
+					flags = flags,
+				})
+			end
 		end
 	)
 

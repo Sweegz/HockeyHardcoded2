@@ -1,13 +1,17 @@
 local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
+local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
+local PostsService = require(script.Parent.PostsService)
 local Chrono = require(ReplicatedStorage.ModdedPackages.Chrono)
 
 local PuckModel = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Pucks"):WaitForChild("Puck")
 local PuckFolder = Workspace:WaitForChild("Pucks")
 
 local COOLDOWN = 0.5
+
+local PucksCache: { BasePart } = {}
 
 local PuckService = {}
 
@@ -24,11 +28,14 @@ function PuckService:Create(position: Vector3, replicate: boolean)
 	CollectionService:AddTag(clone, "Puck")
 
 	if Workspace:GetAttribute("CustomReplication") and replicate then
+		print("YES")
 		Chrono.Entity.new("Default", clone)
 		CollectionService:AddTag(clone, "Replicated")
 	else
 		CollectionService:AddTag(clone, "Collectable")
 	end
+
+	table.insert(PucksCache, clone)
 
 	return clone
 end
@@ -161,6 +168,12 @@ function PuckService:Destroy(puck: BasePart)
 		end
 	end
 
+	for i, v in PucksCache do
+		if v == puck then
+			table.remove(PucksCache, i)
+		end
+	end
+
 	puck:Destroy()
 end
 
@@ -168,6 +181,70 @@ function PuckService:DestroyAllPucks()
 	for _, puck in CollectionService:GetTagged("Puck") do
 		puck:Destroy()
 	end
+end
+
+local inclusionTable: { Instance } = CollectionService:GetTagged("RemoveForce")
+
+local params = RaycastParams.new()
+params.FilterType = Enum.RaycastFilterType.Include
+params.FilterDescendantsInstances = inclusionTable
+
+CollectionService:GetInstanceAddedSignal("RemoveForce"):Connect(function(instance: Instance)
+	table.insert(inclusionTable, instance)
+	params.FilterDescendantsInstances = inclusionTable
+end)
+
+CollectionService:GetInstanceRemovedSignal("RemoveForce"):Connect(function(instance: Instance)
+	for i = #inclusionTable, 1, -1 do
+		if inclusionTable[i] == instance then
+			table.remove(inclusionTable, i)
+			break
+		end
+	end
+	params.FilterDescendantsInstances = inclusionTable
+end)
+
+local function blockcast_collision(
+	part: BasePart,
+	size: Vector3,
+	params: RaycastParams,
+	dist: number,
+	dt: number,
+	visualize: boolean
+): RaycastResult?
+	local velocity = part.AssemblyLinearVelocity
+	if velocity.Magnitude > 0 then
+		local check_distance = velocity.Magnitude * dt * dist
+		local direction = velocity.Unit
+
+		if (direction * check_distance).Magnitude > 1020 then
+			return nil
+		end
+
+		local result = Workspace:Blockcast(part.CFrame, size, direction * check_distance, params)
+
+		return result
+	end
+	return nil
+end
+
+function PuckService:Start()
+	-- Run raycasts
+	RunService.PreSimulation:Connect(function(dt: number)
+		for _, puck: BasePart in PucksCache do
+			local result = blockcast_collision(puck, Vector3.new(1, 0.3, 1), params, 1.25, dt, false)
+			if result then
+				local upwardsForce = puck:FindFirstChild("VectorForce")
+				if upwardsForce then
+					upwardsForce:Destroy()
+				end
+
+				if CollectionService:HasTag(result.Instance, "Post") then
+					PostsService:PlaySound(result.Instance)
+				end
+			end
+		end
+	end)
 end
 
 return PuckService
