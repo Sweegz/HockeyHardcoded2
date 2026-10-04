@@ -1,38 +1,10 @@
-Non-Commercial Software License
-
+LICENSE
 Copyright (c) 2026 Sweegz
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files, to use,
-copy, modify, and distribute the Software, subject to the following conditions:
+You are free to use, modify, distribute, and build upon this source code for any purpose, including commercial use.
 
-Non-Commercial Use Only
+If your project is based on or substantially incorporates this source code, you are free to do whatever you want with your own work. I only ask that you don't claim work from this source as entirely your own.
 
-The Software may be used, copied, modified, and distributed for personal,
-educational, research, and other non-commercial purposes.
+If you explicitly take credit for a project built upon this source code, please also mention Sweegz as a developer who contributed to the project.
 
-Commercial Use Prohibited
-
-The Software may not be used, copied, modified, distributed, incorporated
-into another product or service, or otherwise exploited for commercial
-purposes without prior written permission from the copyright holder.
-
-Commercial License
-
-Commercial use may be permitted under a separate license. Contact the
-copyright holder to obtain permission or a commercial license.
-
-Attribution
-
-The copyright notice and this license must be included with copies or
-substantial portions of the Software.
-
-No Warranty
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY,
-WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
-OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+The source code is provided “as is”, without warranty of any kind.
